@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Person extends Model {
     protected $fillable = [
-        'phone_number',
         'first_name',
         'last_name',
         'birthdate',

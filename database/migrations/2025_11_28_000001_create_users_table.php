@@ -11,9 +11,11 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('phone_number')->unique();
             $table->string('username')->unique();
             $table->string('password');
             $table->boolean('verified');
+            $table->date('verified_at');
             $table->foreignId('person_id')->constrained('people')->onDelete('cascade');
         });
     }

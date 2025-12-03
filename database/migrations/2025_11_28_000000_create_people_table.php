@@ -11,12 +11,12 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('people', function (Blueprint $table) {
             $table->id();
-            $table->string('phone_number');
             $table->string('first_name');
             $table->string('last_name');
             $table->date('birthdate');
             $table->string('personal_photo');
             $table->string('id_photo');
+            $table->timestamps();
         });
     }
 

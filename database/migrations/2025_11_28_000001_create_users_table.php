@@ -14,8 +14,7 @@ return new class extends Migration {
             $table->string('phone_number')->unique();
             $table->string('username')->unique();
             $table->string('password');
-            $table->boolean('verified');
-            $table->date('verified_at');
+            $table->date('verified_at')->nullable();
             $table->foreignId('person_id')->constrained('people')->onDelete('cascade');
         });
     }

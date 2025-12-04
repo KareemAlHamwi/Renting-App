@@ -10,7 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable ,HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +21,7 @@ class User extends Authenticatable {
         'phone_number',
         'username',
         'password',
-        'verified',
+        'verified_at',
         'person_id',
     ];
 
@@ -32,8 +32,9 @@ class User extends Authenticatable {
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
+
+    public $timestamps = false;
 
     /**
      * Get the attributes that should be cast.
@@ -42,11 +43,11 @@ class User extends Authenticatable {
      */
     protected function casts(): array {
         return [
-            'email_verified_at' => 'datetime',
+            'verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
     public function person() {
-        return $this->belongsTo(Person::class);
+        return $this->belongsTo(Person::class,'person_id');
     }
 }

@@ -10,7 +10,7 @@ Route::get('/login', function () {
     return view('login');
 });
 
-Route::post('/login', function () {
+Route::post('/dashboard', function () {
     // handle login logic here
     return view('dashboard');
 });

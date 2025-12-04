@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Repositories\Eloquent;
+
 use App\Repositories\Contracts\PersonRepositoryInterface;
 use App\Models\Person;
 

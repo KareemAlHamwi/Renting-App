@@ -2,14 +2,23 @@
 
 namespace App\Providers;
 
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AppServiceProvider extends ServiceProvider {
-    public function boot(): void {
-        JsonResource::withoutWrapping();
+    public function register(): void {
+        $this->app->bind(
+            \App\Repositories\Contracts\PersonRepositoryInterface::class,
+            \App\Repositories\Eloquent\PersonRepository::class
+        );
+
+        $this->app->bind(
+            \App\Repositories\Contracts\UserRepositoryInterface::class,
+            \App\Repositories\Eloquent\UserRepository::class
+        );
     }
 
-    public function register(): void {
+    public function boot(): void {
+        JsonResource::withoutWrapping();
     }
 }

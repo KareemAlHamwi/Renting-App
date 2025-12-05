@@ -3,24 +3,27 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Repositories\Eloquent\PersonRepository;
-use App\Repositories\Eloquent\UserRepository;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\LogoutRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Resources\UserResource;
+use App\Services\PersonService;
+use App\Services\UserService;
 
 class AuthController extends Controller {
-    private PersonRepository $personRepository;
-    private UserRepository $userRepository;
+    private PersonService $personService;
+    private UserService $userService;
 
     public function __construct(
-        PersonRepository $personRepository,
-        UserRepository $userRepository
+        PersonService $personService,
+        UserService $userService
     ) {
-        $this->personRepository = $personRepository;
-        $this->userRepository   = $userRepository;
+        $this->personService = $personService;
+        $this->userService   = $userService;
     }
 
-    public function store(Request $request) {
-        $person = $this->personRepository->create($request->only([
+    public function register(RegisterRequest $request) {
+        $person = $this->personService->createPerson($request->only([
             'first_name',
             'last_name',
             'birthdate',
@@ -28,20 +31,47 @@ class AuthController extends Controller {
             'id_photo'
         ]));
 
-        $user = $this->userRepository->create([
+        $user = $this->userService->createUser([
             'phone_number' => $request->phone_number,
-            'username'    => $request->username,
-            'password'    => bcrypt($request->password),
+            'username'     => $request->username,
+            'password'     => $request->password,
             'person_id'    => $person->id,
+            'device_id'    => $request->device_id,
         ]);
 
-        return response()->json(['user' => $user]);
+        // Create token
+        $token = $user->createToken($request->device_id)->plainTextToken;
+
+        // Set token in user object for Resource
+        $user->access_token = $token;
+
+        // Return user with token
+        return (new UserResource($user))->additional([
+            'meta' => ['message' => 'Registration successful']
+        ])->response()->setStatusCode(201);
     }
 
-    public function find(Request $request) {
-        $phone = $request->input('phone_number');
-        $user = $this->userRepository->findByPhone($phone);
+    public function login(LoginRequest $request) {
+        $user = $this->userService->validateLogin(
+            $request->phone_number,
+            $request->password
+        );
 
-        return response()->json(['user' => $user]);
+        $token = $user->createToken($request->device_id)->plainTextToken;
+        $user->access_token = $token;
+
+        return (new UserResource($user))->additional([
+            'meta' => ['message' => 'Login successful']
+        ])->response()->setStatusCode(200);
+    }
+
+    public function logout(LogoutRequest $request) {
+        $user = $this->userService->findByPhone($request->phone_number);
+
+        if ($user) {
+            $user->tokens()->delete();
+        }
+
+        return response()->noContent();
     }
 }

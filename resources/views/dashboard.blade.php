@@ -1,6 +1,7 @@
-@extends('components/layout')
+@extends('components.layout')
 
 @section('dashboard')
+
 
 
 @endsection

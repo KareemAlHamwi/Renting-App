@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('username')->unique();
             $table->string('password');
             $table->date('verified_at')->nullable();
+            $table->boolean('role')->default(0);
             $table->foreignId('person_id')->constrained('people')->onDelete('cascade');
         });
     }

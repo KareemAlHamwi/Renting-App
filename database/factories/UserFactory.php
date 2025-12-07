@@ -26,6 +26,7 @@ class UserFactory extends Factory {
             'username' => fake()->userName(),
             'password' => static::$password ??= Hash::make('password'),
             'verified_at' => null,
+            'role' => 0,
             'person_id' => Person::factory(),
         ];
     }

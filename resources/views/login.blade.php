@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/css/app.css">
 </head>
 
-<body data-theme="{{ session('theme', 'dark') }}">
+<body data-theme="{{ session('theme', 'light') }}">
 
     <div class="login-wrapper">
         <div class="login-card">

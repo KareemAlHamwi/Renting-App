@@ -7,7 +7,7 @@ Route::get('/', function () {
     return view('dashboard');
 });
 
-Route::post('/login',AdminController::class,'login');
+Route::post('/login',[AdminController::class,'login']);
 
 Route::post('/dashboard', function () {
     // handle login logic here

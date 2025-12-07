@@ -10,7 +10,7 @@ class PersonRepository implements PersonRepositoryInterface {
         return Person::create($data);
     }
 
-    public function findById($id) {
+    public function findBy($id) {
         return Person::with('user')->findOrFail($id);
     }
 }

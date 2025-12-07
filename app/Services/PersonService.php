@@ -16,6 +16,6 @@ class PersonService {
     }
 
     public function findPersonById($id) {
-        return $this->persons->findById($id);
+        return $this->persons->findBy($id);
     }
 }

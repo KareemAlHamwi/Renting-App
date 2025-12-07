@@ -14,11 +14,13 @@ class UserService {
     }
 
     public function createUser(array $data) {
+        $data['password'] = Hash::make($data['password']);
+
         return $this->users->create($data);
     }
 
     public function findByPhone(string $phone) {
-        return $this->users->findByPhone($phone);
+        return $this->users->findBy($phone);
     }
 
     public function validateLogin(string $phone, string $password) {

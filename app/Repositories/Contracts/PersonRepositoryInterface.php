@@ -4,5 +4,5 @@ namespace App\Repositories\Contracts;
 
 interface PersonRepositoryInterface {
     public function create($request);
-    public function findById($id);
+    public function findBy($id);
 }

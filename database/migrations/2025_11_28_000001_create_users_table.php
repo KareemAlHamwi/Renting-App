@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('password');
             $table->date('verified_at')->nullable();
             $table->boolean('role')->default(0);
-            $table->foreignId('person_id')->constrained('people')->onDelete('cascade');
+            $table->foreignId('person_id')->references('id')->on('people')->onDelete('cascade');
         });
     }
 

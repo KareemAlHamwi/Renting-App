@@ -66,7 +66,7 @@ class AuthController extends Controller {
     }
 
     public function logout(LogoutRequest $request) {
-        $user = $this->userService->findByPhone($request->phone_number);
+        $user = $this->userService->findUserByPhone($request->phone_number);
 
         if ($user) {
             $user->tokens()->delete();

@@ -5,17 +5,29 @@ namespace App\Services;
 use App\Repositories\Contracts\PersonRepositoryInterface;
 
 class PersonService {
-    private PersonRepositoryInterface $persons;
+    private PersonRepositoryInterface $people;
 
-    public function __construct(PersonRepositoryInterface $persons) {
-        $this->persons = $persons;
+    public function __construct(PersonRepositoryInterface $people) {
+        $this->people = $people;
     }
 
-    public function createPerson(array $data) {
-        return $this->persons->create($data);
+    public function allPeople() {
+        return $this->people->index();
     }
 
     public function findPersonById($id) {
-        return $this->persons->findBy($id);
+        return $this->people->show($id);
+    }
+
+    public function createPerson(array $data) {
+        return $this->people->store($data);
+    }
+
+    public function updatePerson($id, array $data) {
+        return $this->people->update($id,$data);
+    }
+
+    public function deletePerson($id) {
+        return $this->people->destroy($id);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -9,9 +10,11 @@ Route::middleware(['auth:api'])->get('/user', function(Request $request) {
 });
 
 Route::group(['middleware' => 'auth:sanctum'], function() {
-    Route::get('/property/index',function() {
-        return 'test';
-    });
+    Route::post('/user/show', [UserController::class,'show']);
+    Route::post('/user/update', [UserController::class,'update']);
+    Route::post('/user/change-phone-number', [UserController::class,'changePhoneNumber']);
+    Route::post('/user/change-password', [UserController::class,'changePassword']);
+    Route::delete('/user/destroy', [UserController::class,'destroy']);
 });
 
 Route::post('/auth/register', [AuthController::class,'register']);

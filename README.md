@@ -1,4 +1,4 @@
-# Renting‑App
+# Renting App
 
 A simple Laravel backend API for managing basic rental app logic & data, with an admin dashboard website to handle verifing users and more.  
 

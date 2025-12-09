@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\LogoutRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Services\PersonService;
 use App\Services\UserService;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller {
     private PersonService $personService;
@@ -39,21 +39,20 @@ class AuthController extends Controller {
             'device_id'    => $request->device_id,
         ]);
 
-        // Create token
         $token = $user->createToken($request->device_id)->plainTextToken;
 
-        // Set token in user object for Resource
         $user->access_token = $token;
 
-        // Return user with token
         return (new UserResource($user))->additional([
             'meta' => ['message' => 'Registration successful']
         ])->response()->setStatusCode(201);
     }
 
     public function login(LoginRequest $request) {
+        $identifier = $request->phone_number ?? $request->username;
+
         $user = $this->userService->validateLogin(
-            $request->phone_number,
+            $identifier,
             $request->password
         );
 
@@ -65,8 +64,8 @@ class AuthController extends Controller {
         ])->response()->setStatusCode(200);
     }
 
-    public function logout(LogoutRequest $request) {
-        $user = $this->userService->findUserByPhone($request->phone_number);
+    public function logout(Request $request) {
+        $user = $request->user();
 
         if ($user) {
             $user->tokens()->delete();

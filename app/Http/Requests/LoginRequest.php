@@ -5,44 +5,48 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array {
         return [
             'phone_number' => [
-                'required',
+                'nullable',
+                'regex:/^(09[3-9]\d{7}|095\d{7}|944\d{7})$/',
+                'required_without:username',
+                'prohibited_if:username,!,'
+            ],
+            'username' => [
+                'nullable',
                 'string',
-                'size:10',
-                'regex:/^(09[3-9]\d{7}|944\d{7}|095\d{7})$/',
+                'min:3',
+                'max:30',
+                'regex:/^[a-zA-Z0-9_.]+$/',
+                'required_without:phone_number',
+                'prohibited_if:phone_number,!,'
             ],
             'password' => [
                 'required',
                 'string',
                 'min:8',
                 'max:50',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/',
             ],
-            'device_id' => 'required',
+            'device_id' => [
+                'required',
+                'string'
+            ],
         ];
     }
 
     public function messages(): array {
         return [
-            // 'phone_number.regex' => 'رقم الهاتف غير صالح. الرجاء إدخال رقم سوري صحيح (مثال: 0931234567)',
-            // 'phone_number.size' => 'رقم الهاتف يجب أن يكون 10 أرقام',
-            // 'phone_number.unique' => 'رقم الهاتف مسجل مسبقاً',
-            // 'password.regex' => 'كلمة المرور يجب أن تحتوي على حرف كبير، حرف صغير، رقم، ورمز خاص (@$!%*?&)',
-            // 'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل',
+            'required_without' => 'Provide either phone number or username.',
+            'prohibited_if'    => 'Provide only one field: phone OR username.',
+            'password.regex'   => 'Password must contain a lowercase letter, uppercase letter, number, and symbol.',
+            'username.regex'   => 'Username may only contain letters, numbers, underscores, and periods.',
+            'phone_number.regex' => 'Invalid Syrian phone number format.',
         ];
     }
 }

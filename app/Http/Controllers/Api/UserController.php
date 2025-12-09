@@ -67,7 +67,8 @@ class UserController extends Controller {
     public function changePassword(UpdateUserRequest $request) {
         $this->userService->changeUserPassword(
             $request->id,
-            $request->password
+            $request->old_password,
+            $request->new_password
         );
 
         return response()->json([

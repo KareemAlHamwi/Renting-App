@@ -69,21 +69,9 @@ class RegisterRequest extends FormRequest {
 
     public function messages(): array {
         return [
-            // 'first_name.regex' => 'الاسم يجب أن يحتوي على أحرف عربية أو إنجليزية فقط',
-            // 'last_name.regex' => 'الاسم يجب أن يحتوي على أحرف عربية أو إنجليزية فقط',
-            // 'birthdate.before_or_equal' => 'يجب أن يكون عمرك 16 سنة على الأقل',
-            // 'birthdate.after_or_equal' => 'الرجاء إدخال تاريخ ميلاد صحيح',
-            // 'personal_photo.dimensions' => 'الصورة الشخصية يجب أن تكون مربعة وبجودة مناسبة',
-            // 'personal_photo.max' => 'حجم الصورة الشخصية يجب ألا يتجاوز 2 ميجابايت',
-            // 'id_photo.max' => 'حجم صورة الهوية يجب ألا يتجاوز 5 ميجابايت',
-
-            // 'phone_number.regex' => 'رقم الهاتف غير صالح. الرجاء إدخال رقم سوري صحيح (مثال: 0931234567)',
-            // 'phone_number.size' => 'رقم الهاتف يجب أن يكون 10 أرقام',
-            // 'phone_number.unique' => 'رقم الهاتف مسجل مسبقاً',
-            // 'username.regex' => 'اسم المستخدم يجب أن يحتوي على أحرف إنجليزية وأرقام ونقاط وشرطات سفلية فقط',
-            // 'username.unique' => 'اسم المستخدم مسجل مسبقاً',
-            // 'password.regex' => 'كلمة المرور يجب أن تحتوي على حرف كبير، حرف صغير، رقم، ورمز خاص (@$!%*?&)',
-            // 'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل',
+            'password.regex'   => 'Password must include lowercase, uppercase, number, and special character.',
+            'phone_number.regex' => 'Invalid Syrian phone number format.',
+            'username.regex'   => 'Username may only contain letters, numbers, underscores, and dots.',
         ];
     }
 }

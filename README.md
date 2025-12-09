@@ -12,7 +12,6 @@ Built with **Laravel 12** and **Sanctum** for token-based authentication.
 | POST   | `/api/auth/register`       | Register a new user |
 | POST   | `/api/auth/login`          | Login and get API token |
 | POST   | `/api/auth/logout`         | Logout and revoke tokens |
-|
 | GET    | `/api/user/show`           | Show user details |
 | POST   | `/api/user/update`         | Update user profile |
 | POST   | `/api/user/change-phone-number` | Change user phone number |

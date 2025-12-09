@@ -21,4 +21,4 @@ Built with **Laravel 12** and **Sanctum** for token-based authentication.
 
 # Database Diagram
 
-![Database Diagram](database/diagrams/database.png)
+![Database Diagram](database/diagrams/renting_app_database.png)

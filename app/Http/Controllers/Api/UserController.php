@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Services\PersonService;
 use App\Services\UserService;
+use Illuminate\Http\Request;
 
 class UserController extends Controller {
     private PersonService $personService;
@@ -24,8 +25,8 @@ class UserController extends Controller {
         return $this->userService->allUsers();
     }
 
-    public function show(UpdateUserRequest $request) {
-        $user = $this->userService->findUserById($request->id);
+    public function show(Request $request) {
+        $user = $request->user();
 
         return new UserResource($user);
     }

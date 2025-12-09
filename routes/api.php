@@ -10,7 +10,7 @@ Route::middleware(['auth:api'])->get('/user', function(Request $request) {
 });
 
 Route::group(['middleware' => 'auth:sanctum'], function() {
-    Route::post('/user/show', [UserController::class,'show']);
+    Route::get('/user/show', [UserController::class,'show']);
     Route::post('/user/update', [UserController::class,'update']);
     Route::post('/user/change-phone-number', [UserController::class,'changePhoneNumber']);
     Route::post('/user/change-password', [UserController::class,'changePassword']);

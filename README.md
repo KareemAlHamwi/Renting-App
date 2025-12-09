@@ -1,7 +1,6 @@
 # Renting‑App
 
-A simple Laravel backend API for managing basic rental app logic & data,
-with an admin dashboard to handle verifing users and more.  
+A simple Laravel backend API for managing basic rental app logic & data, with an admin dashboard website to handle verifing users and more.  
 
 Built with **Laravel 12** and **Sanctum** for token-based authentication.
 

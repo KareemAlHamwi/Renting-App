@@ -13,44 +13,57 @@
     <!-- Sidebar -->
     <aside class="sidebar" aria-label="Main navigation">
         <div class="brand">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <rect width="24" height="24" rx="5" fill="var(--primary)" />
-            </svg>
             <h1>Baytak</h1>
+            <button id="themeToggle" class="btn-primary">Theme</button>
         </div>
 
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const body = document.body;
+                const toggleBtn = document.getElementById("themeToggle");
+
+                toggleBtn.addEventListener("click", function() {
+                    const currentTheme = body.getAttribute("data-theme");
+                    const newTheme = currentTheme === "dark" ? "light" : "dark";
+                    body.setAttribute("data-theme", newTheme);
+
+                    // If you want to persist via localStorage:
+                    localStorage.setItem("theme", newTheme);
+
+                    // If you want to persist via Laravel session,
+                    // you’d need an AJAX call to update session('theme') server-side.
+                });
+
+                // Restore from localStorage if available
+                const savedTheme = localStorage.getItem("theme");
+                if (savedTheme) {
+                    body.setAttribute("data-theme", savedTheme);
+                }
+            });
+        </script>
+
+
         <nav class="sidebar-nav" role="navigation">
-            <a href="#">Dashboard</a>
-
-            {{-- <div class="section-title">Users</div> --}}
-            <a href="#">All Users</a>
-            {{-- <a href="#">Landlords</a> --}}
-            {{-- <a href="#">Tenants</a> --}}
-
-            {{-- <div class="section-title">Properties</div> --}}
-            <a href="#">All Properties</a>
-            {{-- <a href="#">Photos</a> --}}
-            {{-- <a href="#">Reviews</a> --}}
-
-            {{-- <div class="section-title">Reservations</div> --}}
-            <a href="#">All Reservations</a>
-            {{-- <a href="#">Pending</a> --}}
-            {{-- <a href="#">Reserved</a> --}}
-            {{-- <a href="#">Completed</a> --}}
-
-            {{-- <div class="section-title">Regions</div> --}}
-            <a href="#">Governorates</a>
-
-            {{-- <div class="section-title">System</div> --}}
-            <a href="#">Settings</a>
+            <a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Home</a>
+            <a href="/users" class="{{ request()->is('users*') ? 'active' : '' }}">Users</a>
+            <a href="/properties" class="{{ request()->is('properties*') ? 'active' : '' }}">Properties</a>
+            <a href="/reservations" class="{{ request()->is('reservations*') ? 'active' : '' }}">Reservations</a>
+            <a href="/governorates" class="{{ request()->is('governorates*') ? 'active' : '' }}">Governorates</a>
         </nav>
 
         <footer class="footer">
-            <form action="{{ route('logout') }}" method="POST">
+            <a href="/settings" class="{{ request()->is('settings') ? 'active' : '' }}">Settings</a>
+
+            <a href="{{ route('logout') }}"
+                onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn-primary">
+                Logout
+            </a>
+
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
-                <button type="submit" class="btn-primary">Logout</button>
             </form>
         </footer>
+
     </aside>
 
     <!-- Content -->

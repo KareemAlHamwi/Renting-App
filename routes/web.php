@@ -10,4 +10,9 @@ Route::post('/login', [AdminController::class, 'store']);
 
 Route::get('/', [DashboardController::class, 'create'])->middleware('auth');
 Route::get('/users', [UserController::class, 'index'])->middleware('auth');
+Route::get('/users/{user}', [DashboardController::class, 'show'])->middleware('auth');
+// Route::get('/properties', [UserController::class, 'create'])->middleware('auth');
+// Route::get('/reservations', [UserController::class, 'create'])->middleware('auth');
+// Route::get('/governorates', [UserController::class, 'create'])->middleware('auth');
+// Route::get('/settings', [UserController::class, 'create'])->middleware('auth');
 Route::post('/logout', [DashboardController::class, 'destroy'])->name('logout');

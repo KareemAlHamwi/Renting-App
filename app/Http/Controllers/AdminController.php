@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 class AdminController extends Controller {
     public function create() {
         if (Auth::check())
-            return view('dashboard');
+            return view('home');
 
         return view('auth.login');
     }

@@ -7,8 +7,12 @@ use App\Models\User;
 
 class UserRepository implements UserRepositoryInterface {
     public function index() {
-        return User::all();
+        $users = User::orderBy('id', 'desc')->get();
+
+        return view('users.index', compact('users'));
     }
+
+
 
     public function show($id) {
         return User::where('id', $id)->first();

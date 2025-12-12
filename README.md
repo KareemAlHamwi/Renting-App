@@ -30,6 +30,6 @@ Built with **Laravel 12** and **Sanctum** for token-based authentication.
 | POST   | `/users/{user}/verify` | Verify a user account             |
 
 
-# Database Diagram
+## Database Diagram
 
 ![Database Diagram](database/diagrams/renting_app_database.png)

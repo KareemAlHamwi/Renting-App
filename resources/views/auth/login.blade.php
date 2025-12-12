@@ -11,27 +11,29 @@
 <body data-theme="{{ session('theme', 'dark') }}">
 
     <main class="login-wrapper">
-        <section class="login-card" role="form">
+        <section class="login-card">
             <h1>Baytak</h1>
 
-            <form method="POST" action="/login">
+            <form method="POST" action="/login" novalidate>
                 @csrf
 
                 <div class="input-group">
                     <label for="username">Username</label>
-                    <input id="username" type="text" name="username" required />
+                    <input id="username" type="text" name="username" required autocomplete="username" />
 
                     <label for="password">Password</label>
-                    <input id="password" type="password" name="password" required />
+                    <input id="password" type="password" name="password" required autocomplete="current-password" />
+                </div>
 
-                    <button type="submit" class="btn-primary login-btn">Login</button>
+                <button type="submit" class="btn-primary login-btn">
+                    Login
+                </button>
 
-                    @if ($errors->any())
+                @if ($errors->any())
                     <div class="error-message" role="alert">
                         {{ $errors->first() }}
                     </div>
                 @endif
-                </div>
             </form>
         </section>
     </main>

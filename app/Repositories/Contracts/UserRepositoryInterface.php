@@ -11,5 +11,7 @@ interface UserRepositoryInterface {
     public function update($id, array $data);
     public function updatePhone($id, $phone);
     public function updatePassword($id, $password);
+    public function markAsVerified($id);
+    public function is_verified($id);
     public function destroy($id);
 }

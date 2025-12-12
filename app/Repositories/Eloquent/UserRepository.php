@@ -7,12 +7,12 @@ use App\Models\User;
 
 class UserRepository implements UserRepositoryInterface {
     public function index() {
-        $users = User::orderBy('id', 'desc')->get();
+        $users = User::with('person')
+            ->orderBy('id', 'desc')
+            ->get();
 
         return view('users.index', compact('users'));
     }
-
-
 
     public function show($id) {
         return User::where('id', $id)->first();
@@ -49,6 +49,18 @@ class UserRepository implements UserRepositoryInterface {
         $user->update(['password' => $password]);
 
         return $user;
+    }
+
+    public function markAsVerified($id) {
+    User::where('id', $id)->update([
+        'verified_at' => now()
+    ]);
+}
+
+    public function is_verified($id) {
+        $user = User::findOrFail($id);
+
+        return $user->verified_at != null;
     }
 
     public function destroy($id) {

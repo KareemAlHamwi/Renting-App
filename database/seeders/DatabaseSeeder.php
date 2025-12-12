@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder {
     public function run(): void {
         User::factory()->create([
             'phone_number' => '0982700331',
-            'username' => 'admin',
+            'username' => 'admin0',
             'password' => Hash::make('Admin@123'),
             'verified_at' => now(),
             'role' => 1,
@@ -33,6 +33,25 @@ class DatabaseSeeder extends Seeder {
             ])->id,
         ]);
 
-        User::factory(50)->create();
+        User::factory()->create([
+            'phone_number' => '0981024513',
+            'username' => 'admin1',
+            'password' => Hash::make('Admin@123'),
+            'verified_at' => now(),
+            'role' => 1,
+            'person_id' => Person::factory()->create([
+                'first_name' => 'Kinan',
+                'last_name' => 'Mohammad',
+                'birthdate' => '2004-10-10',
+                'personal_photo' => 'test',
+                'id_photo' => 'test',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])->id,
+        ]);
+
+        User::factory(18)->create([
+            'password' => Hash::make('Admin@123'),
+        ]);
     }
 }

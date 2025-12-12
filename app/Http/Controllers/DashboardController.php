@@ -14,7 +14,6 @@ class DashboardController extends Controller {
     }
 
     public function show(User $user) {
-        // dd($user->username);
         return view('users.show', ['user' => $user]);
     }
 

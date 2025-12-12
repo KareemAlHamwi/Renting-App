@@ -2,7 +2,11 @@
 
 @section('content')
     <div class="page-header flex-between">
-        <div class="search-form">
+        <h1>Users Management</h1>
+        <p class="muted">Verify and remove users</p>
+    </div>
+
+    <div class="search-form">
             <input style="width: 4000px" type="text" id="searchInput"
                 placeholder="Search by username, name or phone number ...">
 
@@ -18,7 +22,6 @@
                 <option value="Verified">Verified</option>
             </select>
         </div>
-    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {

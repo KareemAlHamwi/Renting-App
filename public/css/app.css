@@ -113,24 +113,28 @@ outline: none;
 }
 
 /* Buttons */
-button {
+.btn-primary {
 cursor: pointer;
 border: none;
 border-radius: var(--radius-md);
 padding: 1.00rem 1.25rem;
 font-weight: 600;
-transition: background var(--transition), transform var(--transition);
 font-size: 0.95rem;
-}
-button:active {
-transform: scale(0.97);
-}
-.btn-primary {
+transition: background var(--transition), transform var(--transition);
 background: var(--primary);
 color: #fff !important;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+text-decoration: none;
 }
+
 .btn-primary:hover {
 background: var(--primary-dark);
+}
+
+.btn-primary:active {
+transform: scale(0.97);
 }
 
 /* Cards */

@@ -10,7 +10,18 @@ class DashboardController extends Controller {
         if (!Auth::check())
             return view('auth.login');
 
-        return view('home');
+        return view('home', [
+            'totalUsers'     => User::count(),
+            'verifiedUsers'  => User::whereNotNull('verified_at')->count(),
+            'pendingUsers'   => User::whereNull('verified_at')->count(),
+            'adminsCount'   => User::where('role', 1)->count(),
+            'latestUsers'   => User::join('people', 'people.id', '=', 'users.person_id')
+                ->orderBy('people.created_at', 'desc')
+                ->select('users.*')
+                ->with('person')
+                ->take(5)
+                ->get()
+        ]);
     }
 
     public function show(User $user) {

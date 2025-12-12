@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', [AdminController::class, 'create'])->name('login');
 Route::post('/login', [AdminController::class, 'store']);
 
+
 Route::get('/', [DashboardController::class, 'create'])->middleware('auth');
 Route::get('/users', [UserController::class, 'index'])->middleware('auth');
 Route::get('/users/{user}', [DashboardController::class, 'show'])->middleware('auth');

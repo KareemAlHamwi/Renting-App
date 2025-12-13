@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder {
      * Seed the application's database.
      */
     public function run(): void {
+        $this->call(SyrianGovernoratesSeeder::class);
         User::factory()->create([
             'phone_number' => '0982700331',
             'username' => 'admin',
@@ -32,7 +33,6 @@ class DatabaseSeeder extends Seeder {
                 'updated_at' => now(),
             ])->id,
         ]);
-
         User::factory(50)->create();
     }
 }

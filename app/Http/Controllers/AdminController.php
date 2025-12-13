@@ -31,7 +31,7 @@ class AdminController extends Controller {
         if (Auth::user()->role !== 1) {
             Auth::logout();
             throw ValidationException::withMessages([
-                'username' => 'You are not authorized to access the admin panel.'
+                'username' => 'Not authorized to access the admin panel.'
             ]);
         }
 

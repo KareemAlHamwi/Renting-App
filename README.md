@@ -4,7 +4,7 @@ A simple Laravel backend API for managing basic rental app logic & data, with an
 
 Built with **Laravel 12** and **Sanctum** for token-based authentication.
 
-## API Endpoints
+## API (User App) Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -17,6 +17,19 @@ Built with **Laravel 12** and **Sanctum** for token-based authentication.
 | POST   | `/api/user/change-password` | Change user password |
 | DELETE | `/api/user/destroy`        | Delete user account |
 
-# Database Diagram
+## Web (Admin Dashboard) Endpoints
+
+| Method | Path                   | Description                       |
+| ------ | ---------------------- | --------------------------------- |
+| GET    | `/login`               | Show admin login page             |
+| POST   | `/login`               | Authenticate admin                |
+| POST   | `/logout`              | Logout admin                      |
+| GET    | `/`                    | Dashboard home (overview & stats) |
+| GET    | `/users`               | List all users                    |
+| GET    | `/users/{user}`        | Show single user details          |
+| POST   | `/users/{user}/verify` | Verify a user account             |
+
+
+## Database Diagram
 
 ![Database Diagram](database/diagrams/renting_app_database.png)

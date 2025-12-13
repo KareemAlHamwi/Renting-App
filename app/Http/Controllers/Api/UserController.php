@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\Services\PersonService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class UserController extends Controller {
     private PersonService $personService;
@@ -24,7 +25,7 @@ class UserController extends Controller {
     public function index() {
         return $this->userService->allUsers();
     }
-    
+
 
     public function show(Request $request) {
         $user = $request->user();
@@ -89,5 +90,13 @@ class UserController extends Controller {
         }
 
         return response()->json(null, 204);
+    }
+
+    public function verify(User $user) {
+        $this->userService->verifyUser($user);
+
+        return redirect()
+            ->back()
+            ->with('success', 'User verified successfully.');
     }
 }

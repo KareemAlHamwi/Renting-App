@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Models\User;
 
 class UserService {
     private UserRepositoryInterface $users;
@@ -78,6 +79,19 @@ class UserService {
 
         return $user;
     }
+
+    public function verifyUser(User $user): void {
+        if ($this->isUserVerified($user)) {
+            return;
+        }
+
+        $this->users->markAsVerified($user->id);
+    }
+
+    public function isUserVerified(User $user): bool {
+        return $user->verified_at !== null;
+    }
+
 
     public function validateLogin(string $identifier, string $password) {
         if (preg_match('/^(09[3-9]\d{7}|095\d{7}|944\d{7})$/', $identifier))

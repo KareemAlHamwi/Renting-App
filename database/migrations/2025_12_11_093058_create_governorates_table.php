@@ -11,8 +11,7 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('governorates', function (Blueprint $table) {
             $table->id();
-            $table->string('GovernoratesName');
-            $table->timestamps();
+            $table->string('governorate_name');
         });
     }
 

@@ -1,27 +1,98 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\GovernorateController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use App\Http\Controllers\PropertyController;
-use App\Http\Controllers\PropertyPhotoController;
 
-Route::middleware(['auth:api'])->get('/user', function (Request $request) {
-    return $request->user();
+// User (API)
+use App\Http\Controllers\Api\User\AuthController;
+use App\Http\Controllers\Api\User\UserController;
+
+// Property (API)
+use App\Http\Controllers\Api\Property\GovernorateController;
+use App\Http\Controllers\Api\Property\PropertyController;
+use App\Http\Controllers\Api\Property\PropertyPhotoController;
+
+/*
+|--------------------------------------------------------------------------
+| Auth (Public)
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('auth')->group(function () {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
 });
 
-Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::get('/user/show', [UserController::class, 'show']);
-    Route::post('/user/update', [UserController::class, 'update']);
-    Route::post('/user/change-phone-number', [UserController::class, 'changePhoneNumber']);
-    Route::post('/user/change-password', [UserController::class, 'changePassword']);
-    Route::delete('/user/destroy', [UserController::class, 'destroy']);
+/*
+|--------------------------------------------------------------------------
+| Public Read-Only Resources
+|--------------------------------------------------------------------------
+*/
+Route::prefix('governorates')->group(function () {
+    Route::get('/', [GovernorateController::class, 'index']);
+    Route::get('{id}', [GovernorateController::class, 'findById']);
 });
 
-Route::post('/auth/register', [AuthController::class, 'register']);
-Route::post('/auth/login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->post('/auth/logout', [AuthController::class, 'logout']);
+Route::prefix('properties')->group(function () {
+    Route::get('/', [PropertyController::class, 'index']);
+    Route::get('{id}', [PropertyController::class, 'show']);
+});
 
-//Route::get('/{id}', [GovernorateController::class, 'show']);
+/*
+|--------------------------------------------------------------------------
+| Protected Routes (Sanctum)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth:sanctum')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Auth
+    |--------------------------------------------------------------------------
+    */
+    Route::post('auth/logout', [AuthController::class, 'logout']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | User (Authenticated User)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('user')->group(function () {
+        Route::get('/', [UserController::class, 'show']);
+        Route::put('/', [UserController::class, 'update']);
+        Route::put('phone', [UserController::class, 'changePhoneNumber']);
+        Route::put('password', [UserController::class, 'changePassword']);
+        Route::delete('/', [UserController::class, 'destroy']);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Governorates (Admin-like)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('governorates')->group(function () {
+        Route::post('/', [GovernorateController::class, 'store']);
+        Route::put('{id}', [GovernorateController::class, 'update']);
+        Route::delete('{id}', [GovernorateController::class, 'destroy']);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Properties
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('properties')->group(function () {
+        Route::post('/', [PropertyController::class, 'store']);
+        Route::put('{id}', [PropertyController::class, 'update']);
+        Route::delete('{id}', [PropertyController::class, 'destroy']);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Property Photos
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('properties/{propertyId}/photos')->group(function () {
+        Route::post('/', [PropertyPhotoController::class, 'store']);
+        Route::delete('{id}', [PropertyPhotoController::class, 'destroy']);
+    });
+});

@@ -11,10 +11,9 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('property_photos', function (Blueprint $table) {
             $table->id();
-            $table->string('Path');
             $table->foreignId('property_id')->constrained()->onDelete('cascade');
-            $table->integer('Order');
-            $table->timestamps();
+            $table->string('path');
+            $table->integer('order');
         });
     }
 

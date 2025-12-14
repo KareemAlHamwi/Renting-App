@@ -11,14 +11,14 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
-            $table->string('Title');
-            $table->text('Description');
-            $table->string('Address');
-            $table->integer('Rent');
-            $table->float('OverAllReviews')->nullable();
-            $table->integer('ReviewersNumber')->default(0);
-            $table->timestamp('verified_at')->nullable();
+            $table->string('title');
+            $table->text('description');
             $table->foreignId('governorate_id')->constrained()->onDelete('cascade');
+            $table->string('address');
+            $table->integer('rent');
+            $table->float('overall_reviews')->nullable();
+            $table->integer('reviewers_number')->default(0);
+            $table->date('verified_at')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

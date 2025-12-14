@@ -5,25 +5,34 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-use App\Repositories\Eloquent\PropertyRepository;
-use  App\Repositories\Contracts\PropertyRepositoryInterface;
+// User
+use App\Repositories\Contracts\User\PersonRepositoryInterface;
+use App\Repositories\Contracts\User\UserRepositoryInterface;
+use App\Repositories\Eloquent\User\PersonRepository;
+use App\Repositories\Eloquent\User\UserRepository;
 
-use App\Repositories\Eloquent\PropertyPhotoRepository;
-use  App\Repositories\Contracts\PropertyPhotoRepositoryInterface;
-
-use App\Repositories\Eloquent\GovernorateRepository;
-use  App\Repositories\Contracts\GovernorateRepositoryInterface;
+// Property
+use App\Repositories\Contracts\Property\GovernorateRepositoryInterface;
+use App\Repositories\Contracts\Property\PropertyRepositoryInterface;
+use App\Repositories\Contracts\Property\PropertyPhotoRepositoryInterface;
+use App\Repositories\Eloquent\Property\GovernorateRepository;
+use App\Repositories\Eloquent\Property\PropertyRepository;
+use App\Repositories\Eloquent\Property\PropertyPhotoRepository;
 
 class AppServiceProvider extends ServiceProvider {
     public function register(): void {
+        // User
         $this->app->bind(
-            \App\Repositories\Contracts\PersonRepositoryInterface::class,
-            \App\Repositories\Eloquent\PersonRepository::class
+            PersonRepositoryInterface::class,
+            PersonRepository::class
         );
+
         $this->app->bind(
-            \App\Repositories\Contracts\UserRepositoryInterface::class,
-            \App\Repositories\Eloquent\UserRepository::class
+            UserRepositoryInterface::class,
+            UserRepository::class
         );
+
+        // Property
         $this->app->bind(
             GovernorateRepositoryInterface::class,
             GovernorateRepository::class

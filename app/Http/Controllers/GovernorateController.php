@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use App\Services\GovernorateService;
 
 class GovernorateController extends Controller {
@@ -24,8 +25,8 @@ class GovernorateController extends Controller {
         return $this->service->create($request->all());
     }
 
-    public function show($id) {
-        return $this->service->find($id);
+    public function findById($id) {
+        return $this->service->findById($id);
     }
 
     public function update(Request $request, $id) {

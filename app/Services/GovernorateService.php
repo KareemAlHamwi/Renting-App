@@ -15,7 +15,7 @@ class GovernorateService {
         return $this->repo->getAll();
     }
 
-    public function find($id) {
+    public function findById($id) {
         return $this->repo->findById($id);
     }
 

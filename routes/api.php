@@ -24,29 +24,4 @@ Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/auth/logout', [AuthController::class, 'logout']);
 
-
-
-Route::prefix('governorates')->group(function () {
-
-    Route::get('/', [GovernorateController::class, 'index']);
-    Route::post('/', [GovernorateController::class, 'store']);
-    Route::get('/{id}', [GovernorateController::class, 'show']);
-    Route::put('/{id}', [GovernorateController::class, 'update']);
-    Route::delete('/{id}', [GovernorateController::class, 'destroy']);
-});
-
-
-Route::prefix('properties')->group(function () {
-
-    Route::get('/', [PropertyController::class, 'index']);
-    Route::post('/', [PropertyController::class, 'store']);
-    Route::get('/{id}', [PropertyController::class, 'show']);
-    Route::put('/{id}', [PropertyController::class, 'update']);
-    Route::delete('/{id}', [PropertyController::class, 'destroy']);
-});
-
-Route::prefix('photos')->group(function () {
-
-    Route::post('/', [PropertyPhotoController::class, 'store']);
-    Route::delete('/{id}', [PropertyPhotoController::class, 'destroy']);
-});
+//Route::get('/{id}', [GovernorateController::class, 'show']);

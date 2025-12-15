@@ -29,12 +29,12 @@ Route::prefix('auth')->group(function () {
 */
 Route::prefix('governorates')->group(function () {
     Route::get('/', [GovernorateController::class, 'index']);
-    Route::get('{id}', [GovernorateController::class, 'findById']);
+    Route::get('/{id}', [GovernorateController::class, 'findById']);
 });
 
 Route::prefix('properties')->group(function () {
     Route::get('/', [PropertyController::class, 'index']);
-    Route::get('{id}', [PropertyController::class, 'show']);
+    Route::get('/{id}', [PropertyController::class, 'show']);
 });
 
 /*
@@ -57,22 +57,11 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('user')->group(function () {
-        Route::get('/', [UserController::class, 'show']);
-        Route::put('/', [UserController::class, 'update']);
-        Route::put('phone', [UserController::class, 'changePhoneNumber']);
-        Route::put('password', [UserController::class, 'changePassword']);
-        Route::delete('/', [UserController::class, 'destroy']);
-    });
-
-    /*
-    |--------------------------------------------------------------------------
-    | Governorates (Admin-like)
-    |--------------------------------------------------------------------------
-    */
-    Route::prefix('governorates')->group(function () {
-        Route::post('/', [GovernorateController::class, 'store']);
-        Route::put('{id}', [GovernorateController::class, 'update']);
-        Route::delete('{id}', [GovernorateController::class, 'destroy']);
+        Route::get('/show', [UserController::class, 'show']);
+        Route::put('/update', [UserController::class, 'update']);
+        Route::put('change-phone-number', [UserController::class, 'changePhoneNumber']);
+        Route::put('change-password', [UserController::class, 'changePassword']);
+        Route::delete('/destroy', [UserController::class, 'destroy']);
     });
 
     /*

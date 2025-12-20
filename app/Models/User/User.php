@@ -2,6 +2,7 @@
 
 namespace App\Models\User;
 
+use App\Models\Property\Property;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -48,5 +49,9 @@ class User extends Authenticatable {
     }
     public function person() {
         return $this->belongsTo(Person::class, 'person_id');
+    }
+
+    public function favorites() {
+        return $this->belongsToMany(Property::class, 'favorites')->withTimestamps();
     }
 }

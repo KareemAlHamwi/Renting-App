@@ -2,6 +2,7 @@
 
 namespace App\Models\Property;
 
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Property extends Model {
@@ -26,5 +27,8 @@ class Property extends Model {
 
     public function photos() {
         return $this->hasMany(PropertyPhoto::class);
+    }
+    public function favoritedBy() {
+        return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
     }
 }

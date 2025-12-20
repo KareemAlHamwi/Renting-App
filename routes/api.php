@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Property\FavoritesController;
 use Illuminate\Support\Facades\Route;
 
 // User (API)
@@ -84,4 +85,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [PropertyPhotoController::class, 'store']);
         Route::delete('{id}', [PropertyPhotoController::class, 'destroy']);
     });
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/favorites/toggle', [FavoritesController::class, 'toggle']);
+        Route::get('/favorites', [FavoritesController::class, 'index']);
+    });
 });
+
+
+
+
+

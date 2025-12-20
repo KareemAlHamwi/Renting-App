@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Repositories\Contracts\Property\FavoritesRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,6 +16,7 @@ use App\Repositories\Eloquent\User\UserRepository;
 use App\Repositories\Contracts\Property\GovernorateRepositoryInterface;
 use App\Repositories\Contracts\Property\PropertyRepositoryInterface;
 use App\Repositories\Contracts\Property\PropertyPhotoRepositoryInterface;
+use App\Repositories\Eloquent\Property\FavoriteRepository;
 use App\Repositories\Eloquent\Property\GovernorateRepository;
 use App\Repositories\Eloquent\Property\PropertyRepository;
 use App\Repositories\Eloquent\Property\PropertyPhotoRepository;
@@ -46,6 +48,11 @@ class AppServiceProvider extends ServiceProvider {
         $this->app->bind(
             PropertyPhotoRepositoryInterface::class,
             PropertyPhotoRepository::class
+        );
+
+        $this->app->bind(
+            FavoritesRepositoryInterface::class,
+            FavoriteRepository::class
         );
     }
 

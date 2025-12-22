@@ -2,10 +2,10 @@
 
 namespace App\Services\User;
 
+use App\Models\User\User;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use App\Models\User\User;
 
 class UserService {
     private UserRepositoryInterface $users;
@@ -14,7 +14,7 @@ class UserService {
         $this->users = $users;
     }
 
-    private function validateCredentials($user, string $password) {
+    private function validateCredentials(?User $user, string $password): void {
         if (!$user || !Hash::check($password, $user->password)) {
             throw ValidationException::withMessages([
                 'message' => ['The provided credentials are incorrect.']
@@ -22,62 +22,45 @@ class UserService {
         }
     }
 
-    public function allUsers() {
-        return $this->users->index();
-    }
-
-    public function findUserById(int $id) {
-        return $this->users->show($id);
-    }
-
-    public function findUserByPhone(string $phone) {
+    public function findUserByPhone(string $phone): ?User {
         return $this->users->showByPhone($phone);
     }
 
-    public function findUserByUsername(string $username) {
+    public function findUserByUsername(string $username): ?User {
         return $this->users->showByUsername($username);
     }
 
-    public function createUser(array $data) {
+    public function createUser(array $data): User {
         $data['password'] = Hash::make($data['password']);
-
         return $this->users->store($data);
     }
 
-    public function updateUser(int $id, array $data) {
+    public function updateSelf(User $user, array $data): User {
         $filteredData = array_filter($data, fn($value) => !is_null($value));
-
-        return $this->users->update($id, $filteredData);
+        return $this->users->update($user->id, $filteredData);
     }
 
-    public function changeUserPhone(int $id, string $phone) {
-        return $this->users->updatePhone($id, $phone);
+    public function changeSelfPhone(User $user, string $phone): User {
+        return $this->users->updatePhone($user->id, $phone);
     }
 
-    public function changeUserPassword(int $id, string $old_password, string $new_password) {
-        $user = $this->findUserById($id);
-
-        if ($old_password === $new_password) {
+    public function changeSelfPassword(User $user, string $oldPassword, string $newPassword): User {
+        if ($oldPassword === $newPassword) {
             throw ValidationException::withMessages([
                 'password' => ['Cannot use the same password.']
             ]);
         }
 
-        $this->validateCredentials($user, $old_password);
+        $this->validateCredentials($user, $oldPassword);
 
-        $hashedPassword = Hash::make($new_password);
-        return $this->users->updatePassword($id, $hashedPassword);
+        return $this->users->updatePassword($user->id, Hash::make($newPassword));
     }
 
-    public function deleteUser(int $id, string $password) {
-        $user = $this->findUserById($id);
-
+    public function deleteSelf(User $user, string $password): void {
         $this->validateCredentials($user, $password);
 
         $user->tokens()->delete();
-        $user->delete();
-
-        return $user;
+        $this->users->destroy($user->id);
     }
 
     public function verifyUser(User $user): void {
@@ -92,13 +75,12 @@ class UserService {
         return $user->verified_at !== null;
     }
 
-
-    public function validateLogin(string $identifier, string $password) {
-        if (preg_match('/^(09[3-9]\d{7}|095\d{7}|944\d{7})$/', $identifier))
+    public function validateLogin(string $identifier, string $password): User {
+        if (preg_match('/^(09[3-9]\d{7}|095\d{7}|944\d{7})$/', $identifier)) {
             $user = $this->findUserByPhone($identifier);
-        else
+        } else {
             $user = $this->findUserByUsername($identifier);
-
+        }
 
         $this->validateCredentials($user, $password);
 

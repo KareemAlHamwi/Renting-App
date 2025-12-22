@@ -2,68 +2,74 @@
 
 namespace App\Repositories\Eloquent\User;
 
-use App\Repositories\Contracts\User\UserRepositoryInterface;
 use App\Models\User\User;
+use App\Repositories\Contracts\User\UserRepositoryInterface;
 
 class UserRepository implements UserRepositoryInterface {
     public function index() {
-        $users = User::with('person')
-            ->orderBy('id', 'desc')
+        return User::with('person')
+            ->orderByDesc('id')
             ->get();
-
-        return view('users.index', compact('users'));
     }
 
     public function show($id) {
-        return User::where('id', $id)->first();
+        return User::with('person')->find($id);
     }
 
     public function showByPhone($phone) {
-        return User::where('phone_number', $phone)->first();
+        return User::with('person')
+            ->where('phone_number', $phone)
+            ->first();
     }
 
-    public function showByUsername($phone) {
-        return User::where('username', $phone)->first();
+    public function showByUsername($username) {
+        return User::with('person')
+            ->where('username', $username)
+            ->first();
     }
 
     public function store(array $data) {
-        return User::create($data);
+        $user = User::create($data);
+        return $user->load('person');
     }
 
     public function update($id, array $data) {
         $user = User::findOrFail($id);
         $user->update($data);
 
-        return $user;
+        return $user->load('person');
     }
 
     public function updatePhone($id, $phone) {
         $user = User::findOrFail($id);
         $user->update(['phone_number' => $phone]);
 
-        return $user;
+        return $user->load('person');
     }
 
     public function updatePassword($id, $password) {
         $user = User::findOrFail($id);
         $user->update(['password' => $password]);
 
-        return $user;
+        return $user->load('person');
     }
 
     public function markAsVerified($id) {
-    User::where('id', $id)->update([
-        'verified_at' => now()
-    ]);
-}
+        $user = User::findOrFail($id);
+        $user->forceFill(['verified_at' => now()])->save();
+
+        return $user->load('person');
+    }
 
     public function is_verified($id) {
         $user = User::findOrFail($id);
-
-        return $user->verified_at != null;
+        return $user->verified_at !== null;
     }
 
     public function destroy($id) {
-        return User::findOrFail($id)->delete();
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return true;
     }
 }

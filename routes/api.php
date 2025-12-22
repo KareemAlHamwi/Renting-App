@@ -28,6 +28,8 @@ Route::prefix('auth')->group(function () {
 | Public Read-Only Resources
 |--------------------------------------------------------------------------
 */
+Route::get('/users/{username}', [UserController::class, 'publicProfileByUsername']);
+
 Route::prefix('governorates')->group(function () {
     Route::get('/', [GovernorateController::class, 'index']);
     Route::get('/{id}', [GovernorateController::class, 'findById']);
@@ -51,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::post('auth/logout', [AuthController::class, 'logout']);
+    Route::post('auth/logout-all', [AuthController::class, 'logoutAll']);
 
     /*
     |--------------------------------------------------------------------------
@@ -58,11 +61,11 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('user')->group(function () {
-        Route::get('/show', [UserController::class, 'show']);
+        Route::get('/my-profile', [UserController::class, 'myProfile']);
         Route::put('/update', [UserController::class, 'update']);
-        Route::put('change-phone-number', [UserController::class, 'changePhoneNumber']);
-        Route::put('change-password', [UserController::class, 'changePassword']);
-        Route::delete('/destroy', [UserController::class, 'destroy']);
+        Route::put('phone', [UserController::class, 'changePhoneNumber']);
+        Route::put('password', [UserController::class, 'changePassword']);
+        Route::delete('/delete', [UserController::class, 'deleteAccount']);
     });
 
     /*
@@ -91,8 +94,3 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/favorites', [FavoritesController::class, 'index']);
     });
 });
-
-
-
-
-

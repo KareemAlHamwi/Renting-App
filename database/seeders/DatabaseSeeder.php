@@ -16,5 +16,7 @@ class DatabaseSeeder extends Seeder {
         $this->call(SyrianGovernoratesSeeder::class);
 
         $this->call(UsersSeeder::class);
+
+        // $this->call(PropertiesSeeder::class);
     }
 }

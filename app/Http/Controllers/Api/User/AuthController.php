@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Requests\User\RegisterRequest;
-use App\Http\Resources\User\UserResource;
+use App\Http\Resources\User\UserMeResource;
 use App\Services\User\PersonService;
 use App\Services\User\UserService;
 use Illuminate\Http\Request;
@@ -28,7 +28,7 @@ class AuthController extends Controller {
             'last_name',
             'birthdate',
             'personal_photo',
-            'id_photo'
+            'id_photo',
         ]));
 
         $user = $this->userService->createUser([
@@ -36,41 +36,57 @@ class AuthController extends Controller {
             'username'     => $request->username,
             'password'     => $request->password,
             'person_id'    => $person->id,
-            'device_id'    => $request->device_id,
         ]);
 
-        $token = $user->createToken($request->device_id)->plainTextToken;
+        $token = $this->issueTokenForDevice($user, $request->device_id);
 
-        $user->access_token = $token;
-
-        return (new UserResource($user))->additional([
-            'meta' => ['message' => 'Registration successful']
-        ])->response()->setStatusCode(201);
+        return response()->json([
+            'token' => $token,
+            'user'  => new UserMeResource($user),
+            'meta'  => ['message' => 'Registration successful'],
+        ], 201);
     }
 
     public function login(LoginRequest $request) {
         $identifier = $request->phone_number ?? $request->username;
+        $user = $this->userService->validateLogin($identifier, $request->password);
 
-        $user = $this->userService->validateLogin(
-            $identifier,
-            $request->password
-        );
+        $token = $this->issueTokenForDevice($user, $request->device_id);
 
-        $token = $user->createToken($request->device_id)->plainTextToken;
-        $user->access_token = $token;
-
-        return (new UserResource($user))->additional([
-            'meta' => ['message' => 'Login successful']
-        ])->response()->setStatusCode(200);
+        return response()->json([
+            'token' => $token,
+            'user'  => new UserMeResource($user),
+            'meta'  => ['message' => 'Login successful'],
+        ]);
     }
 
     public function logout(Request $request) {
-        $user = $request->user();
+        /** @var \Laravel\Sanctum\PersonalAccessToken|null $token */
+        $token = $request->user()?->currentAccessToken();
 
-        if ($user) {
-            $user->tokens()->delete();
+        if ($token) {
+            $token->delete();
         }
 
         return response()->noContent();
+    }
+
+    public function logoutAll(Request $request) {
+        $request->user()?->tokens()->delete();
+
+        return response()->noContent();
+    }
+
+    private function issueTokenForDevice(
+        \App\Models\User\User $user,
+        string $deviceId
+    ): string {
+        $user->tokens()
+            ->where('name', $deviceId)
+            ->delete();
+
+        return $user
+            ->createToken($deviceId)
+            ->plainTextToken;
     }
 }

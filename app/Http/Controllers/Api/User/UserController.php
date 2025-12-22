@@ -3,100 +3,79 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\UpdateUserRequest;
-use App\Http\Resources\User\UserResource;
+use App\Http\Requests\User\ChangePasswordRequest;
+use App\Http\Requests\User\ChangePhoneRequest;
+use App\Http\Requests\User\DeleteAccountRequest;
+use App\Http\Requests\User\UpdateProfileRequest;
+use App\Http\Resources\User\UserMeResource;
+use App\Http\Resources\User\UserPublicResource;
 use App\Services\User\PersonService;
 use App\Services\User\UserService;
 use Illuminate\Http\Request;
-use App\Models\User\User;
 
 class UserController extends Controller {
     private PersonService $personService;
     private UserService $userService;
 
-    public function __construct(
-        PersonService $personService,
-        UserService $userService
-    ) {
+    public function __construct(PersonService $personService, UserService $userService) {
         $this->personService = $personService;
         $this->userService   = $userService;
     }
 
-    public function index() {
-        return $this->userService->allUsers();
+    public function myProfile(Request $request) {
+        return new UserMeResource($request->user());
     }
 
+    public function publicProfileByUsername(string $username) {
+        return new UserPublicResource($this->userService->findUserByUsername($username));
+    }
 
-    public function show(Request $request) {
+    public function update(UpdateProfileRequest $request) {
         $user = $request->user();
 
-        return new UserResource($user);
+        $this->personService->updateForUser($user, $request->only([
+            'first_name',
+            'last_name',
+            'birthdate',
+            'personal_photo',
+            'id_photo',
+        ]));
+
+        $this->userService->updateSelf($user, [
+            'username' => $request->username,
+        ]);
+
+        return new UserMeResource($user->refresh()->load('person'));
     }
 
-    public function update(UpdateUserRequest $request) {
-        $person = $this->personService->updatePerson(
-            $request->id,
-            $request->only([
-                'first_name',
-                'last_name',
-                'birthdate',
-                'personal_photo',
-                'id_photo'
-            ])
-        );
+    public function changePhoneNumber(ChangePhoneRequest $request) {
+        $user = $request->user();
 
-        $user = $this->userService->updateUser(
-            $request->id,
-            [
-                'username'     => $request->username,
-                'person_id'    => $person->id
-            ]
-        );
-
-        return new UserResource($user);
-    }
-
-    public function changePhoneNumber(UpdateUserRequest $request) {
-        $this->userService->changeUserPhone(
-            $request->id,
-            $request->phone_number
-        );
+        $this->userService->changeSelfPhone($user, $request->phone_number);
 
         return response()->json([
             'phone_number' => $request->phone_number
         ], 200);
     }
 
-    public function changePassword(UpdateUserRequest $request) {
-        $this->userService->changeUserPassword(
-            $request->id,
-            $request->old_password,
-            $request->new_password
-        );
+    public function changePassword(ChangePasswordRequest $request) {
+        $user = $request->user();
+
+        $this->userService->changeSelfPassword($user, $request->old_password, $request->new_password);
 
         return response()->json([
             'message' => 'Password updated successfully'
         ], 200);
     }
 
-    public function destroy(UpdateUserRequest $request) {
-        $user = $this->userService->deleteUser(
-            $request->id,
-            $request->password
-        );
+    public function deleteAccount(DeleteAccountRequest $request) {
+        $user = $request->user();
+        $personId = $user->person_id;
 
-        if ($user) {
-            $this->personService->deletePerson($request->id);
-        }
+        $this->userService->deleteSelf($user, $request->password);
 
-        return response()->json(null, 204);
-    }
+        $this->personService->deleteForUser($user);
 
-    public function verify(User $user) {
-        $this->userService->verifyUser($user);
-
-        return redirect()
-            ->back()
-            ->with('success', 'User verified successfully.');
+        return response()->noContent();
     }
 }

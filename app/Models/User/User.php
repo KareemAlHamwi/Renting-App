@@ -9,11 +9,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<\Database\Factories\User\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
+     *
+     * Keep this list minimal. Do NOT include role/verified_at unless you have a controlled admin-only flow.
      *
      * @var list<string>
      */
@@ -21,7 +23,6 @@ class User extends Authenticatable {
         'phone_number',
         'username',
         'password',
-        'verified_at',
         'person_id',
     ];
 
@@ -36,17 +37,12 @@ class User extends Authenticatable {
 
     public $timestamps = false;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array {
-        return [
-            'verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'verified_at' => 'date',
+        'role'        => 'boolean',
+        'password'    => 'hashed',
+    ];
+
     public function person() {
         return $this->belongsTo(Person::class, 'person_id');
     }

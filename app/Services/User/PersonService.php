@@ -2,6 +2,7 @@
 
 namespace App\Services\User;
 
+use App\Models\User\User;
 use App\Repositories\Contracts\User\PersonRepositoryInterface;
 
 class PersonService {
@@ -15,7 +16,7 @@ class PersonService {
         return $this->people->index();
     }
 
-    public function findPersonById($id) {
+    public function findPersonById(int $id) {
         return $this->people->show($id);
     }
 
@@ -23,11 +24,20 @@ class PersonService {
         return $this->people->store($data);
     }
 
-    public function updatePerson($id, array $data) {
-        return $this->people->update($id,$data);
+
+    public function updateForUser(User $user, array $data) {
+        return $this->people->update($user->person_id, $data);
     }
 
-    public function deletePerson($id) {
-        return $this->people->destroy($id);
+    public function deleteForUser(User $user) {
+        return $this->people->destroy($user->person_id);
     }
+
+    // public function updatePerson(int $personId, array $data) {
+    //     return $this->people->update($personId, $data);
+    // }
+
+    // public function deletePerson(int $personId) {
+    //     return $this->people->destroy($personId);
+    // }
 }

@@ -28,7 +28,7 @@ class AdminController extends Controller {
 
         request()->session()->regenerate();
 
-        if (Auth::user()->role !== 1) {
+        if (!Auth::user()->role) {
             Auth::logout();
             throw ValidationException::withMessages([
                 'username' => 'Not authorized to access the admin panel.'

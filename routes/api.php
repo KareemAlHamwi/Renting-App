@@ -63,8 +63,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('user')->group(function () {
         Route::get('/my-profile', [UserController::class, 'myProfile']);
         Route::put('/update', [UserController::class, 'update']);
-        Route::put('phone', [UserController::class, 'changePhoneNumber']);
-        Route::put('password', [UserController::class, 'changePassword']);
+        Route::put('/phone', [UserController::class, 'changePhoneNumber']);
+        Route::put('/password', [UserController::class, 'changePassword']);
         Route::delete('/delete', [UserController::class, 'deleteAccount']);
     });
 
@@ -75,8 +75,8 @@ Route::middleware('auth:sanctum')->group(function () {
     */
     Route::prefix('properties')->group(function () {
         Route::post('/', [PropertyController::class, 'store']);
-        Route::put('{id}', [PropertyController::class, 'update']);
-        Route::delete('{id}', [PropertyController::class, 'destroy']);
+        Route::put('/{property}', [PropertyController::class, 'update']);
+        Route::delete('/{property}', [PropertyController::class, 'destroy']);
     });
 
     /*
@@ -86,7 +86,7 @@ Route::middleware('auth:sanctum')->group(function () {
     */
     Route::prefix('properties/{propertyId}/photos')->group(function () {
         Route::post('/', [PropertyPhotoController::class, 'store']);
-        Route::delete('{id}', [PropertyPhotoController::class, 'destroy']);
+        Route::delete('/{id}', [PropertyPhotoController::class, 'destroy']);
     });
 
     Route::middleware('auth:sanctum')->group(function () {

@@ -18,13 +18,13 @@ class PropertyRepository implements PropertyRepositoryInterface {
         return Property::with('photos', 'governorate')->findOrFail($id);
     }
 
-    public function update($user, array $data) {
-        $property = Property::findOrFail($user->id);
+    public function update($id, array $data) {
+        $property = Property::findOrFail($id);
         $property->update($data);
         return $property;
     }
 
     public function delete($id) {
-        Property::findOrFail($id)->delete();
+        return Property::findOrFail($id)->delete();
     }
 }

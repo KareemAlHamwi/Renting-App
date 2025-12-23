@@ -27,4 +27,16 @@ class PropertyRepository implements PropertyRepositoryInterface {
     public function delete($id) {
         return Property::findOrFail($id)->delete();
     }
+
+    public function markAsVerified($id) {
+        $property = Property::findOrFail($id);
+        $property->forceFill(['verified_at' => now()])->save();
+
+        return $property;
+    }
+
+    public function is_verified($id) {
+        $user = Property::findOrFail($id);
+        return $user->verified_at !== null;
+    }
 }

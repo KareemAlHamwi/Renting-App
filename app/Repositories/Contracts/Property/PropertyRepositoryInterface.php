@@ -8,4 +8,6 @@ interface PropertyRepositoryInterface {
     public function findById($id);
     public function update($id, array $data);
     public function delete($id);
+    public function markAsVerified($id);
+    public function is_verified($id);
 }

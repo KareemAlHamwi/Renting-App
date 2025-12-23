@@ -480,7 +480,14 @@ width: 55px;
 height: 55px;
 border-radius: 50%;
 object-fit: cover;
-margin-right: 0.5rem;
+margin-right: 0.1rem;
+}
+
+img.avatar-sm.avatar-square,
+.users-table img.avatar-sm.avatar-square {
+width: 120px;
+height: 80px;
+border-radius: 10%;
 }
 
 /* User info cell */

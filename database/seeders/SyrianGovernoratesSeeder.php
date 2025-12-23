@@ -15,20 +15,20 @@ class SyrianGovernoratesSeeder extends Seeder {
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $governorates = [
-            'Damascus - دمشق',
-            'Rif Dimashq - ريف دمشق',
-            'Aleppo - حلب',
-            'Homs - حمص',
-            'Hama - حماه',
-            'Latakia - اللاذقية',
-            'Tartus - طرطوس',
-            'Idlib - إدلب',
-            'Deir ez-Zor - دير الزور',
-            'Raqqa - الرقة',
-            'Hasakah - الحسكة',
-            'Daraa - درعا',
-            'As-Suwayda - السويداء',
-            'Quneitra - القنيطرة'
+            'Damascus',
+            'Rif Dimashq',
+            'Aleppo',
+            'Homs',
+            'Hama',
+            'Latakia',
+            'Tartus',
+            'Idlib',
+            'Deir ez-Zor',
+            'Raqqa',
+            'Hasakah',
+            'Daraa',
+            'As-Suwayda',
+            'Quneitra'
         ];
 
         foreach ($governorates as $governorate) {

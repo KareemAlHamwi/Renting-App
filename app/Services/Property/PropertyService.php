@@ -34,4 +34,16 @@ class PropertyService {
     public function delete(Property $property) {
         return $this->repo->delete($property->id);
     }
+
+    public function verifyProperty(Property $property): void {
+        if ($this->isPropertyVerified($property)) {
+            return;
+        }
+
+        $this->repo->markAsVerified($property->id);
+    }
+
+    public function isPropertyVerified(Property $property): bool {
+        return $property->verified_at !== null;
+    }
 }

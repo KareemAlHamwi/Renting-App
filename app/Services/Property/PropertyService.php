@@ -23,8 +23,8 @@ class PropertyService {
         return $this->repo->create($data);
     }
 
-    public function update($id, array $data) {
-        return $this->repo->update($id, $data);
+    public function update($user, array $data) {
+        return $this->repo->update($user, $data);
     }
 
     public function delete($id) {

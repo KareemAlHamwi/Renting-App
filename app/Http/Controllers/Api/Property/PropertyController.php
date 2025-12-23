@@ -30,8 +30,10 @@ class PropertyController extends Controller {
         return $this->service->find($id);
     }
 
-    public function update(Request $request, $id) {
-        return $this->service->update($id, $request->all());
+    public function update(Request $request) {
+        $user = $request->user();
+
+        return $this->service->update($user, $request->all());
     }
 
     public function destroy($id) {

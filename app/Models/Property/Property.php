@@ -22,6 +22,10 @@ class Property extends Model {
         'user_id'
     ];
 
+    public function owner() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function governorate() {
         return $this->belongsTo(Governorate::class);
     }

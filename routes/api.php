@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Api\Property\GovernorateController;
 use App\Http\Controllers\Api\Property\PropertyController;
 use App\Http\Controllers\Api\Property\PropertyPhotoController;
+
+// Reservation (API)
 use App\Http\Controllers\Api\Reservation\ReservationController;
 use App\Http\Controllers\Api\Reservation\ReviewController;
 
@@ -91,16 +93,31 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [PropertyPhotoController::class, 'destroy']);
     });
 
+    /*
+    |--------------------------------------------------------------------------
+    | Favorites
+    |--------------------------------------------------------------------------
+    */
     Route::prefix('favorites')->group(function () {
         Route::get('/', [FavoritesController::class, 'index']);
         Route::post('/toggle', [FavoritesController::class, 'toggle']);
     });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Reservations
+    |--------------------------------------------------------------------------
+    */
+    Route::post('/reservations', [ReservationController::class, 'store']);
+    Route::post('/reservations/{id}/review', [ReservationController::class, 'addReview']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Reviews
+    |--------------------------------------------------------------------------
+    */
+    Route::post('/reviews', [ReviewController::class, 'store']);
+    Route::get('/reviews/{id}', [ReviewController::class, 'show']);
+    Route::put('/reviews/{id}', [ReviewController::class, 'update']);
+    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
 });
-
-Route::post('/reservations', [ReservationController::class, 'store']);
-Route::post('/reservations/{id}/review', [ReservationController::class, 'addReview']);
-
-Route::post('/reviews', [ReviewController::class, 'store']);
-Route::get('/reviews/{id}', [ReviewController::class, 'show']);
-Route::put('/reviews/{id}', [ReviewController::class, 'update']);
-Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);

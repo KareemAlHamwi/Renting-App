@@ -20,9 +20,8 @@ class RegisterRequest extends FormRequest {
                 'after_or_equal:' . now()->subYears(100)->format('Y-m-d'),
             ],
 
-            // For now: accept stored path/URL strings. If you move to file uploads, replace with image/file rules.
-            'personal_photo' => ['required', 'string', 'max:2048'],
-            'id_photo'       => ['required', 'string', 'max:2048'],
+            'personal_photo' => ['sometimes', 'string', 'max:8000000'],
+            'id_photo'       => ['sometimes', 'string', 'max:8000000'],
 
             'phone_number' => [
                 'required',

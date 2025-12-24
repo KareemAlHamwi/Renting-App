@@ -2,19 +2,13 @@
 
 @section('content')
     <div class="page-header text-center">
-        <h2>Property Details</h2>
-    </div>
-
-    <div class="card">
-        <div class="photo-section">
-            <div class="photo-item left">
-                <img src="{{ asset('images/property.jpg') }}" alt="Property Image">
-            </div>
-        </div>
-
         <div class="user-header">
             <h2 class="username">{{ $property->title }}</h2>
         </div>
+    </div>
+
+    <div class="card">
+
 
         <div>
             <p>
@@ -50,6 +44,12 @@
                 <strong>Rent:</strong>
                 {{ $property->rent }}
             </p>
+        </div>
+
+        <div class="photo-section">
+            <div class="photo-item left">
+                {{-- <img src="{{ asset('images/property.jpg') }}" alt="Property Image"> --}}
+            </div>
         </div>
 
         <div class="card-footer">

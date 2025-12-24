@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\Property;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Property\PropertyPhotoRequest;
 use App\Services\Property\PropertyPhotoService;
+use App\Models\Property\Property;
+use App\Models\Property\PropertyPhoto;
 
 class PropertyPhotoController extends Controller {
     protected $service;
@@ -13,16 +15,19 @@ class PropertyPhotoController extends Controller {
         $this->service = $service;
     }
 
-    public function store(Request $request) {
-        $request->validate([
-            'Path' => 'required|string',
-            'property_id' => 'required|exists:properties,id'
-        ]);
+    public function store(PropertyPhotoRequest $request, int $propertyId) {
+        $property = Property::findOrFail($propertyId);
+        $this->authorize('update', $property);
 
-        return $this->service->create($request->all());
+        return $this->service->createForProperty($propertyId, $request->all());
     }
 
-    public function destroy($id) {
-        return $this->service->delete($id);
+    public function destroy(int $propertyId, int $id) {
+        $photo = PropertyPhoto::where('property_id', $propertyId)->findOrFail($id);
+        $this->authorize('update', $photo->property);
+
+        $this->service->deletePhoto($photo);
+
+        return response()->noContent();
     }
 }

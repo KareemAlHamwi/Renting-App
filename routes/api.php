@@ -89,8 +89,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [PropertyPhotoController::class, 'destroy']);
     });
 
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/favorites/toggle', [FavoritesController::class, 'toggle']);
-        Route::get('/favorites', [FavoritesController::class, 'index']);
+    Route::prefix('favorites')->group(function () {
+        Route::get('/', [FavoritesController::class, 'index']);
+        Route::post('/toggle', [FavoritesController::class, 'toggle']);
     });
 });

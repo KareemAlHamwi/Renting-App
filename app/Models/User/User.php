@@ -3,6 +3,7 @@
 namespace App\Models\User;
 
 use App\Models\Property\Property;
+use App\Models\Reservation\Reservation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -53,5 +54,9 @@ class User extends Authenticatable {
 
     public function favoriteProperties() {
         return $this->belongsToMany(Property::class, 'favorites')->withTimestamps();
+    }
+
+    public function reservations() {
+        return $this->hasMany(Reservation::class);
     }
 }

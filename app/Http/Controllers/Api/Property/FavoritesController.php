@@ -15,6 +15,11 @@ class FavoritesController extends Controller {
         $this->favoriteService = $favoriteService;
     }
 
+    public function index() {
+        $userId = Auth::id();
+        return response()->json($this->favoriteService->getFavorites($userId));
+    }
+
     public function toggle(Request $request) {
         $userId = Auth::id();
         $propertyId = $request->property_id;
@@ -22,10 +27,5 @@ class FavoritesController extends Controller {
         $result = $this->favoriteService->toggleFavorite($userId, $propertyId);
 
         return response()->json($result);
-    }
-
-    public function index() {
-        $userId = Auth::id();
-        return response()->json($this->favoriteService->getFavorites($userId));
     }
 }

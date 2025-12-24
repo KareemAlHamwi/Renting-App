@@ -7,21 +7,20 @@
     </div>
 
     <div class="search-form">
-            <input style="width: 4000px" type="text" id="searchInput"
-                placeholder="Search by username, name or phone number ...">
+        <input style="width: 4000px" type="text" id="searchInput" placeholder="Search by username, name or phone number ...">
 
-            <select style="width: 200px" id="roleFilter">
-                <option value="">All Roles</option>
-                <option value="User">User</option>
-                <option value="Admin">Admin</option>
-            </select>
+        <select style="width: 200px" id="roleFilter">
+            <option value="">All Roles</option>
+            <option value="User">User</option>
+            <option value="Admin">Admin</option>
+        </select>
 
-            <select style="width: 200px" id="verifiedFilter">
-                <option value="">All Statuses</option>
-                <option value="Pending">Pending</option>
-                <option value="Verified">Verified</option>
-            </select>
-        </div>
+        <select style="width: 200px" id="verifiedFilter">
+            <option value="">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Verified">Verified</option>
+        </select>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -37,14 +36,14 @@
 
                 rows.forEach(row => {
                     const username = row.querySelector("td:nth-child(1) strong")?.textContent
-                    .toLowerCase() || "";
+                        .toLowerCase() || "";
                     const fullName = row.querySelector("td:nth-child(1) small")?.textContent
-                    .toLowerCase() || "";
+                        .toLowerCase() || "";
                     const phone = row.querySelector("td:nth-child(2)")?.textContent.toLowerCase() || "";
                     const roleText = row.querySelector("td:nth-child(3) span")?.textContent.toLowerCase()
                         .trim() || "";
                     const verifiedText = row.querySelector("td:nth-child(4) span")?.textContent
-                    .toLowerCase().trim() || "";
+                        .toLowerCase().trim() || "";
 
                     // Case-insensitive partial matches
                     let matchesSearch = !search || username.includes(search) || phone.includes(search) ||
@@ -84,14 +83,44 @@
                 @forelse($users as $user)
                     <tr class="clickable-row" data-id="{{ $user->id }}">
                         <td>
-                            <div class="user-info">
-                                <img src="{{ asset('images/default.png') }}" alt="Photo" class="avatar-sm">
+                            <div class="user-info" style="display:flex; gap:12px; align-items:center;">
+                                @php $person = $user->person; @endphp
+
+                                @php
+    $photo = $person?->personal_photo;
+
+    if (!$photo) {
+        $photoSrc = asset('images/default.png');
+    } elseif (str_contains($photo, '://')) {
+        // already a full URL (S3/CDN/etc)
+        $photoSrc = $photo;
+    } else {
+        // normalize common stored formats:
+        // "users/..." OR "public/users/..." OR "storage/users/..."
+        $photo = preg_replace('#^public/#', '', $photo);
+        $photo = ltrim($photo, '/');
+
+        $photoSrc = str_starts_with($photo, 'storage/')
+            ? asset($photo)
+            : asset('storage/' . $photo);
+    }
+@endphp
+
+<img
+    src="{{ $photoSrc }}"
+    alt="Personal Photo"
+    class="avatar-sm"
+    onerror="this.onerror=null;this.src='{{ asset('images/default.png') }}';"
+/>
+
+
                                 <div>
                                     <strong>{{ $user->username }}</strong><br>
-                                    <small>{{ $user->person->first_name }} {{ $user->person->last_name }}</small>
+                                    <small>{{ $person?->first_name }} {{ $person?->last_name }}</small>
                                 </div>
                             </div>
                         </td>
+
                         <td>{{ $user->phone_number }}</td>
                         <td>
                             <span class="badge {{ $user->role == 1 ? 'badge-admin' : 'badge-user' }}">

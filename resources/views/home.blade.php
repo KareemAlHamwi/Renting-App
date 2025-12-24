@@ -19,7 +19,7 @@
         </div>
 
         <div class="card stat-card">
-            <h4>Pending Verification</h4>
+            <h4>Pending Users</h4>
             <p class="stat-number text-warning">{{ $pendingUsers }}</p>
         </div>
 
@@ -30,4 +30,27 @@
     </div>
 
     <h2>Properties</h2>
+    <div class="user-data">
+        <div class="card stat-card">
+            <h4>Total Properties</h4>
+            <p class="stat-number">{{ $totalProperties }}</p>
+        </div>
+
+        <div class="card stat-card">
+            <h4>Verified Properties</h4>
+            <p class="stat-number text-success">{{ $verifiedProperties }}</p>
+        </div>
+
+        <div class="card stat-card">
+            <h4>Pending Properties</h4>
+            <p class="stat-number text-warning">{{ $pendingProperties }}</p>
+        </div>
+
+        <div class="card stat-card">
+            <h4>Average Rent</h4>
+            <p class="stat-number">{{ number_format($avgRent, 0) }}</p>
+        </div>
+    </div>
+
+    <h2>Reservations</h2>
 @endsection

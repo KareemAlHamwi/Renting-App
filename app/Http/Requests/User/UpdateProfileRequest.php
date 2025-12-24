@@ -22,9 +22,9 @@ class UpdateProfileRequest extends FormRequest {
                 'before_or_equal:' . now()->subYears(16)->format('Y-m-d'),
                 'after_or_equal:' . now()->subYears(100)->format('Y-m-d'),
             ],
-            // For now these are strings (paths/URLs). If you move to file uploads, replace with image/file rules.
-            'personal_photo' => ['sometimes', 'string', 'max:2048'],
-            'id_photo'       => ['sometimes', 'string', 'max:2048'],
+
+            'personal_photo' => ['sometimes', 'string', 'max:8000000'],
+            'id_photo'       => ['sometimes', 'string', 'max:8000000'],
 
             'username' => [
                 'sometimes',

@@ -480,7 +480,14 @@ width: 55px;
 height: 55px;
 border-radius: 50%;
 object-fit: cover;
-margin-right: 0.5rem;
+margin-right: 0.1rem;
+}
+
+img.avatar-sm.avatar-square,
+.users-table img.avatar-sm.avatar-square {
+width: 120px;
+height: 80px;
+border-radius: 10%;
 }
 
 /* User info cell */
@@ -593,12 +600,39 @@ transition: background var(--transition), transform var(--transition);
 background: var(--text-secondary);
 }
 
-.photo-section {
-display: flex;
-justify-content: space-between;
-align-items: flex-start;
-margin-bottom: 24px;
+.photo-section{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:24px;
+width:100%;
+height: 350px;
 }
+
+/* Left: big circle avatar */
+.photo-item.avatar-item img{
+width: 250px;
+height: 250px;
+border-radius: 50%;
+object-fit: cover;
+display:block;
+transform: translate(35px, 30px);
+}
+
+/* Right: rectangle ID */
+.photo-item.id-item img{
+width: 520px;
+height: 290px;
+border-radius: 12px;
+object-fit: cover;
+display:block;
+}
+
+/* Optional: ensure right block stays on the far right */
+.photo-item.id-item{
+margin-left: auto;
+}
+
 
 .photo-item {
 display: flex;
@@ -607,13 +641,9 @@ align-items: center;
 }
 
 .photo-item img {
-width: 140px;
-height: 140px;
-object-fit:cover;
-border-radius: 8px;
-/* border: 1px solid #ddd; */
+object-fit: cover;
+display: block;
 }
-
 
 .user-header {
 display: flex;

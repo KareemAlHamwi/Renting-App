@@ -7,7 +7,11 @@ use App\Models\Property\Property;
 
 class PropertyRepository implements PropertyRepositoryInterface {
     public function getAll() {
-        return Property::with('photos', 'governorate')->get();
+        return Property::with('photos', 'governorate')->orderByDesc('id')->get();
+    }
+
+    public function getAllVerified() {
+        return Property::with('photos', 'governorate')->whereNotNull('verified_at')->orderByDesc('id')->get();
     }
 
     public function create(array $data) {
@@ -33,10 +37,5 @@ class PropertyRepository implements PropertyRepositoryInterface {
         $property->forceFill(['verified_at' => now()])->save();
 
         return $property;
-    }
-
-    public function is_verified($id) {
-        $user = Property::findOrFail($id);
-        return $user->verified_at !== null;
     }
 }

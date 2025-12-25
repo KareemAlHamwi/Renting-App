@@ -9,24 +9,24 @@ use App\Models\Property\Property;
 use App\Models\Property\PropertyPhoto;
 
 class PropertyPhotoController extends Controller {
-    protected $service;
+    protected PropertyPhotoService $propertyPhotoService;
 
-    public function __construct(PropertyPhotoService $service) {
-        $this->service = $service;
+    public function __construct(PropertyPhotoService $propertyPhotoService) {
+        $this->propertyPhotoService = $propertyPhotoService;
     }
 
     public function store(PropertyPhotoRequest $request, int $propertyId) {
         $property = Property::findOrFail($propertyId);
         $this->authorize('update', $property);
 
-        return $this->service->createForProperty($propertyId, $request->all());
+        return $this->propertyPhotoService->createForProperty($propertyId, $request->all());
     }
 
     public function destroy(int $propertyId, int $id) {
         $photo = PropertyPhoto::where('property_id', $propertyId)->findOrFail($id);
         $this->authorize('update', $photo->property);
 
-        $this->service->deletePhoto($photo);
+        $this->propertyPhotoService->deletePhoto($photo);
 
         return response()->noContent();
     }

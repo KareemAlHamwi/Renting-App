@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Property extends Model {
-
     use HasFactory;
 
     protected $fillable = [
@@ -19,7 +18,7 @@ class Property extends Model {
         'reviewers_number',
         'verified_at',
         'governorate_id',
-        'user_id'
+        'user_id',
     ];
 
     public function owner() {
@@ -33,6 +32,12 @@ class Property extends Model {
     public function photos() {
         return $this->hasMany(PropertyPhoto::class);
     }
+
+    public function primaryPhoto() {
+        return $this->hasOne(PropertyPhoto::class)
+            ->orderBy('order');
+    }
+
     public function favoritedBy() {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
     }

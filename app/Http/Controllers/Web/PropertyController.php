@@ -8,16 +8,16 @@ use App\Repositories\Contracts\Property\PropertyRepositoryInterface;
 use App\Services\Property\PropertyService;
 
 class PropertyController extends Controller {
-    private PropertyRepositoryInterface $properties;
+    private PropertyRepositoryInterface $propertyRepository;
     private PropertyService $propertyService;
 
-    public function __construct(PropertyRepositoryInterface $properties, PropertyService $propertyService) {
-        $this->properties = $properties;
+    public function __construct(PropertyRepositoryInterface $propertyRepository, PropertyService $propertyService) {
+        $this->propertyRepository = $propertyRepository;
         $this->propertyService = $propertyService;
     }
 
     public function index() {
-        $properties = $this->properties->getAll();
+        $properties = $this->propertyRepository->getAll();
         return view('properties.index', compact('properties'));
     }
 

@@ -5,6 +5,7 @@ namespace App\Models\Reservation;
 use App\Models\Property\Property;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\ReservationStatus;
 
 class Reservation extends Model {
     protected $fillable = [
@@ -14,6 +15,12 @@ class Reservation extends Model {
         'user_id',
         'property_id',
         'review_id'
+    ];
+
+    protected $casts = [
+        'status' => ReservationStatus::class,
+        'start_date' => 'date',
+        'end_date' => 'date'
     ];
 
     public function property() {

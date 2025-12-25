@@ -2,30 +2,45 @@
 
 namespace App\Repositories\Eloquent\Reservation;
 
+use App\Enums\ReservationStatus;
 use App\Models\Reservation\Reservation;
-use App\Models\Reservation\Review;
 use App\Repositories\Contracts\Reservation\ReservationRepositoryInterface;
+use Illuminate\Support\Collection;
 
 class ReservationRepository implements ReservationRepositoryInterface {
-    public function findById($id): Reservation {
-        return Reservation::findOrFail($id);
+    public function findById(int $id): Reservation {
+        return Reservation::query()->findOrFail($id);
     }
 
     public function create(array $data): Reservation {
-        return Reservation::create($data);
+        return Reservation::query()->create($data);
     }
 
-    public function attachReview(Reservation $reservation, Review $review): void {
-        $reservation->update(['review_id' => $review->id]);
-    }
-
-    public function checkConflict(array $data): bool {
-        return Reservation::where('property_id', $data['property_id'])
-            ->where(function ($query) use ($data) {
-                $query->whereBetween('start_date', [$data['start_date'], $data['end_date']])
-                    ->orWhereBetween('end_date', [$data['start_date'], $data['end_date']]);
-            })
-            ->where('status', '!=', 4)
+    public function checkConflict(int $propertyId, string $startDate, string $endDate): bool {
+        return Reservation::query()
+            ->where('property_id', $propertyId)
+            ->whereIn('status', [
+                ReservationStatus::Pending,
+                ReservationStatus::Reserved,
+            ])
+            ->where('start_date', '<', $endDate)
+            ->where('end_date', '>', $startDate)
             ->exists();
+    }
+
+    public function getReservedPeriods(int $propertyId): Collection {
+        return Reservation::query()
+            ->where('property_id', $propertyId)
+            ->whereIn('status', [
+                ReservationStatus::Pending,
+                ReservationStatus::Reserved,
+            ])
+            ->orderBy('start_date')
+            ->get(['start_date', 'end_date']);
+    }
+
+    public function attachReview(Reservation $reservation, int $reviewId): Reservation {
+        $reservation->update(['review_id' => $reviewId]);
+        return $reservation->refresh();
     }
 }

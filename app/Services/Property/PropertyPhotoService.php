@@ -8,25 +8,13 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class PropertyPhotoService {
-    protected PropertyPhotoRepositoryInterface $repo;
+    protected PropertyPhotoRepositoryInterface $propertyPhotoRepository;
 
-    public function __construct(PropertyPhotoRepositoryInterface $repo) {
-        $this->repo = $repo;
+    public function __construct(PropertyPhotoRepositoryInterface $propertyPhotoRepository) {
+        $this->propertyPhotoRepository = $propertyPhotoRepository;
     }
 
-    /**
-     * Create one or more PropertyPhoto rows for a given property.
-     *
-     * Accepted payload keys:
-     * - photos: string[] (base64)
-     * - photo: string (base64)
-     * - path / Path: string (base64) (backward compatible)
-     * - order: int (optional, only used for single-photo upload)
-     *
-     * Enforces MAX 5 photos per property (total).
-     */
     public function createForProperty(int $propertyId, array $data) {
-        // Normalize payload to an array of base64 strings
         $photos = [];
 
         if (!empty($data['photos']) && is_array($data['photos'])) {
@@ -42,14 +30,12 @@ class PropertyPhotoService {
             ]);
         }
 
-        // 1) Per-request cap
         if (count($photos) > 5) {
             throw ValidationException::withMessages([
                 'photos' => 'You can upload a maximum of 5 images per request.'
             ]);
         }
 
-        // 2) Total per-property cap
         $existingCount = PropertyPhoto::where('property_id', $propertyId)->count();
         if (($existingCount + count($photos)) > 5) {
             $remaining = max(0, 5 - $existingCount);
@@ -60,7 +46,6 @@ class PropertyPhotoService {
 
         $baseDir = "properties/{$propertyId}";
 
-        // Determine starting order (append behavior)
         $currentMaxOrder = PropertyPhoto::where('property_id', $propertyId)->max('order');
         $nextOrder = ($currentMaxOrder ?? 0) + 1;
 
@@ -76,7 +61,7 @@ class PropertyPhotoService {
                 $order = $nextOrder++;
             }
 
-            $row = $this->repo->create([
+            $row = $this->propertyPhotoRepository->create([
                 'property_id' => $propertyId,
                 'path'        => $relativePath,
                 'order'       => $order,
@@ -99,7 +84,7 @@ class PropertyPhotoService {
 
     public function deletePhoto(PropertyPhoto $photo): void {
         $this->deleteStoredPath($photo->path);
-        $this->repo->delete($photo->id);
+        $this->propertyPhotoRepository->delete($photo->id);
     }
 
     private function publicUrl(?string $path): ?string {
@@ -125,10 +110,6 @@ class PropertyPhotoService {
     }
 
     private function storeBase64Image(string $base64, string $dir): string {
-        // Accept both:
-        // 1) data:image/png;base64,AAA...
-        // 2) raw base64 AAA...
-
         $data = $base64;
 
         if (preg_match('/^data:\s*image\/[a-zA-Z0-9.+-]+;\s*base64,/', $base64)) {
@@ -155,7 +136,7 @@ class PropertyPhotoService {
             throw ValidationException::withMessages(['photo' => 'Unsupported image type.']);
         }
 
-        $maxBytes = 6 * 1024 * 1024; // 6MB
+        $maxBytes = 6 * 1024 * 1024;
         if (strlen($binary) > $maxBytes) {
             throw ValidationException::withMessages(['photo' => 'Image is too large.']);
         }

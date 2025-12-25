@@ -7,32 +7,36 @@ use App\Models\User\User;
 use App\Models\Property\Property;
 
 class PropertyService {
-    protected $repo;
+    protected $propertyRepository;
 
-    public function __construct(PropertyRepositoryInterface $repo) {
-        $this->repo = $repo;
+    public function __construct(PropertyRepositoryInterface $propertyRepository) {
+        $this->propertyRepository = $propertyRepository;
     }
 
     public function getAll() {
-        return $this->repo->getAll();
+        return $this->propertyRepository->getAll();
+    }
+
+    public function getAllVerified() {
+        return $this->propertyRepository->getAllVerified();
     }
 
     public function find($id) {
-        return $this->repo->findById($id);
+        return $this->propertyRepository->findById($id);
     }
 
     public function create(User $user, array $data) {
         $data['user_id'] = $user->id;
 
-        return $this->repo->create($data);
+        return $this->propertyRepository->create($data);
     }
 
     public function update(Property $property, array $data) {
-        return $this->repo->update($property->id, $data);
+        return $this->propertyRepository->update($property->id, $data);
     }
 
     public function delete(Property $property) {
-        return $this->repo->delete($property->id);
+        return $this->propertyRepository->delete($property->id);
     }
 
     public function verifyProperty(Property $property): void {
@@ -40,7 +44,7 @@ class PropertyService {
             return;
         }
 
-        $this->repo->markAsVerified($property->id);
+        $this->propertyRepository->markAsVerified($property->id);
     }
 
     public function isPropertyVerified(Property $property): bool {

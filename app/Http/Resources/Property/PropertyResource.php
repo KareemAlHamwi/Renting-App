@@ -10,13 +10,23 @@ class PropertyResource extends JsonResource {
         $this->loadMissing(['governorate', 'photos', 'owner']);
 
         return [
-            'id'            => $this->id,
-            'title'         => $this->title,
-            'description'   => $this->description,
-            'governorate_id' => $this->governorate_id,
-            'address'       => $this->address,
-            'rent'          => $this->rent,
-            'verified_at'   => $this->verified_at,
+            'id'             => $this->id,
+            'title'          => $this->title,
+            'description'    => $this->description,
+            'address'        => $this->address,
+            'rent'           => $this->rent,
+
+            'overall_reviews'  => $this->overall_reviews,
+            'reviewers_number' => (int) ($this->reviewers_number ?? 0),
+
+            'verified_at'    => $this->verified_at,
+
+            'governorate' => $this->whenLoaded('governorate', function () {
+                return [
+                    'id' => $this->governorate?->id,
+                    'governorate_name' => $this->governorate?->governorate_name,
+                ];
+            }),
 
             'owner' => $this->whenLoaded('owner', function () {
                 return [
@@ -36,11 +46,6 @@ class PropertyResource extends JsonResource {
                         'url'   => $this->photoUrl($p->path),
                     ];
                 });
-            }),
-
-            'primary_photo' => $this->whenLoaded('photos', function () {
-                $first = $this->photos->sortBy('order')->first();
-                return $first ? $this->photoUrl($first->path) : null;
             }),
         ];
     }

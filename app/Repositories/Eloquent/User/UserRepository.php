@@ -61,11 +61,6 @@ class UserRepository implements UserRepositoryInterface {
         return $user->load('person');
     }
 
-    public function is_verified($id) {
-        $user = User::findOrFail($id);
-        return $user->verified_at !== null;
-    }
-
     public function destroy($id) {
         $user = User::findOrFail($id);
         $user->delete();

@@ -8,16 +8,16 @@ use App\Repositories\Contracts\User\UserRepositoryInterface;
 use App\Services\User\UserService;
 
 class UsersController extends Controller {
-    private UserRepositoryInterface $users;
+    private UserRepositoryInterface $userRepository;
     private UserService $userService;
 
-    public function __construct(UserRepositoryInterface $users, UserService $userService) {
-        $this->users = $users;
+    public function __construct(UserRepositoryInterface $userRepository, UserService $userService) {
+        $this->userRepository = $userRepository;
         $this->userService = $userService;
     }
 
     public function index() {
-        $users = $this->users->index();
+        $users = $this->userRepository->index();
         return view('users.index', compact('users'));
     }
 

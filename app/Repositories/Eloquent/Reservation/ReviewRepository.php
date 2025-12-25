@@ -6,6 +6,15 @@ use App\Models\Reservation\Review;
 use App\Repositories\Contracts\Reservation\ReviewRepositoryInterface;
 
 class ReviewRepository implements ReviewRepositoryInterface {
+    public function getAllPropertyReviews($propertyId) {
+        return Review::query()
+            ->whereHas('reservation', function ($q) use ($propertyId) {
+                $q->where('property_id', $propertyId);
+            })
+            ->latest()
+            ->get();
+    }
+
     public function findById($id): Review {
         return Review::findOrFail($id);
     }

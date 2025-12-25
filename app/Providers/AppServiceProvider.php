@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Repositories\Contracts\Property\FavoritesRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -13,13 +12,20 @@ use App\Repositories\Eloquent\User\PersonRepository;
 use App\Repositories\Eloquent\User\UserRepository;
 
 // Property
+use App\Repositories\Contracts\Property\FavoriteRepositoryInterface;
 use App\Repositories\Contracts\Property\GovernorateRepositoryInterface;
-use App\Repositories\Contracts\Property\PropertyRepositoryInterface;
 use App\Repositories\Contracts\Property\PropertyPhotoRepositoryInterface;
-use App\Repositories\Eloquent\Property\FavoritesRepository;
+use App\Repositories\Contracts\Property\PropertyRepositoryInterface;
+use App\Repositories\Eloquent\Property\FavoriteRepository;
 use App\Repositories\Eloquent\Property\GovernorateRepository;
-use App\Repositories\Eloquent\Property\PropertyRepository;
 use App\Repositories\Eloquent\Property\PropertyPhotoRepository;
+use App\Repositories\Eloquent\Property\PropertyRepository;
+
+// Reservation
+use App\Repositories\Contracts\Reservation\ReservationRepositoryInterface;
+use App\Repositories\Contracts\Reservation\ReviewRepositoryInterface;
+use App\Repositories\Eloquent\Reservation\ReservationRepository;
+use App\Repositories\Eloquent\Reservation\ReviewRepository;
 
 class AppServiceProvider extends ServiceProvider {
     public function register(): void {
@@ -49,10 +55,19 @@ class AppServiceProvider extends ServiceProvider {
             PropertyPhotoRepositoryInterface::class,
             PropertyPhotoRepository::class
         );
-
         $this->app->bind(
-            FavoritesRepositoryInterface::class,
-            FavoritesRepository::class
+            FavoriteRepositoryInterface::class,
+            FavoriteRepository::class
+        );
+
+        // Reservation
+        $this->app->bind(
+            ReservationRepositoryInterface::class,
+            ReservationRepository::class
+        );
+        $this->app->bind(
+            ReviewRepositoryInterface::class,
+            ReviewRepository::class
         );
     }
 

@@ -3,38 +3,48 @@
 namespace App\Http\Controllers\Api\Reservation;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Reservation\AddReviewToReservationRequest;
+use App\Http\Requests\Reservation\StoreReservationRequest;
+use App\Http\Resources\Reservation\ReservationResource;
+use App\Http\Resources\Reservation\ReservedPeriodResource;
+use App\Http\Resources\Reservation\ReviewResource;
 use App\Services\Reservation\ReservationService;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class ReservationController extends Controller {
-    protected $reservationService;
-
+    private ReservationService $reservationService;
     public function __construct(ReservationService $reservationService) {
         $this->reservationService = $reservationService;
     }
 
+    public function store(StoreReservationRequest $request) {
+        $userId = (int) $request->user()->id;
 
-    public function store(Request $request) {
-        $data = $request->validate([
-            'start_date' => 'required|date',
-            'end_date'   => 'required|date|after_or_equal:start_date',
-            'property_id' => 'required|exists:properties,id',
-            'user_id'    => 'required|exists:users,id',
-        ]);
+        $reservation = $this->reservationService->createReservation(
+            userId: $userId,
+            propertyId: (int) $request->validated('property_id'),
+            startDate: $request->validated('start_date'),
+            endDate: $request->validated('end_date'),
+        );
 
-        $reservation = $this->reservationService->createReservation($data);
-
-        return response()->json($reservation, 201);
+        return new ReservationResource($reservation);
     }
 
-    public function addReview(Request $request, $id) {
-        $data = $request->validate([
-            'stars'  => 'required|numeric|min:0|max:5',
-            'review' => 'nullable|string',
-        ]);
+    public function addReview(AddReviewToReservationRequest $request, int $id) {
+        $userId = (int) $request->user()->id;
 
-        $review = $this->reservationService->addReviewToReservation($id, $data);
+        $review = $this->reservationService->addReviewToReservation(
+            userId: $userId,
+            reservationId: $id,
+            reviewData: $request->validated(),
+        );
 
-        return response()->json($review, 201);
+        return new ReviewResource($review);
+    }
+
+    public function reservedPeriods(int $id) {
+        $periods = $this->reservationService->getReservedPeriods($id);
+
+        return ReservedPeriodResource::collection($periods);
     }
 }

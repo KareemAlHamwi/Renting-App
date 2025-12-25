@@ -5,29 +5,17 @@ namespace App\Services\Property;
 use App\Repositories\Contracts\Property\GovernorateRepositoryInterface;
 
 class GovernorateService {
-    protected $repo;
+    protected $governorateRepository;
 
-    public function __construct(GovernorateRepositoryInterface $repo) {
-        $this->repo = $repo;
+    public function __construct(GovernorateRepositoryInterface $governorateRepository) {
+        $this->governorateRepository = $governorateRepository;
     }
 
     public function getAll() {
-        return $this->repo->getAll();
+        return $this->governorateRepository->getAll();
     }
 
     public function findById($id) {
-        return $this->repo->findById($id);
-    }
-
-    public function create(array $data) {
-        return $this->repo->create($data);
-    }
-
-    public function update($id, array $data) {
-        return $this->repo->update($id, $data);
-    }
-
-    public function delete($id) {
-        return $this->repo->delete($id);
+        return $this->governorateRepository->findById($id);
     }
 }

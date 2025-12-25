@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->text('description');
             $table->foreignId('governorate_id')->constrained()->onDelete('cascade');
             $table->string('address');
-            $table->integer('rent');
+            $table->decimal('rent');
             $table->float('overall_reviews')->nullable();
             $table->integer('reviewers_number')->default(0);
             $table->date('verified_at')->nullable();

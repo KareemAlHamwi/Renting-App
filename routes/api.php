@@ -42,6 +42,8 @@ Route::prefix('governorates')->group(function () {
 Route::prefix('properties')->group(function () {
     Route::get('/', [PropertyController::class, 'index']);
     Route::get('/{id}', [PropertyController::class, 'show']);
+    Route::get('/{id}/reserved-periods', [ReservationController::class, 'reservedPeriods']);
+    Route::get('/{property}/reviews', [ReviewController::class, 'getAllPropertyReviews']);
 });
 
 /*
@@ -108,16 +110,19 @@ Route::middleware('auth:sanctum')->group(function () {
     | Reservations
     |--------------------------------------------------------------------------
     */
-    Route::post('/reservations', [ReservationController::class, 'store']);
-    Route::post('/reservations/{id}/review', [ReservationController::class, 'addReview']);
+    Route::prefix('reservations')->group(function () {
+        Route::post('/', [ReservationController::class, 'store']);
+        Route::post('/{id}/review', [ReservationController::class, 'addReview']);
+    });
 
     /*
     |--------------------------------------------------------------------------
     | Reviews
     |--------------------------------------------------------------------------
     */
-    Route::post('/reviews', [ReviewController::class, 'store']);
-    Route::get('/reviews/{id}', [ReviewController::class, 'show']);
-    Route::put('/reviews/{id}', [ReviewController::class, 'update']);
-    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
+    Route::prefix('reviews')->group(function () {
+        Route::get('/{id}', [ReviewController::class, 'show']);
+        Route::put('/{id}', [ReviewController::class, 'update']);
+        Route::delete('/{id}', [ReviewController::class, 'destroy']);
+    });
 });

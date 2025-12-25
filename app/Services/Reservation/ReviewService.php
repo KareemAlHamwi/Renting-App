@@ -12,8 +12,12 @@ class ReviewService {
         $this->reviewRepo = $reviewRepo;
     }
 
-    public function createReview(array $data): Review {
-        return $this->reviewRepo->create($data);
+    public function getAllPropertyReviews($propertyId) {
+        return $this->reviewRepo->getAllPropertyReviews($propertyId);
+    }
+
+    public function getReview($id): Review {
+        return $this->reviewRepo->findById($id);
     }
 
     public function updateReview($id, array $data): Review {
@@ -24,9 +28,5 @@ class ReviewService {
     public function deleteReview($id): void {
         $review = $this->reviewRepo->findById($id);
         $this->reviewRepo->delete($review);
-    }
-
-    public function getReview($id): Review {
-        return $this->reviewRepo->findById($id);
     }
 }

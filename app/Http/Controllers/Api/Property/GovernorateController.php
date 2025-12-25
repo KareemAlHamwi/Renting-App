@@ -7,33 +7,17 @@ use Illuminate\Http\Request;
 use App\Services\Property\GovernorateService;
 
 class GovernorateController extends Controller {
-    protected $service;
+    private GovernorateService $governorateService;
 
-    public function __construct(GovernorateService $service) {
-        $this->service = $service;
+    public function __construct(GovernorateService $governorateService) {
+        $this->governorateService = $governorateService;
     }
 
     public function index() {
-        return $this->service->getAll();
-    }
-
-    public function store(Request $request) {
-        $request->validate([
-            'GovernorateName' => 'required|string|max:255'
-        ]);
-
-        return $this->service->create($request->all());
+        return $this->governorateService->getAll();
     }
 
     public function findById($id) {
-        return $this->service->findById($id);
-    }
-
-    public function update(Request $request, $id) {
-        return $this->service->update($id, $request->all());
-    }
-
-    public function destroy($id) {
-        return $this->service->delete($id);
+        return $this->governorateService->findById($id);
     }
 }

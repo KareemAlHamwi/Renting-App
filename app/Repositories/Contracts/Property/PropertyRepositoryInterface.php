@@ -4,6 +4,8 @@ namespace App\Repositories\Contracts\Property;
 
 interface PropertyRepositoryInterface {
     public function getAll();
+    public function getUserProperties($id);
+    public function getUserProperty($userId, $propertyId);
     public function getAllVerified();
     public function create(array $data);
     public function findById($id);

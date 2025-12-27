@@ -72,7 +72,7 @@
         <table class="users-table">
             <thead>
                 <tr>
-                    <th>User</th>
+                    <th style="text-align: left">User</th>
                     <th>Phone number</th>
                     <th>Role</th>
                     <th>Verified</th>
@@ -87,31 +87,27 @@
                                 @php $person = $user->person; @endphp
 
                                 @php
-    $photo = $person?->personal_photo;
+                                    $photo = $person?->personal_photo;
 
-    if (!$photo) {
-        $photoSrc = asset('images/default.png');
-    } elseif (str_contains($photo, '://')) {
-        // already a full URL (S3/CDN/etc)
-        $photoSrc = $photo;
-    } else {
-        // normalize common stored formats:
-        // "users/..." OR "public/users/..." OR "storage/users/..."
-        $photo = preg_replace('#^public/#', '', $photo);
-        $photo = ltrim($photo, '/');
+                                    if (!$photo) {
+                                        $photoSrc = asset('images/default.png');
+                                    } elseif (str_contains($photo, '://')) {
+                                        // already a full URL (S3/CDN/etc)
+                                        $photoSrc = $photo;
+                                    } else {
+                                        // normalize common stored formats:
+                                        // "users/..." OR "public/users/..." OR "storage/users/..."
+                                        $photo = preg_replace('#^public/#', '', $photo);
+                                        $photo = ltrim($photo, '/');
 
-        $photoSrc = str_starts_with($photo, 'storage/')
-            ? asset($photo)
-            : asset('storage/' . $photo);
-    }
-@endphp
+                                        $photoSrc = str_starts_with($photo, 'storage/')
+                                            ? asset($photo)
+                                            : asset('storage/' . $photo);
+                                    }
+                                @endphp
 
-<img
-    src="{{ $photoSrc }}"
-    alt="Personal Photo"
-    class="avatar-sm"
-    onerror="this.onerror=null;this.src='{{ asset('images/default.png') }}';"
-/>
+                                <img src="{{ $photoSrc }}" alt="Personal Photo" class="avatar-sm"
+                                    onerror="this.onerror=null;this.src='{{ asset('images/default.png') }}';" />
 
 
                                 <div>

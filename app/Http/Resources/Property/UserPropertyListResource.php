@@ -5,7 +5,7 @@ namespace App\Http\Resources\Property;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PropertyListResource extends JsonResource {
+class UserPropertyListResource extends JsonResource {
     public function toArray(Request $request): array {
         $this->loadMissing(['governorate', 'primaryPhoto']);
 
@@ -22,6 +22,7 @@ class PropertyListResource extends JsonResource {
 
             'overall_reviews' => $this->overall_reviews,
             'reviewers_number' => (int) ($this->reviewers_number ?? 0),
+            'verified_at' => $this->verified_at,
 
             // photo with order = 1 (or smallest order)
             'primary_photo' => $primary ? [

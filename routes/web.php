@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Web\AdminController;
 use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\ReservationController;
 use App\Http\Controllers\Web\UsersController;
 
 Route::get('/login', [AdminController::class, 'create'])->name('login');
@@ -21,6 +22,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/properties', [PropertyController::class, 'index']);
     Route::get('/properties/{property}', [DashboardController::class, 'showProperty']);
     Route::post('/properties/{property}/verify', [PropertyController::class, 'verify']);
+
+    Route::get('/reservations', [ReservationController::class, 'index']);
+    Route::get('/reservations/{reservation}', [DashboardController::class, 'showReservation']);
+
 
     Route::post('/logout', [DashboardController::class, 'destroy'])->name('logout');
 });

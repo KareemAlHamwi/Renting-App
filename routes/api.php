@@ -32,7 +32,9 @@ Route::prefix('auth')->group(function () {
 | Public Read-Only Resources
 |--------------------------------------------------------------------------
 */
-Route::get('/users/{username}', [UserController::class, 'publicProfileByUsername']);
+Route::prefix('users')->group(function () {
+    Route::get('/{username}', [UserController::class, 'publicProfileByUsername']);
+});
 
 Route::prefix('governorates')->group(function () {
     Route::get('/', [GovernorateController::class, 'index']);
@@ -72,6 +74,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/phone', [UserController::class, 'changePhoneNumber']);
         Route::put('/password', [UserController::class, 'changePassword']);
         Route::delete('/delete', [UserController::class, 'deleteAccount']);
+        Route::get('/properties', [PropertyController::class, 'userProperties']);
+        Route::get('/properties/{id}', [PropertyController::class, 'userProperty']);
     });
 
     /*
@@ -80,6 +84,7 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('properties')->group(function () {
+        Route::get('/{propertyId}/reservations', [ReservationController::class, 'landlordPropertyReservations']);
         Route::post('/', [PropertyController::class, 'store']);
         Route::put('/{property}', [PropertyController::class, 'update']);
         Route::delete('/{property}', [PropertyController::class, 'destroy']);
@@ -101,7 +106,8 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('favorites')->group(function () {
-        Route::get('/', [FavoritesController::class, 'index']);
+        Route::get('/', [FavoritesController::class, 'userFavorites']);
+        Route::get('/{id}', [FavoritesController::class, 'userFavorite']);
         Route::post('/toggle', [FavoritesController::class, 'toggle']);
     });
 
@@ -111,6 +117,7 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('reservations')->group(function () {
+        Route::get('/', [ReservationController::class, 'tenantReservations']);
         Route::post('/', [ReservationController::class, 'store']);
         Route::post('/{id}/review', [ReservationController::class, 'addReview']);
     });

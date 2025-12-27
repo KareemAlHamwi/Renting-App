@@ -8,6 +8,42 @@ use App\Repositories\Contracts\Reservation\ReservationRepositoryInterface;
 use Illuminate\Support\Collection;
 
 class ReservationRepository implements ReservationRepositoryInterface {
+    public function getAllReservations(): Collection {
+        return Reservation::query()
+            ->with([
+                'user',
+                'property.owner',
+                'property.governorate',
+                'property.primaryPhoto',
+                'review',
+            ])
+            ->orderByDesc('start_date')
+            ->get();
+    }
+
+    public function getLandlordPropertyReservations(int $landlordUserId, int $propertyId): Collection {
+        return Reservation::query()
+            ->with(['user', 'review']) // tenant + review (add 'property' if you need it)
+            ->where('property_id', $propertyId)
+            ->whereHas('property', function ($q) use ($landlordUserId) {
+                $q->where('user_id', $landlordUserId);
+            })
+            ->orderByDesc('start_date')
+            ->get();
+    }
+
+    public function getTenantReservations(int $tenantUserId): Collection {
+        return Reservation::query()
+            ->with([
+                'property.governorate',
+                'property.primaryPhoto', // smallest payload for listing
+                'review',
+            ])
+            ->where('user_id', $tenantUserId)
+            ->orderByDesc('start_date')
+            ->get();
+    }
+
     public function findById(int $id): Reservation {
         return Reservation::query()->findOrFail($id);
     }

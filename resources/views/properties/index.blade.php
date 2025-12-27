@@ -135,7 +135,7 @@
         <table class="users-table">
             <thead>
                 <tr>
-                    <th>Property</th>
+                    <th style="text-align: left">Property</th>
                     <th>Governorate</th>
                     <th>Address</th>
                     <th>Status</th>
@@ -148,8 +148,15 @@
                     <tr class="clickable-row" data-id="{{ $property->id }}">
                         <td>
                             <div class="user-info">
-                                <img src="{{ asset('images/property.jpg') }}" alt="Property Image"
-                                    class="avatar-sm avatar-square">
+                                @php
+                                    $firstPhoto = $property->photos->first();
+                                    $src = $firstPhoto
+                                        ? \Illuminate\Support\Facades\Storage::disk('public')->url($firstPhoto->path)
+                                        : asset('images/property.jpg');
+                                @endphp
+
+                                <img src="{{ $src }}" alt="Property Image" class="avatar-sm avatar-square">
+
                                 <div>
                                     <strong>{{ $property->title }}</strong><br>
                                     <small>{{ \Illuminate\Support\Str::limit($property->description, 60, '...') }}</small>

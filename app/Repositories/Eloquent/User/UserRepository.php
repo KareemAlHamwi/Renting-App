@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent\User;
 
 use App\Models\User\User;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
+use App\Models\Property\Property;
 
 class UserRepository implements UserRepositoryInterface {
     public function index() {

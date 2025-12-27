@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Property\PropertyRequest;
 use App\Http\Resources\Property\PropertyResource;
 use App\Http\Resources\Property\PropertyListResource;
+use App\Http\Resources\Property\UserPropertyListResource;
+use App\Http\Resources\Property\UserPropertyResource;
 use App\Services\Property\PropertyService;
 use App\Models\Property\Property;
+use Illuminate\Http\Request;
 
 class PropertyController extends Controller {
     private PropertyService $propertyService;
@@ -65,5 +68,21 @@ class PropertyController extends Controller {
 
         $this->propertyService->delete($property);
         return response()->noContent();
+    }
+
+    public function userProperties(Request $request) {
+        $user = $request->user();
+
+        $properties = $this->propertyService->userProperties($user);
+
+        return UserPropertyListResource::collection($properties);
+    }
+
+    public function userProperty(Request $request, $propertyId) {
+        $user = $request->user();
+
+        $property = $this->propertyService->userProperty($user, $propertyId);
+
+        return new UserPropertyResource($property);
     }
 }

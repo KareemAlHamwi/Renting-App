@@ -50,4 +50,12 @@ class PropertyService {
     public function isPropertyVerified(Property $property): bool {
         return $property->verified_at !== null;
     }
+
+    public function userProperties(User $user) {
+        return $this->propertyRepository->getUserProperties($user->id);
+    }
+
+    public function userProperty(User $user, $propertyId) {
+        return $this->propertyRepository->getUserProperty($user->id,$propertyId);
+    }
 }

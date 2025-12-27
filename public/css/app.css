@@ -431,7 +431,7 @@ font-size: 0.95rem;
 .users-table th,
 .users-table td {
 padding: 0.75rem 1rem;
-text-align: left;
+text-align: center;
 border-bottom: 1px solid #e5e7eb;
 }
 
@@ -446,20 +446,33 @@ background: rgba(43, 138, 246, 0.05);
 }
 
 /* Status badges */
-.status {
-padding: 0.25rem 0.75rem;
-border-radius: var(--radius-sm);
-font-size: 0.8rem;
-font-weight: 600;
+.status{
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
 }
-.status.verified {
-background: rgba(22, 163, 74, 0.1);
-color: var(--success);
+
+.status.verified{
+  background: rgba(22, 163, 74, 0.10);
+  color: var(--success);
 }
-.status.pending {
-background: rgba(255, 200, 87, 0.15);
-color: var(--accent);
+
+.status.pending{
+  background: rgba(255, 200, 87, 0.15);
+  color: var(--accent);
 }
+
+.status.completed{
+  background: rgba(43, 138, 246, 0.15);
+  color: var(--primary);
+}
+
+.status.cancelled{
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+}
+
 
 /* User detail card */
 .user-detail .detail-grid {
@@ -494,6 +507,7 @@ border-radius: 10%;
 .user-info {
 display: flex;
 flex-direction:row; /* stack items vertically */
+text-align: left;
 align-items: flex-start; /* align text to the left */
 gap: 0.5rem;
 }
@@ -600,7 +614,7 @@ transition: background var(--transition), transform var(--transition);
 background: var(--text-secondary);
 }
 
-.photo-section{
+.photo-section-person{
 display:flex;
 justify-content:space-between;
 align-items:flex-start;
@@ -662,4 +676,44 @@ color: #fff;
 cursor: not-allowed;
 opacity: 0.7;
 transform: none;
+}
+
+.photo-section-property{
+width: 100%;
+margin-top: 1.25rem;
+}
+
+/*
+  Horizontal photo scroller (up to 5 photos)
+  - Works with mouse/touch
+  - Scroll-snap for a clean "slide" feel
+*/
+.photo-carousel{
+display: flex;
+gap: 16px;
+overflow-x: auto;
+overflow-y: hidden;
+scroll-snap-type: x mandatory;
+padding: 8px 6px 14px;
+-webkit-overflow-scrolling: touch;
+}
+
+.photo-slide{
+flex: 0 0 auto;
+scroll-snap-align: start;
+}
+
+.photo-slide img{
+width: min(400px, 85vw);
+aspect-ratio: 16 / 9;
+height: auto;
+border-radius: 12px;
+object-fit: cover;
+display: block;
+}
+
+/* Slightly tighter on very small screens */
+@media (max-width: 480px){
+  .photo-carousel{ gap: 12px; }
+  .photo-slide img{ width: 92vw; }
 }

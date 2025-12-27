@@ -2,6 +2,8 @@
 
 namespace App\Services\Property;
 
+use App\Http\Resources\Property\PropertyResource;
+use App\Models\User\User;
 use App\Repositories\Contracts\Property\FavoriteRepositoryInterface;
 
 class FavoriteService {
@@ -9,6 +11,14 @@ class FavoriteService {
 
     public function __construct(FavoriteRepositoryInterface $favoriteRepository) {
         $this->favoriteRepository = $favoriteRepository;
+    }
+
+    public function userFavorites($userId) {
+        return $this->favoriteRepository->getUserFavorites($userId);
+    }
+
+    public function userFavorite(User $user, $propertyId) {
+        return $this->favoriteRepository->getUserFavorite($user->id,$propertyId);
     }
 
     public function toggleFavorite($userId, $propertyId) {
@@ -19,9 +29,5 @@ class FavoriteService {
 
         $this->favoriteRepository->add($userId, $propertyId);
         return ['message' => 'Property has been added to your favorites'];
-    }
-
-    public function getFavorites($userId) {
-        return $this->favoriteRepository->getUserFavorites($userId);
     }
 }

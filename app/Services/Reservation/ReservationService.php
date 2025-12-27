@@ -20,6 +20,18 @@ class ReservationService {
         $this->reviewRepository = $reviewRepository;
     }
 
+    public function getAllReservations() {
+        return $this->reservationRepository->getAllReservations();
+    }
+
+    public function getLandlordPropertyReservations(int $landlordUserId, int $propertyId) {
+        return $this->reservationRepository->getLandlordPropertyReservations($landlordUserId, $propertyId);
+    }
+
+    public function getTenantReservations(int $tenantUserId) {
+        return $this->reservationRepository->getTenantReservations($tenantUserId);
+    }
+
     public function createReservation(int $userId, int $propertyId, string $startDate, string $endDate): Reservation {
         if ($this->reservationRepository->checkConflict($propertyId, $startDate, $endDate)) {
             throw new \RuntimeException('The property is booked during this period.');

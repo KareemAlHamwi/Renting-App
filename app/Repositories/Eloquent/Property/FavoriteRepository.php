@@ -8,12 +8,23 @@ use App\Repositories\Contracts\Property\FavoriteRepositoryInterface;
 class FavoriteRepository implements FavoriteRepositoryInterface {
     public function getUserFavorites($userId) {
         return User::query()
-        ->findOrFail($userId)
-        ->favoriteProperties()
-        ->with(['photos', 'governorate'])
-        ->whereNotNull('properties.verified_at')
-        ->get();
+            ->findOrFail($userId)
+            ->favoriteProperties()
+            ->with(['photos', 'governorate'])
+            ->whereNotNull('properties.verified_at')
+            ->get();
     }
+
+    public function getUserFavorite($userId, $propertyId) {
+        return User::query()
+            ->findOrFail($userId)
+            ->favoriteProperties()
+            ->where('properties.id', $propertyId)
+            ->whereNotNull('properties.verified_at')
+            ->with(['photos', 'governorate'])
+            ->firstOrFail();
+    }
+
 
     public function add($userId, $propertyId) {
         $user = User::findOrFail($userId);

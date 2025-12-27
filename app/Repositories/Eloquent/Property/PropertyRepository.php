@@ -10,6 +10,24 @@ class PropertyRepository implements PropertyRepositoryInterface {
         return Property::with('photos', 'governorate')->orderByDesc('id')->get();
     }
 
+    public function getUserProperties($id) {
+        $properties = Property::query()
+            ->where('user_id', $id)
+            ->latest()
+            ->get();
+
+        return $properties;
+    }
+
+    public function getUserProperty($userId, $propertyId) {
+        $property = Property::query()
+            ->where('id', $propertyId)
+            ->where('user_id', $userId)
+            ->firstOrFail();
+
+        return $property;
+    }
+
     public function getAllVerified() {
         return Property::with('photos', 'governorate')->whereNotNull('verified_at')->orderByDesc('id')->get();
     }

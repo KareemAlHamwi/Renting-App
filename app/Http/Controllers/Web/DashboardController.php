@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Property\Property;
+use App\Models\Reservation\Reservation;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User\User;
 
@@ -39,6 +40,10 @@ class DashboardController extends Controller {
 
     public function showProperty(Property $property) {
         return view('properties.show', ['property' => $property]);
+    }
+
+    public function showReservation(Reservation $reservation) {
+        return view('reservations.show', ['reservation' => $reservation]);
     }
 
     public function destroy() {

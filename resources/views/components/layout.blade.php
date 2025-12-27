@@ -48,11 +48,11 @@
             <a href="/users" class="{{ request()->is('users*') ? 'active' : '' }}">Users</a>
             <a href="/properties" class="{{ request()->is('properties*') ? 'active' : '' }}">Properties</a>
             <a href="/reservations" class="{{ request()->is('reservations*') ? 'active' : '' }}">Reservations</a>
-            <a href="/governorates" class="{{ request()->is('governorates*') ? 'active' : '' }}">Governorates</a>
+            {{-- <a href="/governorates" class="{{ request()->is('governorates*') ? 'active' : '' }}">Governorates</a> --}}
         </nav>
 
         <footer class="footer">
-            <a href="/settings" class="{{ request()->is('settings') ? 'active' : '' }}">Settings</a>
+            {{-- <a href="/settings" class="{{ request()->is('settings') ? 'active' : '' }}">Settings</a> --}}
 
             <a href="{{ route('logout') }}"
                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn-primary">

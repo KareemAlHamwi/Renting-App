@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\Property;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Property\ToggleFavoriteRequest;
+use App\Http\Resources\Property\PropertyListResource;
+use App\Http\Resources\Property\PropertyResource;
 use App\Services\Property\FavoriteService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,14 +19,20 @@ class FavoritesController extends Controller {
         $this->favoriteService = $favoriteService;
     }
 
-    public function index(Request $request): JsonResponse {
+    public function userFavorites(Request $request) {
         $userId = $request->user()->id;
 
-        $favorites = $this->favoriteService->getFavorites($userId);
+        $favorites = $this->favoriteService->userFavorites($userId);
 
-        return response()->json([
-            'message' => $favorites,
-        ], 200);
+        return PropertyListResource::collection($favorites);
+    }
+
+    public function userFavorite(Request $request, $id) {
+        $user = $request->user();
+
+        $property = $this->favoriteService->userFavorite($user, $id);
+
+        return new PropertyResource($property);
     }
 
     public function toggle(ToggleFavoriteRequest $request): JsonResponse {

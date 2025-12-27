@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class UserService {
-    private UserRepositoryInterface $users;
+    private UserRepositoryInterface $userRepository;
 
     public function __construct(UserRepositoryInterface $users) {
-        $this->users = $users;
+        $this->userRepository = $users;
     }
 
     private function validateCredentials(?User $user, string $password): void {
@@ -23,25 +23,25 @@ class UserService {
     }
 
     public function findUserByPhone(string $phone): ?User {
-        return $this->users->showByPhone($phone);
+        return $this->userRepository->showByPhone($phone);
     }
 
     public function findUserByUsername(string $username): ?User {
-        return $this->users->showByUsername($username);
+        return $this->userRepository->showByUsername($username);
     }
 
     public function createUser(array $data): User {
         $data['password'] = Hash::make($data['password']);
-        return $this->users->store($data);
+        return $this->userRepository->store($data);
     }
 
     public function updateSelf(User $user, array $data): User {
         $filteredData = array_filter($data, fn($value) => !is_null($value));
-        return $this->users->update($user->id, $filteredData);
+        return $this->userRepository->update($user->id, $filteredData);
     }
 
     public function changeSelfPhone(User $user, string $phone): User {
-        return $this->users->updatePhone($user->id, $phone);
+        return $this->userRepository->updatePhone($user->id, $phone);
     }
 
     public function changeSelfPassword(User $user, string $oldPassword, string $newPassword): User {
@@ -53,14 +53,14 @@ class UserService {
 
         $this->validateCredentials($user, $oldPassword);
 
-        return $this->users->updatePassword($user->id, Hash::make($newPassword));
+        return $this->userRepository->updatePassword($user->id, Hash::make($newPassword));
     }
 
     public function deleteSelf(User $user, string $password): void {
         $this->validateCredentials($user, $password);
 
         $user->tokens()->delete();
-        $this->users->destroy($user->id);
+        $this->userRepository->destroy($user->id);
     }
 
     public function verifyUser(User $user): void {
@@ -68,7 +68,7 @@ class UserService {
             return;
         }
 
-        $this->users->markAsVerified($user->id);
+        $this->userRepository->markAsVerified($user->id);
     }
 
     public function isUserVerified(User $user): bool {

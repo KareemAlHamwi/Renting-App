@@ -2,6 +2,7 @@
 
 namespace App\Models\Property;
 
+use App\Models\Reservation\Reservation;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -40,5 +41,9 @@ class Property extends Model {
 
     public function favoritedBy() {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+    }
+
+    public function reservations() {
+        return $this->hasMany(Reservation::class);
     }
 }

@@ -3,18 +3,11 @@
 @section('content')
     <div class="page-header text-center">
         <div class="user-header">
-            <h2 class="username">Reservation {{ $reservation->id }}</h2>
+            <h1 >Reservation Details</h1>
         </div>
     </div>
 
-    <div>
-        <h2>Tenant</h2>
-        <x-user-card :user="$reservation->user"></x-user-card>
-    </div>
-
-    <div>
-        <h2>Landlord Property</h2>
-        <x-property-card :property="$reservation->property" />
-    </div>
-
+    <x-property-card :property="$reservation->property" showActions="{{ false }}" />
+    <x-user-card :user="$reservation->property->owner" showActions="{{ false }}" cardHeader="Landlord Card"></x-user-card>
+    <x-user-card :user="$reservation->user" showActions="{{ false }}" cardHeader="Tenant Card"></x-user-card>
 @endsection

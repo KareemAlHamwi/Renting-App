@@ -1,12 +1,18 @@
 @props([
     'property',
+    'cardHeader' => 'Property Card',
     'showActions' => true,
     'backUrl' => url('/properties'),
     'reservationsUrl' => url('/reservations'),
     'showVerify' => true,
 ])
 
+
+
+<h2 >{{ $cardHeader }}</h2>
 <div class="card">
+    <h1 class="username" style="margin-top: -12px">{{ $property->title }}</h1>
+
     <div>
         <p>
             <strong>Description:</strong><br>
@@ -14,7 +20,7 @@
         </p>
     </div>
 
-    <div class="user-data">
+    <div class="property-data">
         <p><strong>Address:</strong> {{ $property->address }}</p>
 
         <p>
@@ -63,11 +69,8 @@
 
     @if ($showActions)
         <div class="card-footer">
-            <div class="footer-left">
-                <a href="{{ $reservationsUrl }}" class="btn btn-secondary">Reservations</a>
-            </div>
 
-            <div class="footer-right">
+
                 <a href="{{ $backUrl }}" class="btn btn-secondary">Back</a>
 
                 @if ($showVerify)
@@ -78,7 +81,6 @@
                         </button>
                     </form>
                 @endif
-            </div>
         </div>
     @endif
 </div>

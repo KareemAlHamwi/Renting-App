@@ -1,42 +1,16 @@
 @extends('components.layout')
 
 @section('content')
-    <div class="page-header text-center">
+<div class="page-header text-center">
         <div class="user-header">
-            <h2 class="username">{{ $property->title }}</h2>
+            <h1 >Property Details</h1>
         </div>
     </div>
 
     <x-property-card :property="$property" />
+    <x-user-card :user="$property->owner" showActions="{{ false }}" cardHeader="Landlord Card"></x-user-card>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", async function() {
-            const govEl = document.getElementById("governorateName");
-            if (!govEl) return;
-
-            const govId = govEl.dataset.govId;
-            if (!govId) return;
-
-            const GOVS_URL = "{{ url('/api/governorates') }}";
-
-            try {
-                const res = await fetch(GOVS_URL, {
-                    headers: {
-                        "Accept": "application/json"
-                    }
-                });
-                if (!res.ok) return;
-
-                const json = await res.json();
-                const list = Array.isArray(json) ? json : (json.data || []);
-
-                const found = list.find(g => String(g.id) === String(govId));
-                const name = found?.name ?? found?.title ?? found?.governorate_name;
-
-                if (name) govEl.textContent = name;
-            } catch (e) {
-                // leave as ID if API fails
-            }
-        });
-    </script>
+    <h2>Property Reservations</h2>
+    <x-reservations-table-filters />
+    <x-reservations-table :reservations="$property->reservations" />
 @endsection

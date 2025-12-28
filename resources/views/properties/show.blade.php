@@ -11,6 +11,6 @@
     <x-user-card :user="$property->owner" showActions="{{ false }}" cardHeader="Landlord Card"></x-user-card>
 
     <h2>Property Reservations</h2>
-    <x-reservations-table-filters />
-    <x-reservations-table :reservations="$property->reservations" />
+    <x-reservations-table-filters :reservations="$property->reservations" tableId="propertyReservationsTable" />
+    <x-reservations-table :reservations="$property->reservations" tableId="propertyReservationsTable" />
 @endsection

@@ -23,7 +23,6 @@ class PropertyListResource extends JsonResource {
             'overall_reviews' => $this->overall_reviews,
             'reviewers_number' => (int) ($this->reviewers_number ?? 0),
 
-            // photo with order = 1 (or smallest order)
             'primary_photo' => $primary ? [
                 'path' => $primary->path,
                 'url' => $this->photoUrl($primary->path),
@@ -33,13 +32,20 @@ class PropertyListResource extends JsonResource {
 
     private function photoUrl(?string $path): ?string {
         if (!$path) return null;
+
+        // If already absolute, keep it.
         if (str_contains($path, '://')) return $path;
 
+        // Normalize "public/..." and leading slashes
         $path = preg_replace('#^public/#', '', $path);
         $path = ltrim($path, '/');
 
-        return str_starts_with($path, 'storage/')
-            ? asset($path)
-            : asset('storage/' . $path);
+        // Return a RELATIVE public URL (no domain).
+        $relative = str_starts_with($path, 'storage/')
+            ? '/' . $path
+            : '/storage/' . $path;
+
+        // Prevent accidental "//"
+        return preg_replace('#/+#', '/', $relative);
     }
 }

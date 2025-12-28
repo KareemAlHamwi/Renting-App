@@ -33,17 +33,75 @@ class ReservationService {
     }
 
     public function createReservation(int $userId, int $propertyId, string $startDate, string $endDate): Reservation {
+        $endDate = $endDate ?: $startDate;
+
         if ($this->reservationRepository->checkConflict($propertyId, $startDate, $endDate)) {
             throw new \RuntimeException('The property is booked during this period.');
         }
 
-        return $this->reservationRepository->create([
+        return $this->reservationRepository->createReservation([
             'user_id'     => $userId,
             'property_id' => $propertyId,
             'start_date'  => $startDate,
             'end_date'    => $endDate,
             'status'      => ReservationStatus::Pending,
         ]);
+    }
+
+    public function updateReservation(int $reservationId, array $data): Reservation {
+        $reservation = $this->reservationRepository->findById($reservationId);
+
+        if (in_array($reservation->status, [ReservationStatus::Cancelled, ReservationStatus::Completed], true)) {
+            throw new \RuntimeException('You cannot update a cancelled/completed reservation.');
+        }
+
+        $propertyId = (int) ($data['property_id'] ?? $reservation->property_id);
+
+        $startDate = (string) ($data['start_date'] ?? $reservation->start_date->format('Y-m-d'));
+        $endDate = (string) (($data['end_date'] ?? null) ?: ($reservation->end_date?->format('Y-m-d') ?? $startDate));
+        $endDate = $endDate ?: $startDate;
+
+        if ($this->reservationRepository->checkConflictExceptReservation($propertyId, $startDate, $endDate, $reservation->id)) {
+            throw new \RuntimeException('The property is booked during this period.');
+        }
+
+        // Reset to Pending + apply data
+        $updateData = array_merge($data, [
+            'status'      => ReservationStatus::Pending,
+            'property_id' => $propertyId,
+            'start_date'  => $startDate,
+            'end_date'    => $endDate,
+        ]);
+
+        return $this->reservationRepository->updateReservation($reservation, $updateData);
+    }
+
+    public function approveReservation(int $reservationId): Reservation {
+        $reservation = $this->reservationRepository->findById($reservationId);
+
+        if ($reservation->status !== ReservationStatus::Pending) {
+            throw new \RuntimeException('Only pending reservations can be approved.');
+        }
+
+        return $this->reservationRepository->approveReservation($reservation);
+    }
+
+    public function cancelReservation(int $reservationId): Reservation {
+        $reservation = $this->reservationRepository->findById($reservationId);
+
+        if ($reservation->status === ReservationStatus::Completed) {
+            throw new \RuntimeException('You cannot cancel a completed reservation.');
+        }
+
+        if ($reservation->status === ReservationStatus::Cancelled) {
+            return $reservation; // already cancelled
+        }
+
+        return $this->reservationRepository->cancelReservation($reservation);
+    }
+
+    public function markExpiredReservationsCompleted(): int {
+        return $this->reservationRepository->markExpiredReservationsCompleted();
     }
 
     public function getReservedPeriods(int $propertyId) {

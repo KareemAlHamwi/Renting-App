@@ -1,28 +1,45 @@
 @props([
+    // Pass the same collection you render in the table.
+    'reservations' => collect(),
     'searchPlaceholder' => 'Search by username, name or date...',
-    'detailsBaseUrl' => '/reservations/', // used by row click
+    // The ID of the *reservations* table this filter should control.
+    'tableId' => 'reservationsTable',
 ])
 
-<div class="search-form">
-    <input style="width: 4000px" type="text" id="searchInput" placeholder="{{ $searchPlaceholder }}">
+@php
+    // Unique DOM namespace so this component can safely appear more than once on a page.
+    $uid = 'res_filters_' . uniqid();
 
-    <select style="width: 200px" id="verifiedFilter">
+    // Use the canonical enum list + order.
+    // Values are the enum labels (lowercase) so they match the rendered status text.
+    $statusOptions = array_map(
+        fn ($case) => $case->label(),
+        \App\Enums\ReservationStatus::cases(),
+    );
+@endphp
+
+<div class="search-form" id="{{ $uid }}">
+    <input style="width: 4000px" type="text" id="{{ $uid }}_searchInput" placeholder="{{ $searchPlaceholder }}">
+
+    <select style="width: 200px" id="{{ $uid }}_statusFilter">
         <option value="">All Statuses</option>
-        <option value="pending">Pending</option>
-        <option value="reserved">Reserved</option>
-        <option value="completed">Completed</option>
-        <option value="cancelled">Cancelled</option>
+        @foreach ($statusOptions as $value)
+            <option value="{{ $value }}">{{ ucfirst($value) }}</option>
+        @endforeach
     </select>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const searchInput = document.getElementById("searchInput");
-        const statusFilter = document.getElementById("verifiedFilter");
-        const tbody = document.querySelector(".users-table tbody");
-        if (!tbody) return;
+        const root = document.getElementById(@json($uid));
+        if (!root) return;
 
-        const detailsBaseUrl = @json($detailsBaseUrl);
+        const searchInput = root.querySelector(@json('#' . $uid . '_searchInput'));
+        const statusFilter = root.querySelector(@json('#' . $uid . '_statusFilter'));
+
+        const table = document.getElementById(@json($tableId));
+        const tbody = table?.querySelector('tbody');
+        if (!tbody) return;
 
         function getText(el) {
             return (el?.textContent || "").toLowerCase().trim();
@@ -33,7 +50,6 @@
             const status = (statusFilter?.value || "").toLowerCase().trim();
 
             const rows = tbody.querySelectorAll("tr");
-
             rows.forEach(row => {
                 if (row.querySelector("td[colspan]")) return;
 
@@ -66,16 +82,5 @@
         statusFilter?.addEventListener("change", filterTable);
 
         filterTable();
-
-        tbody.querySelectorAll(".clickable-row").forEach(row => {
-            row.addEventListener("click", function(e) {
-                if (window.getSelection && window.getSelection().toString().length) return;
-
-                const reservationId = this.dataset.id;
-                if (!reservationId) return;
-
-                window.location.href = `${detailsBaseUrl}${reservationId}`;
-            });
-        });
     });
 </script>

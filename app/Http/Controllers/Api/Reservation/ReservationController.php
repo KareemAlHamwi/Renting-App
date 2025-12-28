@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Reservation;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Reservation\AddReviewToReservationRequest;
-use App\Http\Requests\Reservation\StoreReservationRequest;
+use App\Http\Requests\Reservation\StoreUpdateReservationRequest;
 use App\Http\Resources\Reservation\ReservationResource;
 use App\Http\Resources\Reservation\ReservedPeriodResource;
 use App\Http\Resources\Reservation\ReviewResource;
@@ -41,7 +41,7 @@ class ReservationController extends Controller {
         return ReservationResource::collection($reservations);
     }
 
-    public function store(StoreReservationRequest $request) {
+    public function store(StoreUpdateReservationRequest $request) {
         $this->authorize('create', Reservation::class);
 
         $userId = (int) $request->user()->id;
@@ -52,6 +52,33 @@ class ReservationController extends Controller {
             startDate: $request->validated('start_date'),
             endDate: $request->validated('end_date'),
         );
+
+        return new ReservationResource($reservation);
+    }
+
+    public function update(StoreUpdateReservationRequest $request, int $id) {
+        $this->authorize('update', [Reservation::class, $id]);
+
+        $reservation = $this->reservationService->updateReservation(
+            reservationId: $id,
+            data: $request->validated()
+        );
+
+        return new ReservationResource($reservation);
+    }
+
+    public function approve(int $id) {
+        $this->authorize('approve', [Reservation::class, $id]);
+
+        $reservation = $this->reservationService->approveReservation($id);
+
+        return new ReservationResource($reservation);
+    }
+
+    public function cancel(int $id) {
+        $this->authorize('cancel', [Reservation::class, $id]);
+
+        $reservation = $this->reservationService->cancelReservation($id);
 
         return new ReservationResource($reservation);
     }

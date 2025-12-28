@@ -48,8 +48,32 @@ class ReservationRepository implements ReservationRepositoryInterface {
         return Reservation::query()->findOrFail($id);
     }
 
-    public function create(array $data): Reservation {
+    public function createReservation(array $data): Reservation {
         return Reservation::query()->create($data);
+    }
+
+    public function updateReservation(Reservation $reservation, array $data): Reservation {
+        $reservation->update($data);
+        return $reservation->refresh();
+    }
+
+    public function approveReservation(Reservation $reservation): Reservation {
+        return $this->updateReservation($reservation, [
+            'status' => ReservationStatus::Reserved,
+        ]);
+    }
+
+    public function cancelReservation(Reservation $reservation): Reservation {
+        return $this->updateReservation($reservation, [
+            'status' => ReservationStatus::Cancelled,
+        ]);
+    }
+
+    public function markExpiredReservationsCompleted(): int {
+        return Reservation::query()
+            ->where('status', ReservationStatus::Reserved)
+            ->whereDate('end_date', '<', now()->toDateString())
+            ->update(['status' => ReservationStatus::Completed]);
     }
 
     public function checkConflict(int $propertyId, string $startDate, string $endDate): bool {
@@ -59,8 +83,26 @@ class ReservationRepository implements ReservationRepositoryInterface {
                 ReservationStatus::Pending,
                 ReservationStatus::Reserved,
             ])
-            ->where('start_date', '<', $endDate)
-            ->where('end_date', '>', $startDate)
+            ->whereDate('start_date', '<=', $endDate)
+            ->whereDate('end_date', '>=', $startDate)
+            ->exists();
+    }
+
+    public function checkConflictExceptReservation(
+        int $propertyId,
+        string $startDate,
+        string $endDate,
+        int $ignoreReservationId
+    ): bool {
+        return Reservation::query()
+            ->where('property_id', $propertyId)
+            ->whereIn('status', [
+                ReservationStatus::Pending,
+                ReservationStatus::Reserved,
+            ])
+            ->whereKeyNot($ignoreReservationId)
+            ->whereDate('start_date', '<=', $endDate)
+            ->whereDate('end_date', '>=', $startDate)
             ->exists();
     }
 

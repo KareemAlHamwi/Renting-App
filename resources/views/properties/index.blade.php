@@ -6,6 +6,6 @@
         <p class="muted">Verify and remove properties</p>
     </div>
 
-    <x-property-table-filters :properties="$properties" />
-    <x-property-table :properties="$properties" />
+    <x-property-table-filters :properties="$properties" tableId="propertiesTable" />
+    <x-property-table :properties="$properties" tableId="propertiesTable" />
 @endsection

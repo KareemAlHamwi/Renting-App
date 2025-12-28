@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/reservations', [ReservationController::class, 'index']);
     Route::get('/reservations/{reservation}', [DashboardController::class, 'showReservation']);
+    Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel']);
 
 
     Route::post('/logout', [DashboardController::class, 'destroy'])->name('logout');

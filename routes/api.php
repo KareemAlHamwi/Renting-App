@@ -119,6 +119,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('reservations')->group(function () {
         Route::get('/', [ReservationController::class, 'tenantReservations']);
         Route::post('/', [ReservationController::class, 'store']);
+        Route::put('/{id}', [ReservationController::class, 'update']);
+        Route::post('/{id}/approve', [ReservationController::class, 'approve']);
+        Route::post('/{id}/cancel', [ReservationController::class, 'cancel']);
         Route::post('/{id}/review', [ReservationController::class, 'addReview']);
     });
 

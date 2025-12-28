@@ -1,7 +1,12 @@
-@props(['properties'])
+@props([
+    'properties',
+    'tableId' => 'propertiesTable',
+    // Base URL used for row navigation (kept here; filters should not handle navigation)
+    'detailsBaseUrl' => '/properties/',
+])
 
 <div class="card table-wrapper">
-    <table class="users-table">
+    <table id="{{ $tableId }}" class="users-table">
         <thead>
             <tr>
                 <th style="text-align: left">Property</th>
@@ -36,7 +41,7 @@
                     </td>
 
                     <td class="gov-cell" data-gov-id="{{ $property->governorate_id }}">
-                        {{ $property->governorate_id ?? '—' }}
+                        {{ $property->governorate->governorate_id ?? '—' }}
                     </td>
 
                     <td>{{ $property->address }}</td>
@@ -59,3 +64,25 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const table = document.getElementById(@json($tableId));
+        if (!table) return;
+
+        const base = @json(rtrim($detailsBaseUrl, '/') . '/');
+
+        table.querySelectorAll("tbody tr.clickable-row").forEach(row => {
+            row.addEventListener("click", function(e) {
+                // Don't hijack clicks on interactive elements inside the row.
+                if (e.target.closest('a, button, input, select, textarea, label')) return;
+                if (window.getSelection && window.getSelection().toString().length) return;
+
+                const id = this.dataset.id;
+                if (!id) return;
+
+                window.location.href = `${base}${id}`;
+            });
+        });
+    });
+</script>

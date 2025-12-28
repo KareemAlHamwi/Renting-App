@@ -52,13 +52,20 @@ class UserPropertyResource extends JsonResource {
 
     private function photoUrl(?string $path): ?string {
         if (!$path) return null;
+
+        // If already absolute, keep it.
         if (str_contains($path, '://')) return $path;
 
+        // Normalize "public/..." and leading slashes
         $path = preg_replace('#^public/#', '', $path);
         $path = ltrim($path, '/');
 
-        return str_starts_with($path, 'storage/')
-            ? asset($path)
-            : asset('storage/' . $path);
+        // Return a RELATIVE public URL (no domain).
+        $relative = str_starts_with($path, 'storage/')
+            ? '/' . $path
+            : '/storage/' . $path;
+
+        // Prevent accidental "//"
+        return preg_replace('#/+#', '/', $relative);
     }
 }

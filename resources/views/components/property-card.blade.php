@@ -34,8 +34,8 @@
 
         <p>
             <strong>Governorate:</strong>
-            <span class="governorateName" data-gov-id="{{ $property->governorate_id }}">
-                {{ $property->governorate_id }}
+            <span >
+                {{ $property->governorate->governorate_name }}
             </span>
         </p>
 

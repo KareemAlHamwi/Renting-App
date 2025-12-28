@@ -6,6 +6,6 @@
         <p class="muted">View reservations</p>
     </div>
 
-    <x-reservations-table-filters />
-    <x-reservations-table :reservations="$reservations" />
+    <x-reservations-table-filters :reservations="$reservations" tableId="reservationsTable" />
+    <x-reservations-table :reservations="$reservations" tableId="reservationsTable" />
 @endsection

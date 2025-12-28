@@ -451,27 +451,37 @@ background: rgba(43, 138, 246, 0.05);
   border-radius: var(--radius-sm);
   font-size: 0.8rem;
   font-weight: 600;
+  border: 1px solid transparent;
 }
 
+/* Verified */
 .status.verified{
-  background: rgba(22, 163, 74, 0.10);
+  background: rgba(22, 163, 74, 0.07);
+  border-color: rgba(22, 163, 74, 0.18);
   color: var(--success);
 }
 
+/* Pending */
 .status.pending{
-  background: rgba(255, 200, 87, 0.15);
+  background: rgba(255, 200, 87, 0.10);
+  border-color: rgba(255, 200, 87, 0.22);
   color: var(--accent);
 }
 
+/* Completed */
 .status.completed{
-  background: rgba(43, 138, 246, 0.15);
+  background: rgba(43, 138, 246, 0.10);
+  border-color: rgba(43, 138, 246, 0.22);
   color: var(--primary);
 }
 
+/* Cancelled */
 .status.cancelled{
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(239, 68, 68, 0.10);
+  border-color: rgba(239, 68, 68, 0.22);
   color: var(--danger);
 }
+
 
 
 /* User detail card */
@@ -530,14 +540,18 @@ padding: 0.3rem 0.6rem;
 border-radius: var(--radius-sm);
 font-size: 0.75rem;
 font-weight: 600;
+border: 1px solid transparent;
+
 }
 .badge-admin {
 background: rgba(43, 138, 246, 0.1);
 color: var(--primary);
+border-color: var(--primary);
 }
 .badge-user {
 background: rgba(107, 114, 128, 0.1);
 color: var(--text-secondary);
+border-color: var(--text-secondary);
 }
 
 .search-form {

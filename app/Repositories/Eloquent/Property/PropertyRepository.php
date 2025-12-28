@@ -10,6 +10,10 @@ class PropertyRepository implements PropertyRepositoryInterface {
         return Property::with('photos', 'governorate')->orderByDesc('id')->get();
     }
 
+    public function getAllVerified() {
+        return Property::with('photos', 'governorate')->whereNotNull('verified_at')->orderByDesc('id')->get();
+    }
+
     public function getUserProperties($id) {
         $properties = Property::query()
             ->where('user_id', $id)
@@ -26,10 +30,6 @@ class PropertyRepository implements PropertyRepositoryInterface {
             ->firstOrFail();
 
         return $property;
-    }
-
-    public function getAllVerified() {
-        return Property::with('photos', 'governorate')->whereNotNull('verified_at')->orderByDesc('id')->get();
     }
 
     public function create(array $data) {

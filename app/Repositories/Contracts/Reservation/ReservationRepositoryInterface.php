@@ -18,5 +18,4 @@ interface ReservationRepositoryInterface {
     public function checkConflict(int $propertyId, string $startDate, string $endDate): bool;
     public function checkConflictExceptReservation(int $propertyId, string $startDate, string $endDate, int $ignoreReservationId): bool;
     public function getReservedPeriods(int $propertyId): Collection;
-    public function attachReview(Reservation $reservation, int $reviewId): Reservation;
 }

@@ -6,11 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model {
     protected $fillable = [
+        'reservation_id',
         'stars',
-        'review'
+        'review',
+    ];
+
+    protected $casts = [
+        'stars' => 'float',
     ];
 
     public function reservation() {
-        return $this->hasOne(Reservation::class);
+        return $this->belongsTo(Reservation::class);
     }
 }

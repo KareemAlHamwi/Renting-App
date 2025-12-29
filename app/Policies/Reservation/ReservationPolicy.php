@@ -3,6 +3,7 @@
 namespace App\Policies\Reservation;
 
 use App\Enums\ReservationStatus;
+use App\Models\Property\Property;
 use App\Models\User\User;
 use App\Models\Reservation\Reservation;
 
@@ -15,8 +16,16 @@ class ReservationPolicy {
         return $this->isVerified($user);
     }
 
-    public function create(User $user): bool {
-        return $this->isVerified($user);
+    public function create(User $user, int|Property $property): bool {
+        if (! $this->isVerified($user)) return false;
+
+        $propertyId = $property instanceof Property ? $property->id : $property;
+
+        // Can't reserve your own property
+        return ! Property::query()
+            ->whereKey($propertyId)
+            ->where('user_id', $user->id)
+            ->exists();
     }
 
     public function update(User $user, int|Reservation $reservation): bool {

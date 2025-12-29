@@ -55,10 +55,10 @@
 
             <!-- Under them: user-data -->
             <div class="user-data">
-                <p><strong>Name :</strong> {{ $person?->first_name }} {{ $person?->last_name }}</p>
-                <p><strong>Phone :</strong> {{ $user->phone_number }}</p>
+                <p><strong>Name:</strong> {{ $person?->first_name }} {{ $person?->last_name }}</p>
+                <p><strong>Phone:</strong> {{ $user->phone_number }}</p>
 
-                <p><strong>Status :</strong>
+                <p><strong>Status:</strong>
                     @if ($user->verified_at)
                         <span class="status verified">Verified</span>
                     @else
@@ -66,7 +66,7 @@
                     @endif
                 </p>
 
-                <p><strong>Registered at :</strong>
+                <p><strong>Registered at:</strong>
                     {{ $person?->created_at ? $person->created_at->format('Y-m-d') : '—' }}
                 </p>
             </div>

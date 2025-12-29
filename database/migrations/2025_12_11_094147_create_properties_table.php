@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->foreignId('governorate_id')->constrained()->onDelete('cascade');
             $table->string('address');
             $table->decimal('rent');
-            $table->float('overall_reviews')->nullable();
+            $table->float('overall_reviews')->default(0);
             $table->integer('reviewers_number')->default(0);
             $table->date('verified_at')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');

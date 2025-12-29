@@ -11,6 +11,7 @@ class ReviewRepository implements ReviewRepositoryInterface {
             ->whereHas('reservation', function ($q) use ($propertyId) {
                 $q->where('property_id', $propertyId);
             })
+            ->with(['reservation'])
             ->latest()
             ->get();
     }
@@ -20,6 +21,15 @@ class ReviewRepository implements ReviewRepositoryInterface {
     }
 
     public function create(array $data): Review {
+        $reservationId = $data['reservation_id'] ?? null;
+        if (!$reservationId) {
+            throw new \InvalidArgumentException('reservation_id is required.');
+        }
+
+        if (Review::query()->where('reservation_id', $reservationId)->exists()) {
+            throw new \RuntimeException('This reservation already has a review.');
+        }
+
         return Review::create($data);
     }
 

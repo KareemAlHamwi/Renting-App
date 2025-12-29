@@ -43,7 +43,14 @@ class UserRepository implements UserRepositoryInterface {
 
     public function updatePhone($id, $phone) {
         $user = User::findOrFail($id);
-        $user->update(['phone_number' => $phone]);
+
+        $user->phone_number = $phone;
+
+        if ($user->isDirty('phone_number')) {
+            $user->verified_at = null;
+        }
+
+        $user->save();
 
         return $user->load('person');
     }

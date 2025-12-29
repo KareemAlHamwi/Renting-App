@@ -119,13 +119,16 @@ class ReservationService {
             throw new \RuntimeException('Bookings cannot be evaluated before they are completed.');
         }
 
-        if (!is_null($reservation->review_id)) {
+        // NEW: check by reservation_id (or use $reservation->review()->exists())
+        if ($reservation->review()->exists()) {
             throw new \RuntimeException('This reservation already has a review.');
         }
 
-        $review = $this->reviewRepository->create($reviewData);
-
-        $this->reservationRepository->attachReview($reservation, $review->id);
+        // NEW: create review and link it via reservation_id
+        $review = $this->reviewRepository->create([
+            ...$reviewData,
+            'reservation_id' => $reservationId,
+        ]);
 
         return $review;
     }

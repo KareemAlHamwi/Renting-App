@@ -12,28 +12,50 @@
 <h2>{{ $cardHeader }}</h2>
 <div class="card">
 
-    <div class="user-data" >
+    <div class="user-data">
         <p><strong>Start date:</strong> {{ $reservation->start_date->format('Y-m-d') }}</p>
         <p><strong>End date:</strong> {{ $reservation->end_date->format('Y-m-d') }}</p>
-        <p><strong>Residnets number:</strong> {{ $reservation->residents_number }}</p>
+        {{-- <p><strong>Residnets number:</strong> {{ $reservation->residents_number }}</p> --}}
         <p><strong>status:</strong>
             @if ($reservation->status === \App\Enums\ReservationStatus::Pending)
-            <span class="status pending">Pending</span>
+                <span class="status pending">Pending</span>
             @elseif ($reservation->status === \App\Enums\ReservationStatus::Reserved)
-            <span class="status verified">Reserved</span>
+                <span class="status verified">Reserved</span>
             @elseif ($reservation->status === \App\Enums\ReservationStatus::Completed)
-            <span class="status completed">Completed</span>
+                <span class="status completed">Completed</span>
             @elseif ($reservation->status === \App\Enums\ReservationStatus::Cancelled)
-            <span class="status cancelled">Cancelled</span>
+                <span class="status cancelled">Cancelled</span>
             @else
-            <span class="status pending">{{ (string) $reservation->status }}</span>
+                <span class="status pending">{{ (string) $reservation->status }}</span>
             @endif
         </p>
-        @if ($reservation->review === null)
-        <p><strong>Review:</strong> {{ $reservation->review }}</p>
-        <p><strong>Stars:</strong> {{ $reservation->stars }}</p>
+        @if ($reservation->review)
+            @php
+                $rating = (float) $reservation->review->stars; // 0.0 .. 5.0 step 0.5
+                $full = (int) floor($rating); // 0..5
+                $half = $rating - $full >= 0.5 ? 1 : 0; // 0 or 1
+                $empty = 5 - $full - $half;
+            @endphp
 
+                <p class="stars-line">
+                    <strong>Stars:</strong>
+                    <span class="stars" aria-label="{{ number_format($rating, 1) }} out of 5">
+                        <span class="stars-full">{!! str_repeat('★', $full) !!}</span>
+                        @if ($half)
+                        <span class="stars-half">★</span>
+                        @endif
+                        <span class="stars-empty">{!! str_repeat('☆', $empty) !!}</span>
+                    </span>
+                    <span class="stars-value">({{ number_format($rating, 1) }})</span>
+                </p>
+
+                <p class="review-line">
+                    <strong>Review:</strong>
+                    <span >{{ $reservation->review->review }}</span>
+                </p>
         @endif
+
+
     </div>
 
     @if ($showActions)
@@ -44,7 +66,9 @@
                     style="display:inline;">
                     @csrf
                     <button type="submit" class="btn btn-primary verify-btn"
-                        @if ($reservation->status === \App\Enums\ReservationStatus::Cancelled || $reservation->status === \App\Enums\ReservationStatus::Completed) disabled @endif>
+                        @if (
+                            $reservation->status === \App\Enums\ReservationStatus::Cancelled ||
+                                $reservation->status === \App\Enums\ReservationStatus::Completed) disabled @endif>
                         {{ $reservation->status === \App\Enums\ReservationStatus::Cancelled || $reservation->status === \App\Enums\ReservationStatus::Completed ? 'Cancelled' : 'Cancel' }}
                     </button>
                 </form>

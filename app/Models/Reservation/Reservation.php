@@ -14,13 +14,12 @@ class Reservation extends Model {
         'status',
         'user_id',
         'property_id',
-        'review_id'
     ];
 
     protected $casts = [
         'status' => ReservationStatus::class,
         'start_date' => 'date',
-        'end_date' => 'date'
+        'end_date' => 'date',
     ];
 
     public function property() {
@@ -32,6 +31,6 @@ class Reservation extends Model {
     }
 
     public function review() {
-        return $this->belongsTo(Review::class);
+        return $this->hasOne(Review::class);
     }
 }

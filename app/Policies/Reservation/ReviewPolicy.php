@@ -24,8 +24,7 @@ class ReviewPolicy {
     }
 
     private function isAuthor(User $user, Review $review): bool {
-        return Reservation::query()
-            ->where('review_id', $review->id)
+        return $review->reservation()
             ->where('user_id', $user->id)
             ->exists();
     }

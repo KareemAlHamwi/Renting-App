@@ -15,9 +15,9 @@ return new class extends Migration {
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->tinyInteger('status')->default(1);
+            $table->integer('cancelled_by')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('property_id')->constrained()->onDelete('cascade');
-            $table->foreignId('review_id')->nullable()->constrained()->nullOnDelete();
             $table->unique(['property_id', 'start_date', 'end_date']);
             $table->timestamps();
         });

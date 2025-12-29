@@ -116,9 +116,4 @@ class ReservationRepository implements ReservationRepositoryInterface {
             ->orderBy('start_date')
             ->get(['start_date', 'end_date']);
     }
-
-    public function attachReview(Reservation $reservation, int $reviewId): Reservation {
-        $reservation->update(['review_id' => $reviewId]);
-        return $reservation->refresh();
-    }
 }

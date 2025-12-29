@@ -447,39 +447,39 @@ background: rgba(43, 138, 246, 0.05);
 
 /* Status badges */
 .status{
-  padding: 0.25rem 0.75rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.8rem;
-  font-weight: 600;
-  border: 1px solid transparent;
+padding: 0.25rem 0.75rem;
+border-radius: var(--radius-sm);
+font-size: 0.8rem;
+font-weight: 600;
+border: 1px solid transparent;
 }
 
 /* Verified */
 .status.verified{
-  background: rgba(22, 163, 74, 0.07);
-  border-color: rgba(22, 163, 74, 0.18);
-  color: var(--success);
+background: rgba(22, 163, 74, 0.07);
+border-color: rgba(22, 163, 74, 0.18);
+color: var(--success);
 }
 
 /* Pending */
 .status.pending{
-  background: rgba(255, 200, 87, 0.10);
-  border-color: rgba(255, 200, 87, 0.22);
-  color: var(--accent);
+background: rgba(255, 200, 87, 0.10);
+border-color: rgba(255, 200, 87, 0.22);
+color: var(--accent);
 }
 
 /* Completed */
 .status.completed{
-  background: rgba(43, 138, 246, 0.10);
-  border-color: rgba(43, 138, 246, 0.22);
-  color: var(--primary);
+background: rgba(43, 138, 246, 0.10);
+border-color: rgba(43, 138, 246, 0.22);
+color: var(--primary);
 }
 
 /* Cancelled */
 .status.cancelled{
-  background: rgba(239, 68, 68, 0.10);
-  border-color: rgba(239, 68, 68, 0.22);
-  color: var(--danger);
+background: rgba(239, 68, 68, 0.10);
+border-color: rgba(239, 68, 68, 0.22);
+color: var(--danger);
 }
 
 
@@ -602,18 +602,18 @@ margin-top: 0rem;
 }
 
 .card-footer{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 1.5rem;
+display:grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+margin-top: 1.5rem;
 }
 
 .card-footer > form{ margin:0; }
 
 .card-footer > a.btn,
 .card-footer > form > button{
-  width:100%;
-  justify-content:center;
+width:100%;
+justify-content:center;
 }
 
 
@@ -638,24 +638,24 @@ background: var(--text-secondary);
 }
 
 .photo-section-person{
-  display:flex;
-  align-items:flex-start;
-  gap:24px;
-  width:100%;
+display:flex;
+align-items:flex-start;
+gap:24px;
+width:100%;
 }
 
 .person-left{
-  flex:1;
-  display:flex;
-  flex-direction:column;  /* makes user-data go UNDER top row */
-  gap:14px;
-  min-width:0;
+flex:1;
+display:flex;
+flex-direction:column; /* makes user-data go UNDER top row */
+gap:14px;
+min-width:0;
 }
 
 .person-top{
-  display:flex;
-  align-items:flex-start;
-  gap:25px;
+display:flex;
+align-items:flex-start;
+gap:25px;
 }
 
 /* Left: big circle avatar */
@@ -670,7 +670,7 @@ display:block;
 
 /* Right: rectangle ID */
 .photo-item.id-item img{
-width: 520px;
+width: 543px;
 height: 290px;
 border-radius: 12px;
 object-fit:cover;
@@ -696,22 +696,22 @@ display: block;
 }
 
 .user-header{
-  display:flex;
-  flex-direction: column;
-  align-items:flex-start;
-  gap:20px;
-  margin:0;
+display:flex;
+flex-direction: column;
+align-items:flex-start;
+gap:20px;
+margin:0;
 }
 .user-header .username{
-  margin:0;
-  font-size:3.0rem;         /* adjust as you like */
-  line-height:1.1;
-  color: var(--primary);     /* optional: match theme */
+margin:0;
+font-size:3.0rem; /* adjust as you like */
+line-height:1.1;
+color: var(--primary); /* optional: match theme */
 }
 
 .user-header .badge{
-  font-size:1.5rem;         /* adjust */
-  line-height:1;
+font-size:1.5rem; /* adjust */
+line-height:1;
 }
 
 
@@ -729,9 +729,9 @@ margin-top: 1.25rem;
 }
 
 /*
-  Horizontal photo scroller (up to 5 photos)
-  - Works with mouse/touch
-  - Scroll-snap for a clean "slide" feel
+Horizontal photo scroller (up to 5 photos)
+- Works with mouse/touch
+- Scroll-snap for a clean "slide" feel
 */
 .photo-carousel{
 display: flex;
@@ -759,6 +759,51 @@ display: block;
 
 /* Slightly tighter on very small screens */
 @media (max-width: 480px){
-  .photo-carousel{ gap: 12px; }
-  .photo-slide img{ width: 92vw; }
+.photo-carousel{ gap: 12px; }
+.photo-slide img{ width: 92vw; }
+}
+
+.stars-line{
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.stars{
+display: inline-flex;
+align-items: center;
+gap: 2px;
+font-size: 1rem;
+line-height: 1;
+}
+
+/* Full stars */
+.stars-full{
+color: #f5b301; /* gold */
+}
+
+/* Empty stars */
+.stars-empty{
+color: rgba(148, 163, 184, 0.9); /* soft gray */
+}
+
+/* Half star: show half gold, half gray */
+.stars-half{
+position: relative;
+display: inline-block;
+color: rgba(148, 163, 184, 0.9); /* base (empty) */
+}
+.stars-half::before{
+content: "★";
+position: absolute;
+left: 0;
+top: 0;
+width: 50%;
+overflow: hidden;
+color: #f5b301; /* gold half */
+}
+
+.stars-value{
+color: rgba(100, 116, 139, 0.9);
+font-size: 0.9rem;
 }

@@ -40,6 +40,32 @@
         </p>
 
         <p><strong>Rent:</strong> {{ $property->rent }}</p>
+
+        @if ($property->overall_reviews)
+            @php
+                $rating = (float) $property->overall_reviews; // 0.0 .. 5.0 step 0.5
+                $full = (float) floor($rating); // 0..5
+                $half = $rating - $full >= 0.5 ? 1 : 0; // 0 or 1
+                $empty = 5 - $full - $half;
+            @endphp
+
+                <p class="stars-line">
+                    <strong>Stars:</strong>
+                    <span class="stars" aria-label="{{ number_format($rating, 1) }} out of 5">
+                        <span class="stars-full">{!! str_repeat('★', $full) !!}</span>
+                        @if ($half)
+                        <span class="stars-half">★</span>
+                        @endif
+                        <span class="stars-empty">{!! str_repeat('☆', $empty) !!}</span>
+                    </span>
+                    <span class="stars-value">({{ number_format($rating, 1) }})</span>
+                </p>
+
+                <p class="review-line">
+                    <strong>Reviewers Number:</strong>
+                    <span >{{ $property->reviewers_number }}</span>
+                </p>
+        @endif
     </div>
 
     @php

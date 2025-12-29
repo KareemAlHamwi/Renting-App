@@ -12,6 +12,8 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('reservation_id')->constrained()->cascadeOnDelete();
+            $table->unique('reservation_id');
             $table->decimal('stars', 2, 1)->default(0.0);
             $table->text('review')->nullable();
             $table->timestamps();

@@ -10,6 +10,7 @@ use App\Http\Resources\Property\UserPropertyListResource;
 use App\Http\Resources\Property\UserPropertyResource;
 use App\Services\Property\PropertyService;
 use App\Models\Property\Property;
+use App\Models\User\User;
 use Illuminate\Http\Request;
 
 class PropertyController extends Controller {
@@ -19,8 +20,10 @@ class PropertyController extends Controller {
         $this->propertyService = $propertyService;
     }
 
-    public function index() {
-        $properties = $this->propertyService->getAllVerified();
+    public function index(Request $request) {
+        $user = $request->user();
+
+        $properties = $this->propertyService->getAllVerified($user);
         return PropertyListResource::collection($properties);
     }
 

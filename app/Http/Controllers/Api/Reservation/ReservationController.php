@@ -9,13 +9,16 @@ use App\Http\Resources\Reservation\ReservationResource;
 use App\Http\Resources\Reservation\ReservedPeriodResource;
 use App\Http\Resources\Reservation\ReviewResource;
 use App\Models\Reservation\Reservation;
+use App\Services\Property\PropertyService;
 use App\Services\Reservation\ReservationService;
 use Illuminate\Http\Request;
 
 class ReservationController extends Controller {
     private ReservationService $reservationService;
-    public function __construct(ReservationService $reservationService) {
+    private PropertyService $propertyService;
+    public function __construct(ReservationService $reservationService, PropertyService $propertyService) {
         $this->reservationService = $reservationService;
+        $this->propertyService = $propertyService;
     }
 
     public function landlordPropertyReservations(Request $request, int $propertyId) {
@@ -42,13 +45,15 @@ class ReservationController extends Controller {
     }
 
     public function store(StoreUpdateReservationRequest $request) {
-        $this->authorize('create', Reservation::class);
+        $propertyId = (int) $request->validated('property_id');
+
+        $this->authorize('create', [Reservation::class, $propertyId]);
 
         $userId = (int) $request->user()->id;
 
         $reservation = $this->reservationService->createReservation(
             userId: $userId,
-            propertyId: (int) $request->validated('property_id'),
+            propertyId: $propertyId,
             startDate: $request->validated('start_date'),
             endDate: $request->validated('end_date'),
         );
@@ -87,15 +92,28 @@ class ReservationController extends Controller {
         $this->authorize('addReview', [Reservation::class, $id]);
 
         $userId = (int) $request->user()->id;
+        $reviewData = $request->validated();
 
         $review = $this->reservationService->addReviewToReservation(
             userId: $userId,
             reservationId: $id,
-            reviewData: $request->validated(),
+            reviewData: $reviewData,
         );
+
+        // Fetch property_id from reservation id
+        $propertyId = (int) Reservation::query()
+            ->whereKey($id)
+            ->value('property_id');
+
+        if ($propertyId <= 0) {
+            abort(404, 'Reservation has no property_id.');
+        }
+
+        $this->propertyService->addReviewStats($propertyId, $reviewData);
 
         return new ReviewResource($review);
     }
+
 
     public function reservedPeriods(int $id) {
         $periods = $this->reservationService->getReservedPeriods($id);

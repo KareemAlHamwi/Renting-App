@@ -8,6 +8,7 @@ class ReviewResource extends JsonResource {
     public function toArray($request): array {
         return [
             'id'         => $this->id,
+            'reservation_id' => $this->reservation_id,
             'stars'      => (float) $this->stars,
             'review'     => $this->review,
             'created_at' => $this->created_at->format('Y-m-d'),

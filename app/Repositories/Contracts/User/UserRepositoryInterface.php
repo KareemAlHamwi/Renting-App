@@ -2,15 +2,16 @@
 
 namespace App\Repositories\Contracts\User;
 
+use App\Models\User\User;
+
 interface UserRepositoryInterface {
     public function index();
-    public function show($id);
-    public function showByPhone($phone);
-    public function showByUsername($username);
+    public function findByPhone(string $phone);
+    public function findByUsername(string $username);
     public function store(array $data);
-    public function update($id, array $data);
-    public function updatePhone($id, $phone);
-    public function updatePassword($id, $password);
-    public function markAsVerified($id);
-    public function destroy($id);
+    public function update(User $user, array $data);
+    public function updatePhone(User $user, string $phone);
+    public function updatePassword(User $user, string $password);
+    public function markAsVerified(User $user);
+    public function destroy(User $user);
 }

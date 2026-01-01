@@ -5,10 +5,10 @@ use Illuminate\Support\Facades\Route;
 
 // User (API)
 use App\Http\Controllers\Api\User\AuthController; //*
-use App\Http\Controllers\Api\User\UserController; //!
+use App\Http\Controllers\Api\User\UserController; //*
 
 // Property (API)
-use App\Http\Controllers\Api\Property\GovernorateController; //!
+use App\Http\Controllers\Api\Property\GovernorateController; //*
 use App\Http\Controllers\Api\Property\PropertyController; //!
 use App\Http\Controllers\Api\Property\PropertyPhotoController; //!
 
@@ -38,7 +38,7 @@ Route::prefix('users')->group(function () {
 
 Route::prefix('governorates')->group(function () {
     Route::get('/', [GovernorateController::class, 'index']);
-    Route::get('/{id}', [GovernorateController::class, 'findById']);
+    Route::get('/{governorate}', [GovernorateController::class, 'findById']);
 });
 
 Route::prefix('properties')->group(function () {

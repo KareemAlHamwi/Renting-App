@@ -2,6 +2,7 @@
 
 namespace App\Services\Property;
 
+use App\Models\Property\Governorate;
 use App\Repositories\Contracts\Property\GovernorateRepositoryInterface;
 
 class GovernorateService {
@@ -15,7 +16,7 @@ class GovernorateService {
         return $this->governorateRepository->getAll();
     }
 
-    public function findById($id) {
-        return $this->governorateRepository->findById($id);
+    public function findById(Governorate $governorate) {
+        return $this->governorateRepository->findById($governorate);
     }
 }

@@ -14,20 +14,12 @@ class UserService {
         $this->userRepository = $users;
     }
 
-    private function validateCredentials(?User $user, string $password): void {
-        if (!$user || !Hash::check($password, $user->password)) {
-            throw ValidationException::withMessages([
-                'message' => ['The provided credentials are incorrect.']
-            ]);
-        }
+    public function findByPhone(string $phone): ?User {
+        return $this->userRepository->findByPhone($phone);
     }
 
-    public function findUserByPhone(string $phone): ?User {
-        return $this->userRepository->showByPhone($phone);
-    }
-
-    public function findUserByUsername(string $username): ?User {
-        return $this->userRepository->showByUsername($username);
+    public function findByUsername(string $username): ?User {
+        return $this->userRepository->findByUsername($username);
     }
 
     public function createUser(array $data): User {
@@ -37,11 +29,11 @@ class UserService {
 
     public function updateSelf(User $user, array $data): User {
         $filteredData = array_filter($data, fn($value) => !is_null($value));
-        return $this->userRepository->update($user->id, $filteredData);
+        return $this->userRepository->update($user, $filteredData);
     }
 
     public function changeSelfPhone(User $user, string $phone): User {
-        return $this->userRepository->updatePhone($user->id, $phone);
+        return $this->userRepository->updatePhone($user, $phone);
     }
 
     public function changeSelfPassword(User $user, string $oldPassword, string $newPassword): User {
@@ -53,14 +45,14 @@ class UserService {
 
         $this->validateCredentials($user, $oldPassword);
 
-        return $this->userRepository->updatePassword($user->id, Hash::make($newPassword));
+        return $this->userRepository->updatePassword($user, Hash::make($newPassword));
     }
 
     public function deleteSelf(User $user, string $password): void {
         $this->validateCredentials($user, $password);
 
         $user->tokens()->delete();
-        $this->userRepository->destroy($user->id);
+        $this->userRepository->destroy($user);
     }
 
     public function verifyUser(User $user): void {
@@ -68,7 +60,7 @@ class UserService {
             return;
         }
 
-        $this->userRepository->markAsVerified($user->id);
+        $this->userRepository->markAsVerified($user);
     }
 
     public function isUserVerified(User $user): bool {
@@ -76,14 +68,26 @@ class UserService {
     }
 
     public function validateLogin(string $identifier, string $password): User {
-        if (preg_match('/^(09[3-9]\d{7}|095\d{7}|944\d{7})$/', $identifier)) {
-            $user = $this->findUserByPhone($identifier);
+        if ($this->isPhoneFormat($identifier)) {
+            $user = $this->findByPhone($identifier);
         } else {
-            $user = $this->findUserByUsername($identifier);
+            $user = $this->findByUsername($identifier);
         }
 
         $this->validateCredentials($user, $password);
 
         return $user;
+    }
+
+    private function isPhoneFormat(string $identifier): bool {
+        return preg_match('/^(09[3-9]\d{7}|095\d{7}|944\d{7})$/', $identifier);
+    }
+
+    private function validateCredentials(?User $user, string $password): void {
+        if (!$user || !Hash::check($password, $user->password)) {
+            throw ValidationException::withMessages([
+                'message' => ['The provided credentials are incorrect.']
+            ]);
+        }
     }
 }

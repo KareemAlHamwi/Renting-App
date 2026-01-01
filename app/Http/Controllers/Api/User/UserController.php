@@ -27,7 +27,7 @@ class UserController extends Controller {
     }
 
     public function publicProfileByUsername(string $username) {
-        return new UserPublicResource($this->userService->findUserByUsername($username));
+        return new UserPublicResource($this->userService->findByUsername($username));
     }
 
     public function update(UpdateProfileRequest $request) {

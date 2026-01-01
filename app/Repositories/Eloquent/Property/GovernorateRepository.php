@@ -11,7 +11,7 @@ class GovernorateRepository implements GovernorateRepositoryInterface {
         return Governorate::all();
     }
 
-    public function findById($id) {
-        return Governorate::with('properties')->findOrFail($id);
+    public function findById(Governorate $governorate) {
+        return Governorate::findOrFail($governorate->id);
     }
 }

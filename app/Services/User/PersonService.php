@@ -23,15 +23,13 @@ class PersonService {
     }
 
     public function updateForUser(User $user, array $data) {
-        $person = Person::query()->findOrFail($user->person_id);
+        $data = $this->hydratePhotoPathsForUpdate($user->person, $data);
 
-        $data = $this->hydratePhotoPathsForUpdate($person, $data);
-
-        return $this->personRepository->update($user->person_id, $data);
+        return $this->personRepository->update($user->person, $data);
     }
 
     public function deleteForUser(User $user) {
-        return $this->personRepository->destroy($user->person_id);
+        return $this->personRepository->destroy($user->person);
     }
 
     private function hydratePhotoPathsForCreate(array $data): array {

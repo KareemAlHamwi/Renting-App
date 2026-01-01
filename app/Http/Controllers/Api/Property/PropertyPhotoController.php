@@ -4,29 +4,35 @@ namespace App\Http\Controllers\Api\Property;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Property\PropertyPhotoRequest;
-use App\Services\Property\PropertyPhotoService;
 use App\Models\Property\Property;
 use App\Models\Property\PropertyPhoto;
+use App\Services\Property\PropertyPhotoService;
 
 class PropertyPhotoController extends Controller {
-    protected PropertyPhotoService $propertyPhotoService;
-
+    private $propertyPhotoService;
     public function __construct(PropertyPhotoService $propertyPhotoService) {
         $this->propertyPhotoService = $propertyPhotoService;
     }
 
-    public function store(PropertyPhotoRequest $request, int $propertyId) {
-        $property = Property::findOrFail($propertyId);
-        $this->authorize('update', $property);
+    public function store(PropertyPhotoRequest $request, Property $property) {
+        $this->authorize('update',$property);
 
-        return $this->propertyPhotoService->createForProperty($propertyId, $request->all());
+        $result = $this->propertyPhotoService->createForProperty(
+            $property,
+            $request->validated()
+        );
+
+        return response()->json($result, 201);
     }
 
-    public function destroy(int $propertyId, int $id) {
-        $photo = PropertyPhoto::where('property_id', $propertyId)->findOrFail($id);
-        $this->authorize('update', $photo->property);
+    public function destroy(Property $property, PropertyPhoto $propertyPhoto) {
+        if ($propertyPhoto->property_id !== $property->getKey()) {
+            abort(404);
+        }
 
-        $this->propertyPhotoService->deletePhoto($photo);
+        $this->authorize('update', $property);
+
+        $this->propertyPhotoService->deletePhoto($propertyPhoto);
 
         return response()->noContent();
     }

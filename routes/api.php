@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\Property\FavoritesController;
 use Illuminate\Support\Facades\Route;
 
 // User (API)
@@ -9,8 +8,9 @@ use App\Http\Controllers\Api\User\UserController; //*
 
 // Property (API)
 use App\Http\Controllers\Api\Property\GovernorateController; //*
-use App\Http\Controllers\Api\Property\PropertyController; //!
-use App\Http\Controllers\Api\Property\PropertyPhotoController; //!
+use App\Http\Controllers\Api\Property\PropertyController; //*
+use App\Http\Controllers\Api\Property\PropertyPhotoController; //*
+use App\Http\Controllers\Api\Property\FavoritesController; //*
 
 // Reservation (API)
 use App\Http\Controllers\Api\Reservation\ReservationController; //!
@@ -42,7 +42,7 @@ Route::prefix('governorates')->group(function () {
 });
 
 Route::prefix('properties')->group(function () {
-    Route::get('/{id}', [PropertyController::class, 'show']);
+    Route::get('/{property}', [PropertyController::class, 'show']);
     Route::get('/{id}/reserved-periods', [ReservationController::class, 'reservedPeriods']);
     Route::get('/{property}/reviews', [ReviewController::class, 'getAllPropertyReviews']);
 });
@@ -76,7 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/password', [UserController::class, 'changePassword']);
         Route::delete('/delete', [UserController::class, 'deleteAccount']);
         Route::get('/properties', [PropertyController::class, 'userProperties']);
-        Route::get('/properties/{id}', [PropertyController::class, 'userProperty']);
+        Route::get('/properties/{property}', [PropertyController::class, 'userProperty']);
     });
 
     /*
@@ -99,7 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
     */
     Route::prefix('properties/{propertyId}/photos')->group(function () {
         Route::post('/', [PropertyPhotoController::class, 'store']);
-        Route::delete('/{id}', [PropertyPhotoController::class, 'destroy']);
+        Route::delete('/{propertyPhoto}', [PropertyPhotoController::class, 'destroy']);
     });
 
     /*
@@ -109,8 +109,8 @@ Route::middleware('auth:sanctum')->group(function () {
     */
     Route::prefix('favorites')->group(function () {
         Route::get('/', [FavoritesController::class, 'userFavorites']);
-        Route::get('/{id}', [FavoritesController::class, 'userFavorite']);
-        Route::post('/toggle', [FavoritesController::class, 'toggle']);
+        Route::get('/{property}', [FavoritesController::class, 'userFavorite']);
+        Route::post('/{property}/toggle', [FavoritesController::class, 'toggle']);
     });
 
     /*

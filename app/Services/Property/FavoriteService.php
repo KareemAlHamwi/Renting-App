@@ -2,7 +2,7 @@
 
 namespace App\Services\Property;
 
-use App\Http\Resources\Property\PropertyResource;
+use App\Models\Property\Property;
 use App\Models\User\User;
 use App\Repositories\Contracts\Property\FavoriteRepositoryInterface;
 
@@ -13,21 +13,21 @@ class FavoriteService {
         $this->favoriteRepository = $favoriteRepository;
     }
 
-    public function userFavorites($userId) {
-        return $this->favoriteRepository->getUserFavorites($userId);
+    public function userFavorites(User $user) {
+        return $this->favoriteRepository->getUserFavorites($user);
     }
 
-    public function userFavorite(User $user, $propertyId) {
-        return $this->favoriteRepository->getUserFavorite($user->id,$propertyId);
+    public function userFavorite(User $user,Property $property) {
+        return $this->favoriteRepository->getUserFavorite($user,$property);
     }
 
-    public function toggleFavorite($userId, $propertyId) {
-        if ($this->favoriteRepository->exists($userId, $propertyId)) {
-            $this->favoriteRepository->remove($userId, $propertyId);
+    public function toggleFavorite(User $user,Property $property) {
+        if ($this->favoriteRepository->exists($user, $property)) {
+            $this->favoriteRepository->remove($user, $property);
             return ['message' => 'Property has been removed from your favorites'];
         }
 
-        $this->favoriteRepository->add($userId, $propertyId);
+        $this->favoriteRepository->add($user, $property);
         return ['message' => 'Property has been added to your favorites'];
     }
 }

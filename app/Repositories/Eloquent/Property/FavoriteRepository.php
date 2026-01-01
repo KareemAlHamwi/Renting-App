@@ -2,44 +2,42 @@
 
 namespace App\Repositories\Eloquent\Property;
 
+use App\Models\Property\Property;
 use App\Models\User\User;
 use App\Repositories\Contracts\Property\FavoriteRepositoryInterface;
 
 class FavoriteRepository implements FavoriteRepositoryInterface {
-    public function getUserFavorites($userId) {
+    public function getUserFavorites(User $user) {
         return User::query()
-            ->findOrFail($userId)
+            ->findOrFail($user->id)
             ->favoriteProperties()
             ->with(['photos', 'governorate'])
             ->whereNotNull('properties.verified_at')
             ->get();
     }
 
-    public function getUserFavorite($userId, $propertyId) {
+    public function getUserFavorite(User $user,Property $property) {
         return User::query()
-            ->findOrFail($userId)
+            ->findOrFail($user->id)
             ->favoriteProperties()
-            ->where('properties.id', $propertyId)
+            ->where('properties.id', $property->id)
             ->whereNotNull('properties.verified_at')
             ->with(['photos', 'governorate'])
             ->firstOrFail();
     }
 
-
-    public function add($userId, $propertyId) {
-        $user = User::findOrFail($userId);
-        $user->favoriteProperties()->syncWithoutDetaching([$propertyId]);
+    public function add(User $user,Property $property) {
+        $user->favoriteProperties()->syncWithoutDetaching([$property->id]);
     }
 
-    public function exists($userId, $propertyId) {
-        return User::findOrFail($userId)
+    public function exists(User $user,Property $property) {
+        return User::findOrFail($user->id)
             ->favoriteProperties()
-            ->where('property_id', $propertyId)
+            ->where('property_id', $property->id)
             ->exists();
     }
 
-    public function remove($userId, $propertyId) {
-        $user = User::findOrFail($userId);
-        $user->favoriteProperties()->detach($propertyId);
+    public function remove(User $user, Property $property) {
+        $user->favoriteProperties()->detach($property->id);
     }
 }

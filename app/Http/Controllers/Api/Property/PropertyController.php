@@ -10,7 +10,6 @@ use App\Http\Resources\Property\UserPropertyListResource;
 use App\Http\Resources\Property\UserPropertyResource;
 use App\Services\Property\PropertyService;
 use App\Models\Property\Property;
-use App\Models\User\User;
 use Illuminate\Http\Request;
 
 class PropertyController extends Controller {
@@ -24,11 +23,11 @@ class PropertyController extends Controller {
         $user = $request->user();
 
         $properties = $this->propertyService->getAllVerified($user);
+
         return PropertyListResource::collection($properties);
     }
 
-    public function show($id) {
-        $property = $this->propertyService->find($id);
+    public function show($property) {
         return new PropertyResource($property);
     }
 
@@ -81,10 +80,10 @@ class PropertyController extends Controller {
         return UserPropertyListResource::collection($properties);
     }
 
-    public function userProperty(Request $request, $propertyId) {
+    public function userProperty(Request $request, Property $property) {
         $user = $request->user();
 
-        $property = $this->propertyService->userProperty($user, $propertyId);
+        $property = $this->propertyService->userProperty($user, $property);
 
         return new UserPropertyResource($property);
     }

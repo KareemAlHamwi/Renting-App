@@ -10,7 +10,7 @@ class PropertyPhotoRepository implements PropertyPhotoRepositoryInterface {
         return PropertyPhoto::create($data);
     }
 
-    public function delete($id) {
-        PropertyPhoto::findOrFail($id)->delete();
+    public function delete(PropertyPhoto $propertyPhoto) {
+        $propertyPhoto->delete();
     }
 }

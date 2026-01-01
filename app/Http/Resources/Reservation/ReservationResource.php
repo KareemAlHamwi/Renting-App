@@ -18,6 +18,7 @@ class ReservationResource extends JsonResource {
             'user_id'     => $this->user_id,
             'property_id' => $this->property_id,
             'review_id'   => $this->review_id,
+            'cancelled_by' => $this->cancelledBy->username,
             'created_at'  => $this->created_at,
             'updated_at'  => $this->updated_at,
         ];

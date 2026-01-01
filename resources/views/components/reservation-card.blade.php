@@ -18,17 +18,22 @@
         {{-- <p><strong>Residnets number:</strong> {{ $reservation->residents_number }}</p> --}}
         <p><strong>status:</strong>
             @if ($reservation->status === \App\Enums\ReservationStatus::Pending)
-                <span class="status pending">Pending</span>
+            <span class="status pending">Pending</span>
             @elseif ($reservation->status === \App\Enums\ReservationStatus::Reserved)
-                <span class="status verified">Reserved</span>
+            <span class="status verified">Reserved</span>
             @elseif ($reservation->status === \App\Enums\ReservationStatus::Completed)
-                <span class="status completed">Completed</span>
+            <span class="status completed">Completed</span>
             @elseif ($reservation->status === \App\Enums\ReservationStatus::Cancelled)
-                <span class="status cancelled">Cancelled</span>
+            <span class="status cancelled">Cancelled</span>
             @else
-                <span class="status pending">{{ (string) $reservation->status }}</span>
+            <span class="status pending">{{ (string) $reservation->status }}</span>
             @endif
         </p>
+
+        @if ($reservation->cancelled_by)
+            <p><strong>Cancelled by:</strong> {{ $reservation->cancelledBy->username }}</p>
+        @endif
+
         @if ($reservation->review)
             @php
                 $rating = (float) $reservation->review->stars; // 0.0 .. 5.0 step 0.5

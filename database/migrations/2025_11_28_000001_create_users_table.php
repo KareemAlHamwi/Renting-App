@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->string('phone_number')->unique();
             $table->string('username')->unique();
             $table->string('password');
-            $table->date('verified_at')->nullable();
+            $table->dateTime('verified_at')->nullable();
             $table->boolean('role')->default(0);
             $table->foreignId('person_id')->references('id')->on('people')->onDelete('cascade');
         });

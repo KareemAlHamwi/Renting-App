@@ -14,6 +14,7 @@ class Reservation extends Model {
         'status',
         'user_id',
         'property_id',
+        'cancelled_by',
     ];
 
     protected $casts = [
@@ -32,5 +33,9 @@ class Reservation extends Model {
 
     public function review() {
         return $this->hasOne(Review::class);
+    }
+
+    public function cancelledBy() {
+        return $this->belongsTo(User::class, 'cancelled_by');
     }
 }

@@ -80,10 +80,12 @@ class ReservationController extends Controller {
         return new ReservationResource($reservation);
     }
 
-    public function cancel(int $id) {
-        $this->authorize('cancel', [Reservation::class, $id]);
+    public function cancel(Request $request, Reservation $reservation) {
+        $this->authorize('cancel', $reservation);
 
-        $reservation = $this->reservationService->cancelReservation($id);
+        $userId = $request->user()->id;
+
+        $reservation = $this->reservationService->cancelReservation($reservation->id, $userId);
 
         return new ReservationResource($reservation);
     }

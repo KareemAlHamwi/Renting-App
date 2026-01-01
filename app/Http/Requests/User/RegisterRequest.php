@@ -45,7 +45,11 @@ class RegisterRequest extends FormRequest {
                 'max:50',
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/',
             ],
-            'device_id' => ['required', 'string', 'max:255'],
+            'device_id' => [
+                'required',
+                'string',
+                'max:255'
+            ],
         ];
     }
 

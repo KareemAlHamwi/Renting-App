@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->decimal('rent');
             $table->float('overall_reviews')->default(0);
             $table->integer('reviewers_number')->default(0);
-            $table->date('verified_at')->nullable();
+            $table->dateTime('verified_at')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

@@ -70,7 +70,6 @@ class UserController extends Controller {
 
     public function deleteAccount(DeleteAccountRequest $request) {
         $user = $request->user();
-        // $personId = $user->person_id;
 
         $this->userService->deleteSelf($user, $request->password);
 

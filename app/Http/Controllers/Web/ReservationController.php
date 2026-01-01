@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Reservation\ReservationResource;
 use App\Models\Reservation\Reservation;
 use App\Services\Reservation\ReservationService;
+use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller {
     private ReservationService $reservationService;
@@ -20,7 +21,7 @@ class ReservationController extends Controller {
     }
 
     public function cancel(int $id) {
-        $this->reservationService->cancelReservation($id);
+        $this->reservationService->cancelReservation($id,Auth::user()->id);
 
         return redirect()
             ->back()

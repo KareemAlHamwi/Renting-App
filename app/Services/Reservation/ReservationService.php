@@ -86,18 +86,14 @@ class ReservationService {
         return $this->reservationRepository->approveReservation($reservation);
     }
 
-    public function cancelReservation(int $reservationId): Reservation {
+    public function cancelReservation(int $reservationId, int $cancelledBy): Reservation {
         $reservation = $this->reservationRepository->findById($reservationId);
 
-        if ($reservation->status === ReservationStatus::Completed) {
-            throw new \RuntimeException('You cannot cancel a completed reservation.');
-        }
-
         if ($reservation->status === ReservationStatus::Cancelled) {
-            return $reservation; // already cancelled
+            return $reservation; // idempotent
         }
 
-        return $this->reservationRepository->cancelReservation($reservation);
+        return $this->reservationRepository->cancelReservation($reservation, $cancelledBy);
     }
 
     public function markExpiredReservationsCompleted(): int {

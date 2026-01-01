@@ -4,17 +4,17 @@ use App\Http\Controllers\Api\Property\FavoritesController;
 use Illuminate\Support\Facades\Route;
 
 // User (API)
-use App\Http\Controllers\Api\User\AuthController;
-use App\Http\Controllers\Api\User\UserController;
+use App\Http\Controllers\Api\User\AuthController; //*
+use App\Http\Controllers\Api\User\UserController; //!
 
 // Property (API)
-use App\Http\Controllers\Api\Property\GovernorateController;
-use App\Http\Controllers\Api\Property\PropertyController;
-use App\Http\Controllers\Api\Property\PropertyPhotoController;
+use App\Http\Controllers\Api\Property\GovernorateController; //!
+use App\Http\Controllers\Api\Property\PropertyController; //!
+use App\Http\Controllers\Api\Property\PropertyPhotoController; //!
 
 // Reservation (API)
-use App\Http\Controllers\Api\Reservation\ReservationController;
-use App\Http\Controllers\Api\Reservation\ReviewController;
+use App\Http\Controllers\Api\Reservation\ReservationController; //!
+use App\Http\Controllers\Api\Reservation\ReviewController; //!
 
 /*
 |--------------------------------------------------------------------------
@@ -23,8 +23,8 @@ use App\Http\Controllers\Api\Reservation\ReviewController;
 */
 
 Route::prefix('auth')->group(function () {
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 });
 
 /*
@@ -59,8 +59,10 @@ Route::middleware('auth:sanctum')->group(function () {
     | Auth
     |--------------------------------------------------------------------------
     */
-    Route::post('auth/logout', [AuthController::class, 'logout']);
-    Route::post('auth/logout-all', [AuthController::class, 'logoutAll']);
+    Route::prefix('auth')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -121,7 +123,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [ReservationController::class, 'store']);
         Route::put('/{id}', [ReservationController::class, 'update']);
         Route::post('/{id}/approve', [ReservationController::class, 'approve']);
-        Route::post('/{id}/cancel', [ReservationController::class, 'cancel']);
+        Route::post('/{reservation}/cancel', [ReservationController::class, 'cancel']);
         Route::post('/{id}/review', [ReservationController::class, 'addReview']);
     });
 

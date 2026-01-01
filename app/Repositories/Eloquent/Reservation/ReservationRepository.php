@@ -63,9 +63,10 @@ class ReservationRepository implements ReservationRepositoryInterface {
         ]);
     }
 
-    public function cancelReservation(Reservation $reservation): Reservation {
+    public function cancelReservation(Reservation $reservation, int $cancelledBy): Reservation {
         return $this->updateReservation($reservation, [
-            'status' => ReservationStatus::Cancelled,
+            'status'       => ReservationStatus::Cancelled,
+            'cancelled_by' => $cancelledBy,
         ]);
     }
 

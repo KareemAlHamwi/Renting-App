@@ -8,6 +8,7 @@ use App\Http\Requests\Reservation\StoreUpdateReservationRequest;
 use App\Http\Resources\Reservation\ReservationResource;
 use App\Http\Resources\Reservation\ReservedPeriodResource;
 use App\Http\Resources\Reservation\ReviewResource;
+use App\Models\Property\Property;
 use App\Models\Reservation\Reservation;
 use App\Services\Property\PropertyService;
 use App\Services\Reservation\ReservationService;
@@ -21,15 +22,12 @@ class ReservationController extends Controller {
         $this->propertyService = $propertyService;
     }
 
-    public function landlordPropertyReservations(Request $request, int $propertyId) {
+    public function landlordPropertyReservations(Request $request, Property $property) {
         $this->authorize('landlordPropertyReservations', Reservation::class);
 
-        $landlordUserId = (int) $request->user()->id;
+        $landlord = $request->user();
 
-        $reservations = $this->reservationService->getLandlordPropertyReservations(
-            landlordUserId: $landlordUserId,
-            propertyId: $propertyId
-        );
+        $reservations = $this->reservationService->getLandlordPropertyReservations($landlord, $property);
 
         return ReservationResource::collection($reservations);
     }
@@ -37,45 +35,40 @@ class ReservationController extends Controller {
     public function tenantReservations(Request $request) {
         $this->authorize('tenantReservations', Reservation::class);
 
-        $userId = (int) $request->user()->id;
+        $user = $request->user();
 
-        $reservations = $this->reservationService->getTenantReservations($userId);
+        $reservations = $this->reservationService->getTenantReservations($user);
 
         return ReservationResource::collection($reservations);
     }
 
-    public function store(StoreUpdateReservationRequest $request) {
-        $propertyId = (int) $request->validated('property_id');
+    public function store(StoreUpdateReservationRequest $request, Property $property) {
+        $this->authorize('create', [Reservation::class, $property]);
 
-        $this->authorize('create', [Reservation::class, $propertyId]);
-
-        $userId = (int) $request->user()->id;
+        $user = $request->user();
 
         $reservation = $this->reservationService->createReservation(
-            userId: $userId,
-            propertyId: $propertyId,
-            startDate: $request->validated('start_date'),
-            endDate: $request->validated('end_date'),
+            $user,
+            $property,
+            $request->validated('start_date'),
+            $request->validated('end_date')
         );
 
         return new ReservationResource($reservation);
     }
 
-    public function update(StoreUpdateReservationRequest $request, int $id) {
-        $this->authorize('update', [Reservation::class, $id]);
+    public function update(StoreUpdateReservationRequest $request, Reservation $reservation) {
+        $this->authorize('update', $reservation);
 
-        $reservation = $this->reservationService->updateReservation(
-            reservationId: $id,
-            data: $request->validated()
-        );
+        $updated = $this->reservationService->updateReservation($reservation,$request->validated());
 
-        return new ReservationResource($reservation);
+        return new ReservationResource($updated);
     }
 
-    public function approve(int $id) {
-        $this->authorize('approve', [Reservation::class, $id]);
+    public function approve(Reservation $reservation) {
+        $this->authorize('approve', $reservation);
 
-        $reservation = $this->reservationService->approveReservation($id);
+        $reservation = $this->reservationService->approveReservation($reservation);
 
         return new ReservationResource($reservation);
     }
@@ -83,42 +76,28 @@ class ReservationController extends Controller {
     public function cancel(Request $request, Reservation $reservation) {
         $this->authorize('cancel', $reservation);
 
-        $userId = $request->user()->id;
+        $user = $request->user();
 
-        $reservation = $this->reservationService->cancelReservation($reservation->id, $userId);
+        $reservation = $this->reservationService->cancelReservation($reservation, $user);
 
         return new ReservationResource($reservation);
     }
 
-    public function addReview(AddReviewToReservationRequest $request, int $id) {
-        $this->authorize('addReview', [Reservation::class, $id]);
+    public function addReview(AddReviewToReservationRequest $request, Reservation $reservation) {
+        $this->authorize('addReview', $reservation);
 
-        $userId = (int) $request->user()->id;
+        $user = $request->user();
         $reviewData = $request->validated();
 
-        $review = $this->reservationService->addReviewToReservation(
-            userId: $userId,
-            reservationId: $id,
-            reviewData: $reviewData,
-        );
+        $review = $this->reservationService->addReviewToReservation($user,$reservation,$reviewData);
 
-        // Fetch property_id from reservation id
-        $propertyId = (int) Reservation::query()
-            ->whereKey($id)
-            ->value('property_id');
-
-        if ($propertyId <= 0) {
-            abort(404, 'Reservation has no property_id.');
-        }
-
-        $this->propertyService->addReviewStats($propertyId, $reviewData);
+        $this->propertyService->addReviewStats($reservation, $reviewData);
 
         return new ReviewResource($review);
     }
 
-
-    public function reservedPeriods(int $id) {
-        $periods = $this->reservationService->getReservedPeriods($id);
+    public function reservedPeriods(Property $property) {
+        $periods = $this->reservationService->getReservedPeriods($property);
 
         return ReservedPeriodResource::collection($periods);
     }

@@ -3,7 +3,6 @@
 namespace App\Policies\Reservation;
 
 use App\Models\User\User;
-use App\Models\Reservation\Reservation;
 use App\Models\Reservation\Review;
 
 class ReviewPolicy {

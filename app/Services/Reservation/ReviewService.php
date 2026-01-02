@@ -2,27 +2,26 @@
 
 namespace App\Services\Reservation;
 
+use App\Models\Property\Property;
 use App\Models\Reservation\Review;
 use App\Repositories\Contracts\Reservation\ReviewRepositoryInterface;
 
 class ReviewService {
     private $reviewRepository;
 
-    public function __construct(
-        ReviewRepositoryInterface $reviewRepository
-    ) {
+    public function __construct(ReviewRepositoryInterface $reviewRepository) {
         $this->reviewRepository = $reviewRepository;
     }
 
-    public function getAllPropertyReviews($propertyId) {
-        return $this->reviewRepository->getAllPropertyReviews($propertyId);
+    public function getAllPropertyReviews(Property $property) {
+        return $this->reviewRepository->getAllPropertyReviews($property);
     }
 
-    public function getReview($id): Review {
-        return $this->reviewRepository->findById($id);
+    public function getReview(Review $review) {
+        return $this->reviewRepository->findById($review);
     }
 
-    public function createReview(array $data): Review {
+    public function createReview(array $data) {
         if (empty($data['reservation_id'])) {
             throw new \InvalidArgumentException('reservation_id is required.');
         }
@@ -30,16 +29,13 @@ class ReviewService {
         return $this->reviewRepository->create($data);
     }
 
-    public function updateReview($id, array $data): Review {
-        $review = $this->reviewRepository->findById($id);
-
+    public function updateReview(Review $review, array $data) {
         unset($data['reservation_id']);
 
         return $this->reviewRepository->update($review, $data);
     }
 
-    public function deleteReview($id): void {
-        $review = $this->reviewRepository->findById($id);
+    public function deleteReview(Review $review) {
         $this->reviewRepository->delete($review);
     }
 }

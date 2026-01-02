@@ -11,7 +11,7 @@ class AddReviewToReservationRequest extends FormRequest {
 
     public function rules(): array {
         return [
-            'stars' => [
+            'rating' => [
                 'required',
                 'numeric',
                 'min:0',
@@ -32,7 +32,7 @@ class AddReviewToReservationRequest extends FormRequest {
                 },
             ],
 
-            'review' => ['nullable', 'string'],
+            'comment' => ['nullable', 'string'],
         ];
     }
 }

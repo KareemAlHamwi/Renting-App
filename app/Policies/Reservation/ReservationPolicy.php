@@ -4,8 +4,8 @@ namespace App\Policies\Reservation;
 
 use App\Enums\ReservationStatus;
 use App\Models\Property\Property;
-use App\Models\User\User;
 use App\Models\Reservation\Reservation;
+use App\Models\User\User;
 
 class ReservationPolicy {
     public function landlordPropertyReservations(User $user): bool {
@@ -16,78 +16,69 @@ class ReservationPolicy {
         return $this->isVerified($user);
     }
 
-    public function create(User $user, int|Property $property): bool {
-        if (! $this->isVerified($user)) return false;
+    public function create(User $user, Property $property): bool {
+        if (!$this->isVerified($user)) {
+            return false;
+        }
 
-        $propertyId = $property instanceof Property ? $property->id : $property;
-
-        // Can't reserve your own property
-        return ! Property::query()
-            ->whereKey($propertyId)
-            ->where('user_id', $user->id)
-            ->exists();
+        return $property->user_id !== $user->id;
     }
 
-    public function update(User $user, int|Reservation $reservation): bool {
-        if (! $this->isVerified($user)) return false;
+    public function update(User $user, Reservation $reservation): bool {
+        if (!$this->isVerified($user)) {
+            return false;
+        }
 
-        $reservationId = $reservation instanceof Reservation ? $reservation->id : $reservation;
+        if ($reservation->user_id !== $user->id) {
+            return false;
+        }
 
-        // Only the tenant (owner of the reservation) can update it
-        return Reservation::query()
-            ->whereKey($reservationId)
-            ->where('user_id', $user->id)
-            ->whereNotIn('status', [
-                ReservationStatus::Cancelled,
-                ReservationStatus::Completed,
-            ])
-            ->exists();
+        return !in_array($reservation->status, [
+            ReservationStatus::Cancelled,
+            ReservationStatus::Completed,
+        ], true);
     }
 
-    public function approve(User $user, int|Reservation $reservation): bool {
-        if (! $this->isVerified($user)) return false;
+    public function approve(User $user, Reservation $reservation): bool {
+        if (!$this->isVerified($user)) {
+            return false;
+        }
 
-        $reservationId = $reservation instanceof Reservation ? $reservation->id : $reservation;
+        if ($reservation->status !== ReservationStatus::Pending) {
+            return false;
+        }
 
-        // Only the landlord (owner of the property) can approve, and only if Pending
-        return Reservation::query()
-            ->whereKey($reservationId)
-            ->where('status', ReservationStatus::Pending)
-            ->whereHas('property', fn($q) => $q->where('user_id', $user->id))
-            ->exists();
+        return (int) $reservation->property?->user_id === (int) $user->id;
     }
 
-    public function cancel(User $user, int|Reservation $reservation): bool {
-        if (! $this->isVerified($user)) return false;
+    public function cancel(User $user, Reservation $reservation): bool {
+        if (!$this->isVerified($user)) {
+            return false;
+        }
 
-        $reservationId = $reservation instanceof Reservation ? $reservation->id : $reservation;
+        if (in_array($reservation->status, [
+            ReservationStatus::Cancelled,
+            ReservationStatus::Completed,
+        ], true)) {
+            return false;
+        }
 
-        // Tenant OR landlord can cancel if not Completed and not already Cancelled
-        return Reservation::query()
-            ->whereKey($reservationId)
-            ->whereNotIn('status', [
-                ReservationStatus::Cancelled,
-                ReservationStatus::Completed,
-            ])
-            ->where(function ($q) use ($user) {
-                $q->where('user_id', $user->id) // tenant
-                    ->orWhereHas('property', fn($qq) => $qq->where('user_id', $user->id)); // landlord
-            })
-            ->exists();
+        $isTenant = ((int) $reservation->user_id === (int) $user->id);
+
+        $isLandlord = ((int) $reservation->property?->user_id === (int) $user->id);
+
+        return $isTenant || $isLandlord;
     }
 
-    public function addReview(User $user, int|Reservation $reservation): bool {
-        if (! $this->isVerified($user)) return false;
+    public function addReview(User $user, Reservation $reservation): bool {
+        if (!$this->isVerified($user)) {
+            return false;
+        }
 
-        $reservationId = $reservation instanceof Reservation ? $reservation->id : $reservation;
-
-        return Reservation::query()
-            ->whereKey($reservationId)
-            ->where('user_id', $user->id)
-            ->exists();
+        return (int) $reservation->user_id === (int) $user->id;
     }
 
     private function isVerified(User $user): bool {
-        return !is_null($user->verified_at);
+        return $user->verified_at !== null;
     }
 }

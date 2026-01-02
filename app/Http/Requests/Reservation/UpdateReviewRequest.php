@@ -11,7 +11,7 @@ class UpdateReviewRequest extends FormRequest {
 
     public function rules(): array {
         return [
-            'stars' => [
+            'rating' => [
                 'sometimes',
                 'numeric',
                 'min:0',
@@ -32,7 +32,7 @@ class UpdateReviewRequest extends FormRequest {
                 },
             ],
 
-            'review' => ['sometimes', 'nullable', 'string'],
+            'comment' => ['sometimes', 'nullable', 'string'],
         ];
     }
 }

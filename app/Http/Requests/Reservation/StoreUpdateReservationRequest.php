@@ -13,7 +13,6 @@ class StoreUpdateReservationRequest extends FormRequest {
         return [
             'start_date'  => ['required', 'date'],
             'end_date'    => ['nullable', 'date', 'after_or_equal:start_date'],
-            'property_id' => ['required', 'integer', 'exists:properties,id'],
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Services\Property;
 
 use App\Models\Property\Property;
+use App\Models\Reservation\Reservation;
 use App\Models\User\User;
 use App\Repositories\Contracts\Property\PropertyRepositoryInterface;
 
@@ -58,7 +59,11 @@ class PropertyService {
         return $this->propertyRepository->getUserProperty($user, $property);
     }
 
-    public function addReviewStats(Property $property, array $reviewData) {
+    public function addReviewStats(Reservation $reservation, array $reviewData) {
+        $property = $reservation->relationLoaded('property')
+            ? $reservation->property
+            : $reservation->load('property')->property;
+
         $rating = $this->ratingFrom($reviewData);
 
         $this->propertyRepository->applyReviewStatsAdd($property, $rating);
@@ -78,6 +83,6 @@ class PropertyService {
     }
 
     private function ratingFrom(array $reviewData) {
-        return (float) ($reviewData['stars'] ?? 0);
+        return (float) ($reviewData['rating'] ?? 0);
     }
 }

@@ -3,12 +3,13 @@
 namespace App\Repositories\Eloquent\Reservation;
 
 use App\Enums\ReservationStatus;
+use App\Models\Property\Property;
 use App\Models\Reservation\Reservation;
+use App\Models\User\User;
 use App\Repositories\Contracts\Reservation\ReservationRepositoryInterface;
-use Illuminate\Support\Collection;
 
 class ReservationRepository implements ReservationRepositoryInterface {
-    public function getAllReservations(): Collection {
+    public function getAllReservations() {
         return Reservation::query()
             ->with([
                 'user',
@@ -21,65 +22,65 @@ class ReservationRepository implements ReservationRepositoryInterface {
             ->get();
     }
 
-    public function getLandlordPropertyReservations(int $landlordUserId, int $propertyId): Collection {
+    public function getLandlordPropertyReservations(User $landlord, Property $property) {
         return Reservation::query()
-            ->with(['user', 'review']) // tenant + review (add 'property' if you need it)
-            ->where('property_id', $propertyId)
-            ->whereHas('property', function ($q) use ($landlordUserId) {
-                $q->where('user_id', $landlordUserId);
+            ->with(['user', 'review'])
+            ->where('property_id', $property->id)
+            ->whereHas('property', function ($q) use ($landlord) {
+                $q->where('user_id', $landlord->id);
             })
             ->orderByDesc('start_date')
             ->get();
     }
 
-    public function getTenantReservations(int $tenantUserId): Collection {
+    public function getTenantReservations(User $tenant) {
         return Reservation::query()
             ->with([
                 'property.governorate',
-                'property.primaryPhoto', // smallest payload for listing
+                'property.primaryPhoto',
                 'review',
             ])
-            ->where('user_id', $tenantUserId)
+            ->where('user_id', $tenant->id)
             ->orderByDesc('start_date')
             ->get();
     }
 
-    public function findById(int $id): Reservation {
-        return Reservation::query()->findOrFail($id);
+    public function findById(Reservation $reservation) {
+        return Reservation::query()->findOrFail($reservation->id);
     }
 
-    public function createReservation(array $data): Reservation {
+    public function createReservation(array $data) {
         return Reservation::query()->create($data);
     }
 
-    public function updateReservation(Reservation $reservation, array $data): Reservation {
+    public function updateReservation(Reservation $reservation, array $data) {
         $reservation->update($data);
         return $reservation->refresh();
     }
 
-    public function approveReservation(Reservation $reservation): Reservation {
+    public function approveReservation(Reservation $reservation) {
         return $this->updateReservation($reservation, [
             'status' => ReservationStatus::Reserved,
         ]);
     }
 
-    public function cancelReservation(Reservation $reservation, int $cancelledBy): Reservation {
+    public function cancelReservation(Reservation $reservation, User $cancelledBy) {
         return $this->updateReservation($reservation, [
             'status'       => ReservationStatus::Cancelled,
-            'cancelled_by' => $cancelledBy,
+            'cancelled_by' => $cancelledBy->id,
         ]);
     }
 
-    public function markExpiredReservationsCompleted(): int {
+    public function markExpiredReservationsCompleted() {
         return Reservation::query()
             ->where('status', ReservationStatus::Reserved)
             ->whereDate('end_date', '<', now()->toDateString())
             ->update(['status' => ReservationStatus::Completed]);
     }
 
-    public function checkConflict(int $propertyId, string $startDate, string $endDate): bool {
+    public function checkConflict(Property $property, string $startDate, string $endDate) {
         return Reservation::query()
-            ->where('property_id', $propertyId)
+            ->where('property_id', $property->id)
             ->whereIn('status', [
                 ReservationStatus::Pending,
                 ReservationStatus::Reserved,
@@ -89,27 +90,22 @@ class ReservationRepository implements ReservationRepositoryInterface {
             ->exists();
     }
 
-    public function checkConflictExceptReservation(
-        int $propertyId,
-        string $startDate,
-        string $endDate,
-        int $ignoreReservationId
-    ): bool {
+    public function checkConflictExceptReservation(Property $property,string $startDate,string $endDate,Reservation $ignoreReservation) {
         return Reservation::query()
-            ->where('property_id', $propertyId)
+            ->where('property_id', $property->id)
             ->whereIn('status', [
                 ReservationStatus::Pending,
                 ReservationStatus::Reserved,
             ])
-            ->whereKeyNot($ignoreReservationId)
+            ->whereKeyNot($ignoreReservation->id)
             ->whereDate('start_date', '<=', $endDate)
             ->whereDate('end_date', '>=', $startDate)
             ->exists();
     }
 
-    public function getReservedPeriods(int $propertyId): Collection {
+    public function getReservedPeriods(Property $property) {
         return Reservation::query()
-            ->where('property_id', $propertyId)
+            ->where('property_id', $property->id)
             ->whereIn('status', [
                 ReservationStatus::Pending,
                 ReservationStatus::Reserved,

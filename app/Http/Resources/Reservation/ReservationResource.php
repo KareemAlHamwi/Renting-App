@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ReservationResource extends JsonResource {
     public function toArray($request): array {
-        $status = $this->status; // if casted to enum, it's already ReservationStatus
+        $status = $this->status;
 
         return [
             'id'          => $this->id,
@@ -17,8 +17,7 @@ class ReservationResource extends JsonResource {
             'status_name' => $status instanceof ReservationStatus ? $status->name : null,
             'user_id'     => $this->user_id,
             'property_id' => $this->property_id,
-            'review_id'   => $this->review_id,
-            'cancelled_by' => $this->cancelledBy->username,
+            'cancelled_by' => $this->cancelledBy ? $this->cancelledBy->username : null,
             'created_at'  => $this->created_at,
             'updated_at'  => $this->updated_at,
         ];

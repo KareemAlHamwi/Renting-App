@@ -3,18 +3,18 @@
 use Illuminate\Support\Facades\Route;
 
 // User (API)
-use App\Http\Controllers\Api\User\AuthController; //*
-use App\Http\Controllers\Api\User\UserController; //*
+use App\Http\Controllers\Api\User\AuthController;
+use App\Http\Controllers\Api\User\UserController;
 
 // Property (API)
-use App\Http\Controllers\Api\Property\GovernorateController; //*
-use App\Http\Controllers\Api\Property\PropertyController; //*
-use App\Http\Controllers\Api\Property\PropertyPhotoController; //*
-use App\Http\Controllers\Api\Property\FavoritesController; //*
+use App\Http\Controllers\Api\Property\GovernorateController;
+use App\Http\Controllers\Api\Property\PropertyController;
+use App\Http\Controllers\Api\Property\PropertyPhotoController;
+use App\Http\Controllers\Api\Property\FavoritesController;
 
 // Reservation (API)
-use App\Http\Controllers\Api\Reservation\ReservationController; //!
-use App\Http\Controllers\Api\Reservation\ReviewController; //!
+use App\Http\Controllers\Api\Reservation\ReservationController;
+use App\Http\Controllers\Api\Reservation\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +43,7 @@ Route::prefix('governorates')->group(function () {
 
 Route::prefix('properties')->group(function () {
     Route::get('/{property}', [PropertyController::class, 'show']);
-    Route::get('/{id}/reserved-periods', [ReservationController::class, 'reservedPeriods']);
+    Route::get('/{property}/reserved-periods', [ReservationController::class, 'reservedPeriods']);
     Route::get('/{property}/reviews', [ReviewController::class, 'getAllPropertyReviews']);
 });
 
@@ -86,20 +86,16 @@ Route::middleware('auth:sanctum')->group(function () {
     */
     Route::prefix('properties')->group(function () {
         Route::get('/', [PropertyController::class, 'index']);
-        Route::get('/{propertyId}/reservations', [ReservationController::class, 'landlordPropertyReservations']);
         Route::post('/', [PropertyController::class, 'store']);
         Route::put('/{property}', [PropertyController::class, 'update']);
         Route::delete('/{property}', [PropertyController::class, 'destroy']);
-    });
+        Route::get('/{property}/reservations', [ReservationController::class, 'landlordPropertyReservations']);
+        Route::post('/{property}/reservations', [ReservationController::class, 'store']);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Property Photos
-    |--------------------------------------------------------------------------
-    */
-    Route::prefix('properties/{propertyId}/photos')->group(function () {
-        Route::post('/', [PropertyPhotoController::class, 'store']);
-        Route::delete('/{propertyPhoto}', [PropertyPhotoController::class, 'destroy']);
+        Route::scopeBindings()->prefix('{property}/photos')->group(function () {
+            Route::post('/', [PropertyPhotoController::class, 'store']);
+            Route::delete('/{propertyPhoto}', [PropertyPhotoController::class, 'destroy']);
+        });
     });
 
     /*
@@ -120,11 +116,10 @@ Route::middleware('auth:sanctum')->group(function () {
     */
     Route::prefix('reservations')->group(function () {
         Route::get('/', [ReservationController::class, 'tenantReservations']);
-        Route::post('/', [ReservationController::class, 'store']);
-        Route::put('/{id}', [ReservationController::class, 'update']);
-        Route::post('/{id}/approve', [ReservationController::class, 'approve']);
+        Route::put('/{reservation}', [ReservationController::class, 'update']);
+        Route::post('/{reservation}/approve', [ReservationController::class, 'approve']);
         Route::post('/{reservation}/cancel', [ReservationController::class, 'cancel']);
-        Route::post('/{id}/review', [ReservationController::class, 'addReview']);
+        Route::post('/{reservation}/review', [ReservationController::class, 'addReview']);
     });
 
     /*

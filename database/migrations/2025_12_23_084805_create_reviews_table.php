@@ -14,18 +14,18 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('reservation_id')->constrained()->cascadeOnDelete();
             $table->unique('reservation_id');
-            $table->decimal('stars', 2, 1)->default(0.0);
-            $table->text('review')->nullable();
+            $table->decimal('rating', 2, 1)->default(0.0);
+            $table->text('comment')->nullable();
             $table->timestamps();
         });
 
         DB::statement("
             ALTER TABLE reviews
-            ADD CONSTRAINT chk_review_stars
+            ADD CONSTRAINT chk_review_rating
             CHECK (
-                stars >= 0
-                AND stars <= 5
-                AND MOD(stars * 10, 5) = 0
+                rating >= 0
+                AND rating <= 5
+                AND MOD(rating * 10, 5) = 0
             )"
         );
     }

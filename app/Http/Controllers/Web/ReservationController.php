@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Reservation\ReservationResource;
 use App\Models\Reservation\Reservation;
 use App\Services\Reservation\ReservationService;
 use Illuminate\Support\Facades\Auth;
@@ -20,8 +19,8 @@ class ReservationController extends Controller {
         return view('reservations.index', compact('reservations'));
     }
 
-    public function cancel(int $id) {
-        $this->reservationService->cancelReservation($id,Auth::user()->id);
+    public function cancel(Reservation $reservation) {
+        $this->reservationService->cancelReservation($reservation,Auth::user());
 
         return redirect()
             ->back()

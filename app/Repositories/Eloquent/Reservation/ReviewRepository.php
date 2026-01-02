@@ -2,25 +2,28 @@
 
 namespace App\Repositories\Eloquent\Reservation;
 
+use App\Models\Property\Property;
 use App\Models\Reservation\Review;
 use App\Repositories\Contracts\Reservation\ReviewRepositoryInterface;
 
 class ReviewRepository implements ReviewRepositoryInterface {
-    public function getAllPropertyReviews($propertyId) {
+    public function getAllPropertyReviews(Property $property) {
         return Review::query()
-            ->whereHas('reservation', function ($q) use ($propertyId) {
-                $q->where('property_id', $propertyId);
+            ->whereHas('reservation', function ($q) use ($property) {
+                $q->where('property_id', $property->id);
             })
+            ->whereNotNull('comment')
+            ->whereRaw("TRIM(comment) <> ''")
             ->with(['reservation'])
             ->latest()
             ->get();
     }
 
-    public function findById($id): Review {
-        return Review::findOrFail($id);
+    public function findById(Review $review) {
+        return Review::findOrFail($review->id);
     }
 
-    public function create(array $data): Review {
+    public function create(array $data) {
         $reservationId = $data['reservation_id'] ?? null;
         if (!$reservationId) {
             throw new \InvalidArgumentException('reservation_id is required.');

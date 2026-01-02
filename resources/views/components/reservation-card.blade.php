@@ -36,7 +36,7 @@
 
         @if ($reservation->review)
             @php
-                $rating = (float) $reservation->review->stars; // 0.0 .. 5.0 step 0.5
+                $rating = (float) $reservation->review->rating; // 0.0 .. 5.0 step 0.5
                 $full = (int) floor($rating); // 0..5
                 $half = $rating - $full >= 0.5 ? 1 : 0; // 0 or 1
                 $empty = 5 - $full - $half;
@@ -56,7 +56,7 @@
 
                 <p class="review-line">
                     <strong>Review:</strong>
-                    <span >{{ $reservation->review->review }}</span>
+                    <span >{{ $reservation->review->comment }}</span>
                 </p>
         @endif
 

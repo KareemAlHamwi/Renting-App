@@ -13,6 +13,23 @@ class DashboardController extends Controller {
         if (!Auth::check())
             return view('auth.login');
 
+        // Reservations
+        $pendingReservations  = Reservation::where('status', \App\Enums\ReservationStatus::Pending)->count();
+        $approvedReservations = Reservation::where('status', \App\Enums\ReservationStatus::Reserved)->count();
+        $cancelledReservations = Reservation::where('status', \App\Enums\ReservationStatus::Cancelled)->count();
+
+        $recentReservations = Reservation::with(['property', 'user'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // Reviews
+        $avgRating = (float) (\App\Models\Reservation\Review::avg('rating') ?? 0);
+
+        // Attention items
+        $propertiesNoPhotos = Property::whereDoesntHave('photos')->count();
+        $unverifiedProperties = Property::whereNull('verified_at')->count();
+
         return view('home', [
             // Users
             'totalUsers'     => User::count(),
@@ -26,11 +43,29 @@ class DashboardController extends Controller {
                 ->take(5)
                 ->get(),
 
+            // Properties
             'totalProperties'     => Property::count(),
             'verifiedProperties'  => Property::whereNotNull('verified_at')->count(),
             'pendingProperties'   => Property::whereNull('verified_at')->count(),
+            'propertiesNoPhotos'  => $propertiesNoPhotos,
 
-            'avgRent' => (float) (Property::avg('rent') ?? 0),
+            // Reservations
+            'pendingReservations'   => $pendingReservations,
+            'approvedReservations'  => $approvedReservations,
+            'cancelledReservations' => $cancelledReservations,
+            'recentReservations'    => $recentReservations,
+
+            // Reviews/Rent
+            'avgRent'   => (float) (Property::avg('rent') ?? 0),
+            'avgRating' => $avgRating,
+
+            // Needs attention
+            'attention' => [
+                'pending_users'       => User::whereNull('verified_at')->count(),
+                'unverified_properties' => $unverifiedProperties,
+                'properties_no_photos' => $propertiesNoPhotos,
+                'pending_reservations' => $pendingReservations,
+            ],
         ]);
     }
 

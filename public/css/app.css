@@ -273,7 +273,6 @@ color: var(--primary);
 .sidebar-nav {
 flex: 1;
 overflow-y: auto;
-padding-right: 0.5rem;
 }
 .section-title {
 font-size: 0.75rem;
@@ -293,6 +292,15 @@ font-weight: 500;
 transition: background var(--transition), color var(--transition);
 font-size: 0.9rem;
 }
+
+.nav-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+
 .sidebar a:hover {
 background: var(--primary);
 color: #fff;
@@ -301,7 +309,6 @@ color: #fff;
 font-size: 0.85rem;
 color: var(--text-muted);
 margin-top: auto;
-padding: 0 0.5rem;
 }
 
 /* =====================================================================
@@ -806,4 +813,210 @@ color: #f5b301; /* gold half */
 .stars-value{
 color: rgba(100, 116, 139, 0.9);
 font-size: 0.9rem;
+}
+
+/* =====================================================================
+DASHBOARD (ADD ON TOP)
+===================================================================== */
+
+.page-header {
+  gap: 1rem;
+  margin: 1.25rem 0 1rem;
+}
+
+.muted {
+  color: var(--text-muted);
+  margin: 0.25rem 0 0;
+}
+
+.text-success { color: var(--success); }
+.text-warning { color: var(--accent); }
+
+.dash-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.dash-grid--cards {
+  grid-template-columns: repeat(12, 1fr);
+  margin-bottom: 1.25rem;
+}
+
+.stat-card {
+  grid-column: span 4;
+  padding: 1.25rem 1.25rem;
+}
+
+@media (max-width: 1100px) {
+  .stat-card { grid-column: span 6; }
+}
+@media (max-width: 700px) {
+  .stat-card { grid-column: span 12; }
+}
+
+.stat-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.stat-meta {
+  margin: 0.5rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.dash-grid--two {
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: start;
+}
+
+@media (max-width: 1000px) {
+  .dash-grid--two { grid-template-columns: 1fr; }
+}
+
+.stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.card-head h3 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.card-head p {
+  margin: 0.25rem 0 0;
+}
+
+.kpi-list {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.kpi-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-md);
+  background: rgba(0,0,0,0.03);
+}
+
+[data-theme="dark"] .kpi-row {
+  background: rgba(255,255,255,0.06);
+}
+
+.kpi-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.kpi-value {
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.list {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  background: rgba(0,0,0,0.03);
+  color: inherit;
+}
+
+[data-theme="dark"] .list-item {
+  background: rgba(255,255,255,0.06);
+}
+
+.list-item:hover {
+  filter: brightness(0.98);
+}
+
+.list-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.list-sub {
+  margin-top: 0.2rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.list-right {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.pill {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 700;
+  background: rgba(43,138,246,0.12);
+  color: var(--primary);
+}
+
+.pill-pending { background: rgba(255,200,87,0.18); color: var(--accent); }
+.pill-approved { background: rgba(22,163,74,0.16); color: var(--success); }
+.pill-cancelled { background: rgba(239,68,68,0.16); color: var(--danger); }
+
+.attention-card .attention-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.attention-card li {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: var(--radius-md);
+  background: rgba(0,0,0,0.03);
+}
+
+[data-theme="dark"] .attention-card li {
+  background: rgba(255,255,255,0.06);
+}
+
+.attention-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+.attention-dot.warn {
+  background: var(--accent);
+}
+
+.attention-link {
+  font-weight: 700;
+  color: var(--primary);
 }

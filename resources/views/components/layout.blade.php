@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="{{ session('theme', 'dark') }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -8,39 +8,33 @@
     <link rel="stylesheet" href="/css/app.css" />
 </head>
 
-<body data-theme="{{ session('theme', 'dark') }}">
+<body>
 
-    <!-- Sidebar -->
     <aside class="sidebar" aria-label="Main navigation">
         <div class="brand">
             <h1>Baytak</h1>
-            <button id="themeToggle" class="btn-primary">Theme</button>
         </div>
 
         <script>
             document.addEventListener("DOMContentLoaded", function() {
-                const body = document.body;
+                const root = document.documentElement;
                 const toggleBtn = document.getElementById("themeToggle");
 
-                toggleBtn.addEventListener("click", function() {
-                    const currentTheme = body.getAttribute("data-theme");
-                    const newTheme = currentTheme === "dark" ? "light" : "dark";
-                    body.setAttribute("data-theme", newTheme);
-
-                    // If you want to persist via localStorage:
-                    localStorage.setItem("theme", newTheme);
-
-                    // If you want to persist via Laravel session,
-                    // you’d need an AJAX call to update session('theme') server-side.
-                });
-
-                // Restore from localStorage if available
                 const savedTheme = localStorage.getItem("theme");
                 if (savedTheme) {
-                    body.setAttribute("data-theme", savedTheme);
+                    root.setAttribute("data-theme", savedTheme);
                 }
+
+                toggleBtn.addEventListener("click", function() {
+                    const currentTheme = root.getAttribute("data-theme") || "dark";
+                    const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+                    root.setAttribute("data-theme", newTheme);
+                    localStorage.setItem("theme", newTheme);
+                });
             });
         </script>
+
 
 
         <nav class="sidebar-nav" role="navigation">
@@ -53,6 +47,7 @@
 
         <footer class="footer">
             {{-- <a href="/settings" class="{{ request()->is('settings') ? 'active' : '' }}">Settings</a> --}}
+            <a id="themeToggle" class="{{ request()->is('settings') ? 'active' : '' }}">Settings</a>
 
             <a href="{{ route('logout') }}"
                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn-primary">

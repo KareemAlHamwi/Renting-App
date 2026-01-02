@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="{{ session('theme', 'dark') }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -8,7 +8,16 @@
     <link rel="stylesheet" href="/css/app.css" />
 </head>
 
-<body data-theme="{{ session('theme', 'dark') }}">
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme) {
+            document.documentElement.setAttribute("data-theme", savedTheme);
+        }
+    })();
+</script>
+
+<body>
 
     <main class="login-wrapper">
         <section class="login-card">

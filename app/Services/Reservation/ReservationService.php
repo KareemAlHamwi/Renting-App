@@ -10,6 +10,7 @@ use App\Models\User\User;
 use App\Repositories\Contracts\Reservation\ReservationRepositoryInterface;
 use App\Repositories\Contracts\Reservation\ReviewRepositoryInterface;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class ReservationService {
@@ -35,46 +36,63 @@ class ReservationService {
         return $this->reservationRepository->getTenantReservations($tenant);
     }
 
-    public function createReservation(User $user, Property $property, string $startDate, string $endDate) {
+    public function createReservation(User $user, Property $property, string $startDate, ?string $endDate) {
         $endDate = $endDate ?: $startDate;
 
-        if ($this->reservationRepository->checkConflict($property, $startDate, $endDate)) {
-            throw new \RuntimeException('The property is booked during this period.');
-        }
+        // if ($endDate < $startDate) {
+        //     throw new ConflictHttpException('End date cannot be before start date.');
+        // }
 
-        return $this->reservationRepository->createReservation([
-            'user_id'     => $user->id,
-            'property_id' => $property->id,
-            'start_date'  => $startDate,
-            'end_date'    => $endDate,
-            'status'      => ReservationStatus::Pending,
-        ]);
+        return DB::transaction(function () use ($user, $property, $startDate, $endDate) {
+            if ($this->reservationRepository->checkConflict($property, $startDate, $endDate)) {
+                throw new ConflictHttpException('The property is booked during this period.');
+            }
+
+            return $this->reservationRepository->createReservation([
+                'user_id'     => $user->id,
+                'property_id' => $property->id,
+                'start_date'  => $startDate,
+                'end_date'    => $endDate,
+                'status'      => ReservationStatus::Pending,
+            ]);
+        }, 3);
     }
 
-    public function updateReservation(Reservation $reservation, array $data): Reservation {
+    public function updateReservation(Reservation $reservation, array $data) {
         if (in_array($reservation->status, [ReservationStatus::Cancelled, ReservationStatus::Completed], true)) {
             throw new ConflictHttpException('You cannot update a cancelled/completed reservation.');
         }
 
-        $property = $reservation->relationLoaded('property')
-            ? $reservation->property
-            : $reservation->load('property')->property;
+        return DB::transaction(function () use ($reservation, $data) {
+            $property = $reservation->relationLoaded('property')
+                ? $reservation->property
+                : $reservation->load('property')->property;
 
-        $startDate = (string) ($data['start_date'] ?? $reservation->start_date->format('Y-m-d'));
-        $endDate   = (string) (($data['end_date'] ?? null) ?: ($reservation->end_date?->format('Y-m-d') ?? $startDate));
-        $endDate   = $endDate ?: $startDate;
+            $startDate = (string) ($data['start_date'] ?? $reservation->start_date->format('Y-m-d'));
 
-        if ($this->reservationRepository->checkConflictExceptReservation($property, $startDate, $endDate, $reservation)) {
-            throw new ConflictHttpException('The property is booked during this period.');
-        }
+            $endDate = (string) (
+                ($data['end_date'] ?? null)
+                ?: ($reservation->end_date?->format('Y-m-d') ?? $startDate)
+            );
 
-        $updateData = array_merge($data, [
-            'status'     => ReservationStatus::Pending,
-            'start_date' => $startDate,
-            'end_date'   => $endDate,
-        ]);
+            $endDate = $endDate ?: $startDate;
 
-        return $this->reservationRepository->updateReservation($reservation, $updateData);
+            // if ($endDate < $startDate) {
+            //     throw new ConflictHttpException('End date cannot be before start date.');
+            // }
+
+            if ($this->reservationRepository->checkConflictExceptReservation($property, $startDate, $endDate, $reservation)) {
+                throw new ConflictHttpException('The property is booked during this period.');
+            }
+
+            $updateData = array_merge($data, [
+                'status'     => ReservationStatus::Pending,
+                'start_date' => $startDate,
+                'end_date'   => $endDate,
+            ]);
+
+            return $this->reservationRepository->updateReservation($reservation, $updateData);
+        }, 3);
     }
 
     public function approveReservation(Reservation $reservation) {

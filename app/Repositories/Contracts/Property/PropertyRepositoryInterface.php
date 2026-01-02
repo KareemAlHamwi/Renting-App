@@ -19,7 +19,4 @@ interface PropertyRepositoryInterface {
     public function saveReviewStats(Property $property, int $reviewersNumber, float $overallReviews);
     public function resetReviewStats(Property $property);
     public function getCurrentReviewStats(Property $property);
-    public function applyReviewStatsAdd(Property $property, float $rating);
-    public function applyReviewStatsReplace(Property $property, float $oldRating, float $newRating);
-    public function applyReviewStatsRemove(Property $property, float $rating);
 }

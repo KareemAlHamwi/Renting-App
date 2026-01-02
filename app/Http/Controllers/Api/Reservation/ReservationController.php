@@ -91,7 +91,7 @@ class ReservationController extends Controller {
 
         $review = $this->reservationService->addReviewToReservation($user,$reservation,$reviewData);
 
-        $this->propertyService->addReviewStats($reservation, $reviewData);
+        $this->propertyService->addReviewStats($reservation->property, $reviewData);
 
         return new ReviewResource($review);
     }

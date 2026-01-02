@@ -52,11 +52,9 @@ class PropertyRepository implements PropertyRepositoryInterface {
     }
 
     public function update(Property $property, array $data) {
-        // Use the provided instance; do not re-query unless you truly need fresh state.
         $property->fill($data);
 
         if ($property->isDirty()) {
-            // Business rule: changing anything invalidates verification
             $property->verified_at = null;
         }
 
@@ -98,64 +96,14 @@ class PropertyRepository implements PropertyRepositoryInterface {
     }
 
     public function getCurrentReviewStats(Property $property) {
+        $fresh = Property::query()
+            ->select(['id', 'reviewers_number', 'overall_reviews'])
+            ->whereKey($property->getKey())
+            ->first();
+
         return [
-            'count' => (int) ($property->reviewers_number ?? 0),
-            'avg'   => (float) ($property->overall_reviews ?? 0),
+            'count' => (int) ($fresh?->reviewers_number ?? 0),
+            'avg'   => (float) ($fresh?->overall_reviews ?? 0.0),
         ];
-    }
-
-    /**
-     * Transactions moved into repository to keep the service layer free of DB facade usage.
-     */
-    public function applyReviewStatsAdd(Property $property, float $rating) {
-        DB::transaction(function () use ($property, $rating) {
-            $locked = $this->findLockedOrFail($property);
-
-            ['count' => $count, 'avg' => $avg] = $this->getCurrentReviewStats($locked);
-
-            $newCount = $count + 1;
-            $newAvg   = (($avg * $count) + $rating) / $newCount;
-
-            $this->saveReviewStats($locked, $newCount, $this->normalizeAvg($newAvg));
-        });
-    }
-
-    public function applyReviewStatsReplace(Property $property, float $oldRating, float $newRating) {
-        DB::transaction(function () use ($property, $oldRating, $newRating) {
-            $locked = $this->findLockedOrFail($property);
-
-            ['count' => $count, 'avg' => $avg] = $this->getCurrentReviewStats($locked);
-
-            if ($count <= 0) {
-                $this->resetReviewStats($locked);
-                return;
-            }
-
-            $newAvg = (($avg * $count) - $oldRating + $newRating) / $count;
-
-            $this->saveReviewStats($locked, $count, $this->normalizeAvg($newAvg));
-        });
-    }
-
-    public function applyReviewStatsRemove(Property $property, float $rating) {
-        DB::transaction(function () use ($property, $rating) {
-            $locked = $this->findLockedOrFail($property);
-
-            ['count' => $count, 'avg' => $avg] = $this->getCurrentReviewStats($locked);
-
-            if ($count <= 1) {
-                $this->resetReviewStats($locked);
-                return;
-            }
-
-            $newCount = $count - 1;
-            $newAvg   = (($avg * $count) - $rating) / $newCount;
-
-            $this->saveReviewStats($locked, $newCount, $this->normalizeAvg($newAvg));
-        });
-    }
-
-    private function normalizeAvg(float $avg) {
-        return round(max(0, $avg), 2);
     }
 }

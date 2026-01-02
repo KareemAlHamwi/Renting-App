@@ -79,18 +79,28 @@ class ReservationRepository implements ReservationRepositoryInterface {
     }
 
     public function checkConflict(Property $property, string $startDate, string $endDate) {
+        Property::query()
+            ->whereKey($property->id)
+            ->lockForUpdate()
+            ->first();
+
         return Reservation::query()
             ->where('property_id', $property->id)
             ->whereIn('status', [
                 ReservationStatus::Pending,
                 ReservationStatus::Reserved,
             ])
-            ->whereDate('start_date', '<=', $endDate)
-            ->whereDate('end_date', '>=', $startDate)
+            ->where('start_date', '<=', $endDate)
+            ->where('end_date', '>=', $startDate)
             ->exists();
     }
 
     public function checkConflictExceptReservation(Property $property,string $startDate,string $endDate,Reservation $ignoreReservation) {
+        Property::query()
+            ->whereKey($property->id)
+            ->lockForUpdate()
+            ->first();
+
         return Reservation::query()
             ->where('property_id', $property->id)
             ->whereIn('status', [
@@ -98,8 +108,8 @@ class ReservationRepository implements ReservationRepositoryInterface {
                 ReservationStatus::Reserved,
             ])
             ->whereKeyNot($ignoreReservation->id)
-            ->whereDate('start_date', '<=', $endDate)
-            ->whereDate('end_date', '>=', $startDate)
+            ->where('start_date', '<=', $endDate)
+            ->where('end_date', '>=', $startDate)
             ->exists();
     }
 

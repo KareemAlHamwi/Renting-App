@@ -45,7 +45,7 @@ class ReviewController extends Controller {
             : $review->reservation->load('property')->property;
 
         $oldReviewData = [
-            'stars' => (float) ($review->stars ?? 0),
+            'rating' => (float) ($review->rating ?? 0),
         ];
 
         $newReviewData = $request->validated();
@@ -67,7 +67,7 @@ class ReviewController extends Controller {
             : $review->reservation->load('property')->property;
 
         $reviewData = [
-            'stars' => (float) ($review->stars ?? 0),
+            'rating' => (float) ($review->rating ?? 0),
         ];
 
         $this->propertyService->removeReviewStats($property, $reviewData);

@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Review extends Model {
     protected $fillable = [
         'reservation_id',
-        'stars',
-        'review',
+        'rating',
+        'comment',
     ];
 
     protected $casts = [
-        'stars' => 'float',
+        'rating' => 'float',
     ];
 
     public function reservation() {

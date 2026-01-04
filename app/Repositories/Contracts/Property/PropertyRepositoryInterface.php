@@ -9,7 +9,7 @@ interface PropertyRepositoryInterface {
     public function getAll();
     public function getUserProperties(User $user);
     public function getUserProperty(User $user,Property $property);
-    public function getAllVerified(User $user);
+    public function getVerifiedExcludingUser(User $user,array $filters);
     public function create(array $data);
     public function findById(Property $property);
     public function update(Property $property, array $data);

@@ -18,8 +18,14 @@ class PropertyService {
         return $this->propertyRepository->getAll();
     }
 
-    public function getAllVerified(User $user) {
-        return $this->propertyRepository->getAllVerified($user);
+    // public function getAllVerified(User $user, array $filters) {
+    //     return $this->propertyRepository->getAllVerified($user, $filters);
+    // }
+
+    public function getAllVerified(User $user, array $filters = []) {
+        $normalized = $this->normalizeFilters($filters);
+
+        return $this->propertyRepository->getVerifiedExcludingUser($user, $normalized);
     }
 
     public function find(Property $property) {
@@ -149,5 +155,59 @@ class PropertyService {
         // Keep avg inside the valid stars range even if upstream data is corrupted.
         $avg = max(0.0, min(5.0, $avg));
         return round($avg, 2);
+    }
+
+    private function normalizeFilters(array $filters): array {
+        $out = [];
+
+        // title
+        if (filled($filters['title'] ?? null)) {
+            $out['title'] = trim((string) $filters['title']);
+        }
+
+        // governorate_id
+        if (filled($filters['governorate_id'] ?? null)) {
+            $out['governorate_id'] = (int) $filters['governorate_id'];
+        }
+
+        // rent_range "20-40" -> rent_min, rent_max
+        if (filled($filters['rent_range'] ?? null)) {
+            [$min, $max] = $this->parseRange((string) $filters['rent_range']);
+
+            if ($min !== null && $max !== null && $min > $max) {
+                [$min, $max] = [$max, $min];
+            }
+
+            if ($min !== null) $out['rent_min'] = $min;
+            if ($max !== null) $out['rent_max'] = $max;
+        }
+
+        // per_page allowlist
+        $allowedPerPage = [10, 15];
+        $perPage = (int) ($filters['per_page'] ?? 15);
+        $out['per_page'] = in_array($perPage, $allowedPerPage, true) ? $perPage : 15;
+
+        // sort_by allowlist
+        $allowedSortBy = ['id', 'rent', 'overall_reviews', 'verified_at', 'reviewers_number'];
+        $sortBy = (string) ($filters['sort_by'] ?? 'id');
+        $out['sort_by'] = in_array($sortBy, $allowedSortBy, true) ? $sortBy : 'id';
+
+        // sort_dir allowlist
+        $sortDir = strtolower((string) ($filters['sort_dir'] ?? 'desc'));
+        $out['sort_dir'] = in_array($sortDir, ['asc', 'desc'], true) ? $sortDir : 'desc';
+
+        return $out;
+    }
+
+    private function parseRange(string $range): array {
+        $parts = preg_split('/\s*-\s*/', trim($range), 2);
+
+        $min = $parts[0] ?? null;
+        $max = $parts[1] ?? null;
+
+        $min = is_numeric($min) ? (float) $min : null;
+        $max = is_numeric($max) ? (float) $max : null;
+
+        return [$min, $max];
     }
 }

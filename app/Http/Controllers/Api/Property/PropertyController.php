@@ -20,9 +20,17 @@ class PropertyController extends Controller {
     }
 
     public function index(Request $request) {
-        $user = $request->user();
-
-        $properties = $this->propertyService->getAllVerified($user);
+        $properties = $this->propertyService->getAllVerified(
+            $request->user(),
+            $request->only([
+                'title',
+                'governorate_id',
+                'rent_range',
+                'per_page',
+                'sort_by',
+                'sort_dir',
+            ])
+        );
 
         return PropertyListResource::collection($properties);
     }

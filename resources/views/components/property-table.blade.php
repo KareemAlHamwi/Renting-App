@@ -63,7 +63,9 @@
             @endforelse
         </tbody>
     </table>
+
 </div>
+{{-- {{ $properties->links() }} --}}
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {

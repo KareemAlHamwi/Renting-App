@@ -29,5 +29,7 @@ class UsersSeeder extends Seeder {
                 'updated_at' => now(),
             ])->id,
         ]);
+
+        User::factory(19)->create();
     }
 }

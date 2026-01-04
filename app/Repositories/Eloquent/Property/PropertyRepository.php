@@ -5,23 +5,67 @@ namespace App\Repositories\Eloquent\Property;
 use App\Models\Property\Property;
 use App\Models\User\User;
 use App\Repositories\Contracts\Property\PropertyRepositoryInterface;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 
 class PropertyRepository implements PropertyRepositoryInterface {
     public function getAll() {
         return Property::query()
             ->with(['photos', 'governorate'])
             ->orderByDesc('id')
+            // ->paginate(10);
             ->get();
     }
 
-    public function getAllVerified(User $user) {
-        return Property::query()
+    // public function getVerifiedExcludingUser(User $user) {
+    //     return Property::query()
+    //         ->with(['photos', 'governorate'])
+    //         ->whereNotNull('verified_at')
+    //         ->where('user_id', '!=', $user->id)
+    //         ->orderByDesc('id')
+    //         ->get();
+    // }
+
+    public function getVerifiedExcludingUser(User $user, array $filters = []) {
+        $query = Property::query()
             ->with(['photos', 'governorate'])
             ->whereNotNull('verified_at')
-            ->where('user_id', '!=', $user->id)
-            ->orderByDesc('id')
-            ->get();
+            ->where('user_id', '!=', $user->id);
+
+        // title
+        $query->when(
+            filled($filters['title'] ?? null),
+            fn(Builder $q) => $q->where('title', 'like', '%' . $filters['title'] . '%')
+        );
+
+        // governorate_id
+        $query->when(
+            filled($filters['governorate_id'] ?? null),
+            fn(Builder $q) => $q->where('governorate_id', (int) $filters['governorate_id'])
+        );
+
+        // rent_min / rent_max (already normalized)
+        $rentMin = $filters['rent_min'] ?? null;
+        $rentMax = $filters['rent_max'] ?? null;
+
+        if ($rentMin !== null && $rentMax !== null) {
+            $query->whereBetween('rent', [$rentMin, $rentMax]);
+        } elseif ($rentMin !== null) {
+            $query->where('rent', '>=', $rentMin);
+        } elseif ($rentMax !== null) {
+            $query->where('rent', '<=', $rentMax);
+        }
+
+        // sorting (already normalized)
+        $sortBy  = $filters['sort_by'] ?? 'verified_at';
+        $sortDir = $filters['sort_dir'] ?? 'desc';
+        $query->orderBy($sortBy, $sortDir);
+
+        // pagination (already normalized)
+        $perPage = (int) ($filters['per_page'] ?? 15);
+
+        return $query
+            ->paginate($perPage)   // uses ?page= automatically
+            ->withQueryString();   // keeps filters/sort/per_page in pagination links
     }
 
     public function getUserProperties(User $user) {

@@ -5,7 +5,7 @@ namespace App\Repositories\Contracts\User;
 use App\Models\User\User;
 
 interface UserRepositoryInterface {
-    public function index();
+    public function index(array $filters);
     public function findByPhone(string $phone);
     public function findByUsername(string $username);
     public function store(array $data);

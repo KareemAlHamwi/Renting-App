@@ -1,7 +1,6 @@
 @props([
     'reservations',
     'tableId' => 'reservationsTable',
-    // Base URL used for row navigation (kept here; filters should not handle navigation)
     'detailsBaseUrl' => '/reservations/',
 ])
 
@@ -10,7 +9,6 @@
         <thead>
             <tr>
                 <th style="text-align: left">Landlord</th>
-                {{-- <th style="text-align: left">Property</th> --}}
                 <th style="text-align: left">Tenant</th>
                 <th>Start date</th>
                 <th>End date</th>
@@ -72,26 +70,6 @@
                             </div>
                         </div>
                     </td>
-
-                    {{-- <td>
-                        <div class="user-info">
-                            @php
-                                // Prefer first photo if already eager-loaded, otherwise fallback.
-                                $firstPhoto = $reservation->property->photos->first();
-                                $src = $firstPhoto
-                                    ? \Illuminate\Support\Facades\Storage::disk('public')->url($firstPhoto->path)
-                                    : asset('images/property.jpg');
-                            @endphp
-
-                            <img src="{{ $src }}" alt="Property Image" class="avatar-sm avatar-square"
-                                 onerror="this.onerror=null;this.src='{{ asset('images/property.jpg') }}';">
-
-                            <div>
-                                <strong>{{ $reservation->property->title }}</strong><br>
-                                <small>{{ \Illuminate\Support\Str::limit($reservation->property->description, 60, '...') }}</small>
-                            </div>
-                        </div>
-                    </td> --}}
 
                     <td>{{ $reservation->start_date->format('Y-m-d') }}</td>
                     <td>{{ $reservation->end_date->format('Y-m-d') }}</td>

@@ -14,13 +14,9 @@ class PropertyService {
         $this->propertyRepository = $propertyRepository;
     }
 
-    public function getAll() {
-        return $this->propertyRepository->getAll();
+    public function getAll(array $filters) {
+        return $this->propertyRepository->getAll($filters);
     }
-
-    // public function getAllVerified(User $user, array $filters) {
-    //     return $this->propertyRepository->getAllVerified($user, $filters);
-    // }
 
     public function getAllVerified(User $user, array $filters = []) {
         $normalized = $this->normalizeFilters($filters);

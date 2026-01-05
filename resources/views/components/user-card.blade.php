@@ -5,7 +5,6 @@
     'backUrl' => url('/users'),
     'propertiesUrl' => url('/users'),
     'reservationsUrl' => url('/reservations'),
-    'showVerify' => true,
 ])
 
     <h2 >{{ $cardHeader }}</h2>
@@ -87,7 +86,10 @@
         <div class="card-footer">
             <a href="{{ $backUrl }}" class="btn btn-secondary">Back</a>
 
-            @if ($showVerify)
+                <button class="btn btn-primary btn-alert">
+                    Block / Blocked
+                </button>
+
                 <form action="{{ url('/users/' . $user->id . '/verify') }}" method="POST">
                     @csrf
                     <button type="submit" class="btn btn-primary verify-btn"
@@ -95,7 +97,6 @@
                         {{ $user->verified_at ? 'Verified' : 'Verify' }}
                     </button>
                 </form>
-            @endif
         </div>
     @endif
 </div>

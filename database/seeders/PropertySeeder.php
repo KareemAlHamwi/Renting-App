@@ -21,7 +21,7 @@ class PropertySeeder extends Seeder {
             return;
         }
 
-        for ($i = 0; $i < 300; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             Property::query()->create([
                 'title'            => $faker->sentence(3),
                 'description'      => $faker->paragraphs(2, true),

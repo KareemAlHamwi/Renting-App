@@ -14,6 +14,10 @@ class UserService {
         $this->userRepository = $users;
     }
 
+    public function index(array $filters) {
+        return $this->userRepository->index($filters);
+    }
+
     public function findByPhone(string $phone): ?User {
         return $this->userRepository->findByPhone($phone);
     }

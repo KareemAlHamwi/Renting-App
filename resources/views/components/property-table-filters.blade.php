@@ -1,122 +1,127 @@
 @props([
-    'properties',
     'searchPlaceholder' => 'Search by title, governorate or address...',
-    'govsUrl' => url('/api/governorates'),
-    // The ID of the *properties* table this filter should control.
-    'tableId' => 'propertiesTable',
+    'govsUrl' => 'http://renting-app.test/api/governorates',
 ])
 
 @php
-    // Unique DOM namespace so this component can safely appear more than once on a page.
-    $uid = 'prop_filters_' . uniqid();
+    use Illuminate\Support\Facades\Http;
+
+    $q       = request('q', '');
+    $govId   = request('governorate_id', '');
+    $status  = request('status', '');
+    $perPage = (int) request('per_page', 10);
+    $sortBy  = request('sort_by', 'id');
+    $sortDir = request('sort_dir', 'desc');
+
+    $perPageOptions = [10, 15, 20, 50];
+
+    $sortByOptions = [
+        'id' => 'Created (ID)',
+        'rent' => 'Rent',
+        'overall_reviews' => 'Ratings',
+        'reviewers_number' => 'Reviewers Number',
+        'verified_at' => 'Verified Date',
+    ];
+
+    $openFilters = filled($govId) || filled($status) || request()->has('per_page') || request()->has('sort_by') || request()->has('sort_dir');
+
+    $govs = collect();
+    try {
+        $res = Http::timeout(5)->acceptJson()->get($govsUrl);
+        if ($res->ok()) {
+            $json = $res->json();
+            $list = is_array($json) ? $json : ($json['data'] ?? []);
+
+            $govs = collect($list)
+                ->map(function ($g) {
+                    $id = $g['id'] ?? null;
+                    $label = $g['name'] ?? $g['title'] ?? $g['governorate_name'] ?? null;
+                    if ($id === null) return null;
+
+                    return [
+                        'id' => (string) $id,
+                        'label' => $label ? (string) $label : ('#' . $id),
+                    ];
+                })
+                ->filter()
+                ->values();
+        }
+    } catch (\Throwable $e) {
+
+    }
 @endphp
 
-<div class="search-form" id="{{ $uid }}">
-    <input style="width: 4000px" type="text" id="{{ $uid }}_searchInput" placeholder="{{ $searchPlaceholder }}">
+<form class="search-form" method="GET" action="{{ url()->current() }}">
+    <input
+        class="search-input"
+        type="text"
+        name="q"
+        value="{{ $q }}"
+        placeholder="{{ $searchPlaceholder }}"
+    >
 
-    <select style="width: 200px" id="{{ $uid }}_governorateFilter">
-        <option value="">All Governorates</option>
-        @foreach ($properties->pluck('governorate_id')->unique() as $govId)
-            <option value="{{ $govId }}">#{{ $govId }}</option>
-        @endforeach
-    </select>
+    <details class="filter-popover" @if($openFilters) open @endif>
+        <summary class="filter-btn">Filters</summary>
 
-    <select style="width: 200px" id="{{ $uid }}_verifiedFilter">
-        <option value="">All Statuses</option>
-        <option value="verified">Verified</option>
-        <option value="pending">Pending</option>
-    </select>
-</div>
+        <div class="popover-card">
+            <div class="field">
+                <label>Governorate</label>
+                <select name="governorate_id">
+                    <option value="">All Governorates</option>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const root = document.getElementById(@json($uid));
-        if (!root) return;
+                    @foreach ($govs as $g)
+                        <option value="{{ $g['id'] }}" @selected((string)$govId === (string)$g['id'])>
+                            {{ $g['label'] }}
+                        </option>
+                    @endforeach
 
-        const searchInput = root.querySelector(@json('#' . $uid . '_searchInput'));
-        const verifiedFilter = root.querySelector(@json('#' . $uid . '_verifiedFilter'));
-        const governorateFilter = root.querySelector(@json('#' . $uid . '_governorateFilter'));
+                    @if ($govs->isEmpty() && $govId !== '')
+                        <option value="{{ $govId }}" selected>#{{ $govId }}</option>
+                    @endif
+                </select>
+            </div>
 
-        const table = document.getElementById(@json($tableId));
-        const tbody = table?.querySelector('tbody');
-        if (!tbody) return;
+            <div class="field">
+                <label>Status</label>
+                <select name="status">
+                    <option value="">All Statuses</option>
+                    <option value="verified" @selected($status === 'verified')>Verified</option>
+                    <option value="pending"  @selected($status === 'pending')>Pending</option>
+                </select>
+            </div>
 
-        const GOVS_URL = @json($govsUrl);
+            <div class="field">
+                <label>Per page</label>
+                <select name="per_page">
+                    @foreach ($perPageOptions as $n)
+                        <option value="{{ $n }}" @selected($perPage === $n)>{{ $n }} properties</option>
+                    @endforeach
+                </select>
+            </div>
 
-        async function loadGovernorates() {
-            try {
-                const res = await fetch(GOVS_URL, { headers: { "Accept": "application/json" } });
-                if (!res.ok) return null;
+            <div class="field">
+                <label>Sort by</label>
+                <select name="sort_by">
+                    @foreach ($sortByOptions as $key => $label)
+                        <option value="{{ $key }}" @selected($sortBy === $key)>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-                const json = await res.json();
-                const list = Array.isArray(json) ? json : (json.data || []);
-                const map = {};
+            <div class="field">
+                <label>Order</label>
+                <select name="sort_dir">
+                    <option value="desc" @selected($sortDir === 'desc')>Descending</option>
+                    <option value="asc"  @selected($sortDir === 'asc')>Ascending</option>
+                </select>
+            </div>
 
-                list.forEach(g => {
-                    const id = String(g.id);
-                    const name = g.name ?? g.title ?? g.governorate_name ?? null;
-                    if (id && name) map[id] = name;
-                });
+            <div class="popover-actions">
+                <button type="submit" class="btn-apply">Apply</button>
+                <a class="btn-reset" href="{{ url()->current() }}">Reset</a>
+            </div>
+        </div>
+    </details>
 
-                return map;
-            } catch (e) {
-                return null;
-            }
-        }
-
-        function applyGovernorateNames(govMap) {
-            if (!govMap) return;
-
-            // Update governorate names only inside the *target* properties table.
-            table.querySelectorAll(".gov-cell").forEach(cell => {
-                const id = cell.dataset.govId;
-                if (id && govMap[id]) cell.textContent = govMap[id];
-            });
-
-            // Update dropdown labels for this filter instance.
-            Array.from(governorateFilter.options).forEach(opt => {
-                const id = opt.value;
-                if (id && govMap[id]) opt.textContent = govMap[id];
-            });
-        }
-
-        function filterTable() {
-            const search = (searchInput?.value || "").toLowerCase().trim();
-            const status = (verifiedFilter?.value || "").toLowerCase().trim();
-            const selectedGovernorateId = (governorateFilter?.value || "").trim();
-
-            const rows = tbody.querySelectorAll('tr');
-            rows.forEach(row => {
-                if (row.querySelector('td[colspan]')) return;
-
-                const title = row.querySelector("td:nth-child(1) strong")?.textContent.toLowerCase() || "";
-
-                const govCell = row.querySelector(".gov-cell");
-                const governorateName = govCell?.textContent.toLowerCase().trim() || "";
-                const governorateId = govCell?.dataset.govId?.trim() || "";
-
-                const address = row.querySelector("td:nth-child(3)")?.textContent.toLowerCase() || "";
-                const statusText = row.querySelector("td:nth-child(4) span")?.textContent.toLowerCase() || "";
-
-                const matchesSearch = !search ||
-                    title.includes(search) ||
-                    governorateName.includes(search) ||
-                    address.includes(search);
-
-                const matchesStatus = !status || statusText.includes(status);
-                const matchesGovernorate = !selectedGovernorateId || governorateId === selectedGovernorateId;
-
-                row.style.display = (matchesSearch && matchesStatus && matchesGovernorate) ? "" : "none";
-            });
-        }
-
-        searchInput?.addEventListener("input", filterTable);
-        verifiedFilter?.addEventListener("change", filterTable);
-        governorateFilter?.addEventListener("change", filterTable);
-
-        loadGovernorates().then(map => {
-            applyGovernorateNames(map);
-            filterTable();
-        });
-    });
-</script>
+    <button type="submit" class="btn-search">Search</button>
+</form>

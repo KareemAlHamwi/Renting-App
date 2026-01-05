@@ -1,8 +1,8 @@
 @props([
-    'properties',
-    'tableId' => 'propertiesTable',
-    // Base URL used for row navigation (kept here; filters should not handle navigation)
-    'detailsBaseUrl' => '/properties/',
+'properties',
+'tableId' => 'propertiesTable',
+'detailsBaseUrl' => '/properties/',
+'links' => true
 ])
 
 <div class="card table-wrapper">
@@ -14,6 +14,7 @@
                 <th>Address</th>
                 <th>Status</th>
                 <th>Rent</th>
+                <th>Ratings</th>
             </tr>
         </thead>
 
@@ -23,7 +24,6 @@
                     <td>
                         <div class="user-info">
                             @php
-                                // Prefer first photo if already eager-loaded, otherwise fallback.
                                 $firstPhoto = $property->photos->first();
                                 $src = $firstPhoto
                                     ? \Illuminate\Support\Facades\Storage::disk('public')->url($firstPhoto->path)
@@ -31,7 +31,7 @@
                             @endphp
 
                             <img src="{{ $src }}" alt="Property Image" class="avatar-sm avatar-square"
-                                 onerror="this.onerror=null;this.src='{{ asset('images/property.jpg') }}';">
+                                onerror="this.onerror=null;this.src='{{ asset('images/property.jpg') }}';">
 
                             <div>
                                 <strong>{{ $property->title }}</strong><br>
@@ -40,8 +40,13 @@
                         </div>
                     </td>
 
-                    <td class="gov-cell" data-gov-id="{{ $property->governorate_id }}">
-                        {{ $property->governorate->governorate_id ?? '—' }}
+                    <td>
+                        @php
+                            $govName =
+                                $property->governorate->name ??
+                                ($property->governorate->title ?? ($property->governorate->governorate_name ?? null));
+                        @endphp
+                        {{ $govName ?? '#' . $property->governorate_id }}
                     </td>
 
                     <td>{{ $property->address }}</td>
@@ -55,17 +60,29 @@
                     </td>
 
                     <td>{{ $property->rent }}</td>
+                    <td>
+                        @if ($property->overall_reviews)
+                            {{ $property->overall_reviews }}
+                        @else
+                            -
+                        @endif
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="text-center">No properties found.</td>
+                    <td colspan="6" class="text-center">No properties found.</td>
                 </tr>
             @endforelse
         </tbody>
     </table>
-
 </div>
-{{-- {{ $properties->links() }} --}}
+
+<div>
+    @if ($links)
+
+    {{ $properties->links() }}
+    @endif
+</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -76,7 +93,6 @@
 
         table.querySelectorAll("tbody tr.clickable-row").forEach(row => {
             row.addEventListener("click", function(e) {
-                // Don't hijack clicks on interactive elements inside the row.
                 if (e.target.closest('a, button, input, select, textarea, label')) return;
                 if (window.getSelection && window.getSelection().toString().length) return;
 

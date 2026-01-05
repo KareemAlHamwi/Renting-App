@@ -6,7 +6,7 @@ use App\Models\Property\Property;
 use App\Models\User\User;
 
 interface PropertyRepositoryInterface {
-    public function getAll();
+    public function getAll(array $filters);
     public function getUserProperties(User $user);
     public function getUserProperty(User $user,Property $property);
     public function getVerifiedExcludingUser(User $user,array $filters);

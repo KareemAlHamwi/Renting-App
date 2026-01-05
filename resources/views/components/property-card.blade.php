@@ -4,12 +4,11 @@
     'showActions' => true,
     'backUrl' => url('/properties'),
     'reservationsUrl' => url('/reservations'),
-    'showVerify' => true,
 ])
 
 
 
-<h2 >{{ $cardHeader }}</h2>
+<h2>{{ $cardHeader }}</h2>
 <div class="card">
     <h1 class="username" style="margin-top: -12px">{{ $property->title }}</h1>
 
@@ -34,7 +33,7 @@
 
         <p>
             <strong>Governorate:</strong>
-            <span >
+            <span>
                 {{ $property->governorate->governorate_name }}
             </span>
         </p>
@@ -49,22 +48,22 @@
                 $empty = 5 - $full - $half;
             @endphp
 
-                <p class="stars-line">
-                    <strong>Stars:</strong>
-                    <span class="stars" aria-label="{{ number_format($rating, 1) }} out of 5">
-                        <span class="stars-full">{!! str_repeat('★', $full) !!}</span>
-                        @if ($half)
+            <p class="stars-line">
+                <strong>Stars:</strong>
+                <span class="stars" aria-label="{{ number_format($rating, 1) }} out of 5">
+                    <span class="stars-full">{!! str_repeat('★', $full) !!}</span>
+                    @if ($half)
                         <span class="stars-half">★</span>
-                        @endif
-                        <span class="stars-empty">{!! str_repeat('☆', $empty) !!}</span>
-                    </span>
-                    <span class="stars-value">({{ number_format($rating, 1) }})</span>
-                </p>
+                    @endif
+                    <span class="stars-empty">{!! str_repeat('☆', $empty) !!}</span>
+                </span>
+                <span class="stars-value">({{ number_format($rating, 1) }})</span>
+            </p>
 
-                <p class="review-line">
-                    <strong>Reviewers Number:</strong>
-                    <span >{{ $property->reviewers_number }}</span>
-                </p>
+            <p class="review-line">
+                <strong>Reviewers Number:</strong>
+                <span>{{ $property->reviewers_number }}</span>
+            </p>
         @endif
     </div>
 
@@ -97,16 +96,20 @@
         <div class="card-footer">
 
 
-                <a href="{{ $backUrl }}" class="btn btn-secondary">Back</a>
+            <a href="{{ $backUrl }}" class="btn btn-secondary">Back</a>
 
-                @if ($showVerify)
-                    <form action="{{ url('/properties/' . $property->id . '/verify') }}" method="POST" style="display:inline;">
-                        @csrf
-                        <button type="submit" class="btn btn-primary verify-btn" @if ($property->verified_at) disabled @endif>
-                            {{ $property->verified_at ? 'Verified' : 'Verify' }}
-                        </button>
-                    </form>
-                @endif
+            <button class="btn btn-primary btn-alert">
+                    Deactivated / Activated
+                </button>
+
+            <form action="{{ url('/properties/' . $property->id . '/verify') }}" method="POST"
+                style="display:inline;">
+                @csrf
+                <button type="submit" class="btn btn-primary verify-btn"
+                    @if ($property->verified_at) disabled @endif>
+                    {{ $property->verified_at ? 'Verified' : 'Verify' }}
+                </button>
+            </form>
         </div>
     @endif
 </div>

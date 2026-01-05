@@ -7,7 +7,7 @@ use App\Models\Reservation\Reservation;
 use App\Models\User\User;
 
 interface ReservationRepositoryInterface {
-    public function getAllReservations();
+    public function getAllReservations(array $filters);
     public function getLandlordPropertyReservations(User $landlord, Property $property);
     public function getTenantReservations(User $tenant);
     public function findById(Reservation $reservation);

@@ -47,7 +47,7 @@
 
         <footer class="footer">
             {{-- <a href="/settings" class="{{ request()->is('settings') ? 'active' : '' }}">Settings</a> --}}
-            <a id="themeToggle" class="{{ request()->is('settings') ? 'active' : '' }}">Settings</a>
+            <a id="themeToggle" class="{{ request()->is('settings') ? 'active' : '' }}">Theme</a>
 
             <a href="{{ route('logout') }}"
                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn-primary">

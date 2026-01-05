@@ -24,8 +24,8 @@ class ReservationService {
         $this->reviewRepository = $reviewRepository;
     }
 
-    public function getAllReservations() {
-        return $this->reservationRepository->getAllReservations();
+    public function getAllReservations(array $filters) {
+        return $this->reservationRepository->getAllReservations($filters);
     }
 
     public function getLandlordPropertyReservations(User $landlord, Property $property) {

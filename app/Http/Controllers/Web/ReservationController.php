@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Reservation\Reservation;
 use App\Services\Reservation\ReservationService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller {
@@ -14,8 +15,16 @@ class ReservationController extends Controller {
         $this->reservationService = $reservationService;
     }
 
-    public function index() {
-        $reservations = $this->reservationService->getAllReservations();
+    public function index(Request $request) {
+        $filters = $request->only([
+            'q',
+            'status',
+            'date_range',
+            'per_page'
+        ]);
+
+        $reservations = $this->reservationService->getAllReservations($filters);
+
         return view('reservations.index', compact('reservations'));
     }
 

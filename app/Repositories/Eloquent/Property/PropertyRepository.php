@@ -8,22 +8,47 @@ use App\Repositories\Contracts\Property\PropertyRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 
 class PropertyRepository implements PropertyRepositoryInterface {
-    public function getAll() {
-        return Property::query()
-            ->with(['photos', 'governorate'])
-            ->orderByDesc('id')
-            // ->paginate(10);
-            ->get();
-    }
+    public function getAll(array $filters = []) {
+        $q             = trim((string)($filters['q'] ?? ''));              // search text
+        $governorateId = $filters['governorate_id'] ?? null;               // FK
+        $status        = $filters['status'] ?? null;                       // verified|pending|null
+        $perPage       = (int)($filters['per_page'] ?? 10);                // 10/15/etc
 
-    // public function getVerifiedExcludingUser(User $user) {
-    //     return Property::query()
-    //         ->with(['photos', 'governorate'])
-    //         ->whereNotNull('verified_at')
-    //         ->where('user_id', '!=', $user->id)
-    //         ->orderByDesc('id')
-    //         ->get();
-    // }
+        // optional sorting (admin-friendly)
+        $allowedSortBy = ['id', 'rent', 'overall_reviews', 'verified_at', 'reviewers_number'];
+        $sortBy  = (string)($filters['sort_by'] ?? 'id');
+        $sortBy  = in_array($sortBy, $allowedSortBy, true) ? $sortBy : 'id';
+
+        $sortDir = strtolower((string)($filters['sort_dir'] ?? 'desc'));
+        $sortDir = in_array($sortDir, ['asc', 'desc'], true) ? $sortDir : 'desc';
+
+        $query = Property::query()
+            ->with(['photos', 'governorate']);
+
+        if ($q !== '') {
+            $query->where(function (Builder $sub) use ($q) {
+                $sub->where('title', 'like', "%{$q}%")
+                    ->orWhere('address', 'like', "%{$q}%");
+            });
+        }
+
+        // governorate_id filter
+        if (!empty($governorateId)) {
+            $query->where('governorate_id', (int)$governorateId);
+        }
+
+        // status filter
+        if ($status === 'verified') {
+            $query->whereNotNull('verified_at');
+        } elseif ($status === 'pending') {
+            $query->whereNull('verified_at');
+        }
+
+        return $query
+            ->orderBy($sortBy, $sortDir)
+            ->paginate($perPage)
+            ->withQueryString(); // keeps q/governorate_id/status/per_page/sort_* across pages
+    }
 
     public function getVerifiedExcludingUser(User $user, array $filters = []) {
         $query = Property::query()

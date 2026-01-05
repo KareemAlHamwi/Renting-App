@@ -18,15 +18,15 @@
         {{-- <p><strong>Residnets number:</strong> {{ $reservation->residents_number }}</p> --}}
         <p><strong>status:</strong>
             @if ($reservation->status === \App\Enums\ReservationStatus::Pending)
-            <span class="status pending">Pending</span>
+                <span class="status pending">Pending</span>
             @elseif ($reservation->status === \App\Enums\ReservationStatus::Reserved)
-            <span class="status verified">Reserved</span>
+                <span class="status verified">Reserved</span>
             @elseif ($reservation->status === \App\Enums\ReservationStatus::Completed)
-            <span class="status completed">Completed</span>
+                <span class="status completed">Completed</span>
             @elseif ($reservation->status === \App\Enums\ReservationStatus::Cancelled)
-            <span class="status cancelled">Cancelled</span>
+                <span class="status cancelled">Cancelled</span>
             @else
-            <span class="status pending">{{ (string) $reservation->status }}</span>
+                <span class="status pending">{{ (string) $reservation->status }}</span>
             @endif
         </p>
 
@@ -42,40 +42,56 @@
                 $empty = 5 - $full - $half;
             @endphp
 
-                <p class="stars-line">
-                    <strong>Stars:</strong>
-                    <span class="stars" aria-label="{{ number_format($rating, 1) }} out of 5">
-                        <span class="stars-full">{!! str_repeat('★', $full) !!}</span>
-                        @if ($half)
+            <p class="stars-line">
+                <strong>Stars:</strong>
+                <span class="stars" aria-label="{{ number_format($rating, 1) }} out of 5">
+                    <span class="stars-full">{!! str_repeat('★', $full) !!}</span>
+                    @if ($half)
                         <span class="stars-half">★</span>
-                        @endif
-                        <span class="stars-empty">{!! str_repeat('☆', $empty) !!}</span>
-                    </span>
-                    <span class="stars-value">({{ number_format($rating, 1) }})</span>
-                </p>
+                    @endif
+                    <span class="stars-empty">{!! str_repeat('☆', $empty) !!}</span>
+                </span>
+                <span class="stars-value">({{ number_format($rating, 1) }})</span>
+            </p>
 
-                <p class="review-line">
-                    <strong>Review:</strong>
-                    <span >{{ $reservation->review->comment }}</span>
-                </p>
+            <p class="review-line">
+                <strong>Review:</strong>
+                <span>{{ $reservation->review->comment }}</span>
+            </p>
         @endif
 
 
     </div>
 
     @if ($showActions)
-        <div class="card-footer">
+        <div class="reservation-card-footer">
             <a href="{{ $backUrl }}" class="btn btn-secondary">Back</a>
             @if ($showCancel)
                 <form action="{{ url('/reservations/' . $reservation->id . '/cancel') }}" method="POST"
                     style="display:inline;">
                     @csrf
-                    <button type="submit" class="btn btn-primary verify-btn"
-                        @if (
-                            $reservation->status === \App\Enums\ReservationStatus::Cancelled ||
-                                $reservation->status === \App\Enums\ReservationStatus::Completed) disabled @endif>
-                        {{ $reservation->status === \App\Enums\ReservationStatus::Cancelled || $reservation->status === \App\Enums\ReservationStatus::Completed ? 'Cancelled' : 'Cancel' }}
-                    </button>
+                    @php
+    // Force enum from raw DB value (bypasses any accessor overriding the cast)
+    $statusEnum = $reservation->status instanceof \App\Enums\ReservationStatus
+        ? $reservation->status
+        : \App\Enums\ReservationStatus::tryFrom((int) $reservation->getRawOriginal('status'));
+
+    $isCompleted = $statusEnum === \App\Enums\ReservationStatus::Completed;
+    $isCancelled = $statusEnum === \App\Enums\ReservationStatus::Cancelled;
+
+    $cancelDisabled = $isCompleted || $isCancelled;
+
+    $cancelLabel = $isCompleted
+        ? 'Completed'
+        : ($isCancelled ? 'Cancelled' : 'Cancel');
+@endphp
+
+<button type="submit"
+        class="btn btn-primary btn-alert"
+        {{ $cancelDisabled ? 'disabled' : '' }}>
+    {{ $cancelLabel }}
+</button>
+
                 </form>
             @endif
         </div>

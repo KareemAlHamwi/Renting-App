@@ -4,20 +4,26 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\User\User;
-use App\Repositories\Contracts\User\UserRepositoryInterface;
 use App\Services\User\UserService;
+use Illuminate\Http\Request;
 
 class UsersController extends Controller {
-    private UserRepositoryInterface $userRepository;
     private UserService $userService;
 
-    public function __construct(UserRepositoryInterface $userRepository, UserService $userService) {
-        $this->userRepository = $userRepository;
+    public function __construct(UserService $userService) {
         $this->userService = $userService;
     }
 
-    public function index() {
-        $users = $this->userRepository->index();
+    public function index(Request $request) {
+        $filters = $request->only([
+            'q',
+            'verification',
+            'role',
+            'per_page'
+        ]);
+
+        $users = $this->userService->index($filters);
+
         return view('users.index', compact('users'));
     }
 

@@ -44,8 +44,16 @@ Built with **Laravel 12** and **Sanctum** for token-based authentication.
 | PUT    | `/api/user/phone`                  | Change phone number                              |
 | PUT    | `/api/user/password`               | Change password                                  |
 | DELETE | `/api/user/delete`                 | Delete account                                   |
+| GET | `/api/user/is-verified`                 | Check account verification                                   |
 | GET    | `/api/user/properties`             | List authenticated user's properties             |
 | GET    | `/api/user/properties/{property}`  | Show a single property owned by the user         |
+
+#### Notifications
+
+| Method | Path                               | Description                                      |
+| ------ | ---------------------------------- | ------------------------------------------------ |
+| POST    | `/api/push/token`             | Store FCM token                   |
+| DELETE    | `/api/push/token`                 | Delete FCM token                              |
 
 #### Properties
 

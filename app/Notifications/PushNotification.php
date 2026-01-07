@@ -2,12 +2,14 @@
 
 namespace App\Notifications;
 
+use App\Models\User\User;
 use App\Notifications\Channels\FcmChannel;
+use App\Notifications\Contracts\FcmNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class PushNotification extends Notification implements ShouldQueue {
+class PushNotification extends Notification implements ShouldQueue, FcmNotification {
     use Queueable;
 
     public function __construct(
@@ -22,7 +24,7 @@ class PushNotification extends Notification implements ShouldQueue {
         return [FcmChannel::class];
     }
 
-    public function toFcm(object $notifiable): FcmMessage {
+    public function toFcm(User $notifiable): FcmMessage {
         return new FcmMessage($this->title, $this->message, $this->data);
     }
 }

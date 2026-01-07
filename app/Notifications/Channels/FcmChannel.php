@@ -7,6 +7,7 @@ use App\Models\User\UserDevice;
 use App\Services\Push\FcmClient;
 use App\Notifications\Contracts\FcmNotification;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
 class FcmChannel {
     public function __construct(
@@ -35,6 +36,22 @@ class FcmChannel {
                 $message->body,
                 $message->data
             );
+
+            if (! $response->successful()) {
+                Log::error('FCM send failed', [
+                    'status' => $response->status(),
+                    'body' => $response->json(),
+                    'device_id' => $device->device_id ?? null,
+                    'user_id' => $notifiable->id ?? null,
+                ]);
+            } else {
+                Log::info('FCM send success', [
+                    'status' => $response->status(),
+                    'body' => $response->json(), // should include "name"
+                    'device_id' => $device->device_id ?? null,
+                    'user_id' => $notifiable->id ?? null,
+                ]);
+            }
 
             if ($this->looksLikeUnregisteredToken($response->json())) {
                 $device->delete();

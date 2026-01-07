@@ -1,2 +1,2 @@
-*
-!.gitignore
+/storage/app/private/
+*.firebase-adminsdk-*.json

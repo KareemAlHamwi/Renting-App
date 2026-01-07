@@ -67,7 +67,8 @@ class UserService {
         if ($this->userRepository->markAsVerified($user)) {
             $user->notify(new \App\Notifications\PushNotification(
                 'Account verified',
-                'Your account has been verified successfully.'
+                'Your account has been verified successfully.',
+                ['type' => 'account_verified']
             ));
         }
     }

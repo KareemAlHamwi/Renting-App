@@ -17,6 +17,7 @@ class UserPropertyListResource extends JsonResource {
 
             // minimal governorate info
             'governorate_name' => $this->governorate?->governorate_name,
+            'governorate_id' => $this->governorate?->id,
 
             'rent' => $this->rent,
 

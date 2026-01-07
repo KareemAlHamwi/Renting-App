@@ -22,8 +22,7 @@ use App\Http\Controllers\Api\Reservation\ReviewController;
 | Auth (Public)
 |--------------------------------------------------------------------------
 */
-
-Route::prefix('auth')->group(function () {
+Route::prefix('auth')->middleware('throttle:10,1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 });

@@ -54,11 +54,18 @@ class FcmClient {
     }
 
     private function stringifyData(array $data): array {
-        // FCM "data" values must be strings
         $out = [];
+
         foreach ($data as $k => $v) {
-            $out[(string) $k] = is_string($v) ? $v : json_encode($v, JSON_UNESCAPED_UNICODE);
+            if (is_string($v)) {
+                $out[(string) $k] = $v;
+                continue;
+            }
+
+            $json = json_encode($v, JSON_UNESCAPED_UNICODE);
+            $out[(string) $k] = $json !== false ? $json : (string) $v;
         }
+
         return $out;
     }
 }

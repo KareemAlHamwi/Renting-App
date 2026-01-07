@@ -95,12 +95,26 @@ class ReservationService {
         }, 3);
     }
 
-    public function approveReservation(Reservation $reservation) {
+    public function approveReservation(Reservation $reservation): Reservation {
         if ($reservation->status !== ReservationStatus::Pending) {
             throw new \RuntimeException('Only pending reservations can be approved.');
         }
 
-        return $this->reservationRepository->approveReservation($reservation);
+        $reservation = $this->reservationRepository->approveReservation($reservation);
+
+        $reservation->loadMissing(['user', 'property']);
+
+        $reservation->user->notify(new \App\Notifications\PushNotification(
+            'Reservation approved',
+            "Your reservation for [{$reservation->property->title}] has been approved.",
+            [
+                'type' => 'reservation_approved',
+                'reservation_id' => (string) $reservation->id,
+                'property_id' => (string) $reservation->property_id,
+            ]
+        ));
+
+        return $reservation;
     }
 
     public function cancelReservation(Reservation $reservation, User $cancelledBy): Reservation {
@@ -108,7 +122,26 @@ class ReservationService {
             return $reservation;
         }
 
-        return $this->reservationRepository->cancelReservation($reservation, $cancelledBy);
+        $reservation = $this->reservationRepository->cancelReservation($reservation, $cancelledBy);
+
+        $reservation->loadMissing(['user', 'property.owner']);
+
+        $tenant   = $reservation->user;
+        $landlord = $reservation->property->owner;
+
+        $recipient = ($cancelledBy->id === $tenant->id) ? $landlord : $tenant;
+
+        $recipient->notify(new \App\Notifications\PushNotification(
+            'Reservation cancelled',
+            "Reservation for [{$reservation->property->title}] has been cancelled by [$reservation->cancelled_by].",
+            [
+                'type' => 'reservation_cancelled',
+                'reservation_id' => (string) $reservation->id,
+                'property_id' => (string) $reservation->property_id,
+            ]
+        ));
+
+        return $reservation;
     }
 
     public function markExpiredReservationsCompleted() {

@@ -47,7 +47,16 @@ class PropertyService {
             return;
         }
 
-        $this->propertyRepository->markAsVerified($property);
+        if ($this->propertyRepository->markAsVerified($property)) {
+            $property->owner->notify(new \App\Notifications\PushNotification(
+                'Property published',
+                "[$property->title] has been published successfully.",
+                [
+                    'type' => 'property_verified',
+                    'property_id' => (string) $property->property_id
+                ]
+            ));
+        }
     }
 
     public function isPropertyVerified(Property $property) {

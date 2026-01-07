@@ -11,7 +11,7 @@ interface PropertyRepositoryInterface {
     public function getUserProperty(User $user,Property $property);
     public function getVerifiedExcludingUser(User $user,array $filters);
     public function create(array $data);
-    public function findById(Property $property);
+    public function findById(int $propertyId);
     public function update(Property $property, array $data);
     public function delete(Property $property);
     public function markAsVerified(Property $property);

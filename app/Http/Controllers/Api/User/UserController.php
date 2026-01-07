@@ -9,6 +9,7 @@ use App\Http\Requests\User\DeleteAccountRequest;
 use App\Http\Requests\User\UpdateProfileRequest;
 use App\Http\Resources\User\UserMeResource;
 use App\Http\Resources\User\UserPublicResource;
+use App\Models\User\User;
 use App\Services\User\PersonService;
 use App\Services\User\UserService;
 use Illuminate\Http\Request;
@@ -76,5 +77,11 @@ class UserController extends Controller {
         $this->personService->deleteForUser($user);
 
         return response()->noContent();
+    }
+
+    public function isVerified(Request $request) {
+        return response()->json([
+            'verified' => (bool) $this->userService->isVerified($request->user()),
+        ]);
     }
 }

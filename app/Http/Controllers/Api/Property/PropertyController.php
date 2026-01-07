@@ -36,6 +36,7 @@ class PropertyController extends Controller {
     }
 
     public function show($property) {
+        $property = $this->propertyService->find($property);
         return new PropertyResource($property);
     }
 

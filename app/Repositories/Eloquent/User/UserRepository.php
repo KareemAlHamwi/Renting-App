@@ -102,4 +102,11 @@ class UserRepository implements UserRepositoryInterface {
 
         return true;
     }
+
+    public function isVerified(User $user): bool {
+        return User::query()
+            ->whereKey($user->getKey())
+            ->whereNotNull('verified_at')
+            ->exists();
+    }
 }

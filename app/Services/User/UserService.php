@@ -64,7 +64,12 @@ class UserService {
             return;
         }
 
-        $this->userRepository->markAsVerified($user);
+        if ($this->userRepository->markAsVerified($user)) {
+            $user->notify(new \App\Notifications\PushNotification(
+                'Account verified',
+                'Your account has been verified successfully.'
+            ));
+        }
     }
 
     public function isUserVerified(User $user): bool {
@@ -81,6 +86,10 @@ class UserService {
         $this->validateCredentials($user, $password);
 
         return $user;
+    }
+
+    public function isVerified(User $user): bool {
+        return $this->userRepository->isVerified($user);
     }
 
     private function isPhoneFormat(string $identifier): bool {

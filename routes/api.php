@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 // User (API)
 use App\Http\Controllers\Api\User\AuthController;
 use App\Http\Controllers\Api\User\UserController;
+use App\Http\Controllers\Api\Push\DeviceTokenController;
 
 // Property (API)
 use App\Http\Controllers\Api\Property\GovernorateController;
@@ -74,8 +75,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/phone', [UserController::class, 'changePhoneNumber']);
         Route::put('/password', [UserController::class, 'changePassword']);
         Route::delete('/delete', [UserController::class, 'deleteAccount']);
+        Route::get('/is-verified', [UserController::class, 'isVerified']);
         Route::get('/properties', [PropertyController::class, 'userProperties']);
         Route::get('/properties/{property}', [PropertyController::class, 'userProperty']);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Notifications
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('push')->group(function () {
+        Route::post('/token', [DeviceTokenController::class, 'upsert']);
+        Route::delete('/token', [DeviceTokenController::class, 'delete']);
     });
 
     /*

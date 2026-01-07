@@ -14,4 +14,5 @@ interface UserRepositoryInterface {
     public function updatePassword(User $user, string $password);
     public function markAsVerified(User $user);
     public function destroy(User $user);
+    public function isVerified(User $user);
 }

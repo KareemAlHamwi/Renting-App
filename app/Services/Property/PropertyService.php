@@ -24,8 +24,8 @@ class PropertyService {
         return $this->propertyRepository->getVerifiedExcludingUser($user, $normalized);
     }
 
-    public function find(Property $property) {
-        return $this->propertyRepository->findById($property);
+    public function find(int $propertyId) {
+        return $this->propertyRepository->findById($propertyId);
     }
 
     public function create(User $user, array $data) {

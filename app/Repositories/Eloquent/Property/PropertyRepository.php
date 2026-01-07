@@ -113,10 +113,10 @@ class PropertyRepository implements PropertyRepositoryInterface {
         return Property::create($data);
     }
 
-    public function findById(Property $property) {
+    public function findById(int $propertyId) {
         return Property::query()
             ->with(['photos', 'governorate'])
-            ->whereKey($property->getKey())
+            ->whereKey($propertyId)
             ->firstOrFail();
     }
 

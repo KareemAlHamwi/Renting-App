@@ -6,6 +6,7 @@ use App\Enums\ReservationStatus;
 use App\Models\Property\Property;
 use App\Models\Reservation\Reservation;
 use App\Models\User\User;
+use function Illuminate\Support\now;
 
 class ReservationPolicy {
     public function landlordPropertyReservations(User $user): bool {
@@ -17,26 +18,42 @@ class ReservationPolicy {
     }
 
     public function create(User $user, Property $property): bool {
-        if (!$this->isVerified($user)) {
+        if (! $this->isVerified($user)) {
             return false;
         }
 
-        return $property->user_id !== $user->id;
+        if ($property->user_id === $user->id) {
+            return false;
+        }
+
+        if ($user->activeReservationsForProperty($property)->exists()) {
+            return false;
+        }
+
+        return true;
     }
 
     public function update(User $user, Reservation $reservation): bool {
-        if (!$this->isVerified($user)) {
-            return false;
-        }
-
         if ($reservation->user_id !== $user->id) {
             return false;
         }
 
-        return !in_array($reservation->status, [
+        if (! $this->isVerified($user)) {
+            return false;
+        }
+
+        if (in_array($reservation->status, [
             ReservationStatus::Cancelled,
             ReservationStatus::Completed,
-        ], true);
+        ], true)) {
+            return false;
+        }
+
+        if ($reservation->start_date->lte(now())) {
+            return false;
+        }
+
+        return true;
     }
 
     public function approve(User $user, Reservation $reservation): bool {

@@ -3,7 +3,6 @@
 namespace App\Services\Property;
 
 use App\Models\Property\Property;
-use App\Models\Reservation\Reservation;
 use App\Models\User\User;
 use App\Repositories\Contracts\Property\PropertyRepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -40,6 +39,16 @@ class PropertyService {
 
     public function delete(Property $property) {
         return $this->propertyRepository->delete($property);
+    }
+
+    public function toggleProperty(Property $property) {
+        if ($this->propertyRepository->isPublished($property)) {
+            $this->propertyRepository->unpublish($property);
+            return ['message' => 'Property has been unpublished',];
+        }
+
+        $this->propertyRepository->publish($property);
+        return ['message' => 'Property has been published',];
     }
 
     public function verifyProperty(Property $property) {

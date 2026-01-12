@@ -99,6 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [PropertyController::class, 'store']);
         Route::put('/{property}', [PropertyController::class, 'update']);
         Route::delete('/{property}', [PropertyController::class, 'destroy']);
+        Route::post('/{property}/toggle', [PropertyController::class, 'toggle']);
         Route::get('/{property}/reservations', [ReservationController::class, 'landlordPropertyReservations']);
         Route::post('/{property}/reservations', [ReservationController::class, 'store']);
 

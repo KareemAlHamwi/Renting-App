@@ -98,14 +98,18 @@
 
             <a href="{{ $backUrl }}" class="btn btn-secondary">Back</a>
 
-            <button class="btn btn-primary btn-alert">
-                    Deactivated / Activated
+            <form action="{{ url('/properties/' . $property->id . '/toggle') }}" method="POST"
+                style="display:inline;">
+                @csrf
+                <button type="submit" class="btn btn-primary @if (!$property->published_at) btn-alert @else btn-safe @endif">
+                    {{ $property->published_at ? 'Published' : 'Unpublished' }}
                 </button>
+            </form>
 
             <form action="{{ url('/properties/' . $property->id . '/verify') }}" method="POST"
                 style="display:inline;">
                 @csrf
-                <button type="submit" class="btn btn-primary verify-btn"
+                <button type="submit" class="btn btn-primary"
                     @if ($property->verified_at) disabled @endif>
                     {{ $property->verified_at ? 'Verified' : 'Verify' }}
                 </button>

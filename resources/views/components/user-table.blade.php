@@ -38,6 +38,14 @@
                                     }
                                 @endphp
 
+                                <div>
+                                @if ($user->deactivated_at)
+                                <div class="status-dot offline-glow" title="Offline"></div>
+                                @else
+                                <div class="status-dot online-glow" title="Online"></div>
+                                @endif
+                            </div>
+
                                 <img src="{{ $photoSrc }}" alt="Personal Photo" class="avatar-sm"
                                     onerror="this.onerror=null;this.src='{{ asset('images/default.png') }}';" />
 

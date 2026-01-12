@@ -42,4 +42,11 @@ class PropertyController extends Controller {
             ->back()
             ->with('success', 'User verified successfully.');
     }
+
+    public function togglePublishing(Property $property) {
+        $this->propertyService->toggleProperty($property);
+
+        return redirect()
+            ->back();
+    }
 }

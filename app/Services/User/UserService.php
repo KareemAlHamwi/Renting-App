@@ -59,6 +59,16 @@ class UserService {
         $this->userRepository->destroy($user);
     }
 
+    public function toggleAccount(User $user) {
+        if ($this->userRepository->isActivated($user)) {
+            $this->userRepository->deactivate($user);
+            return ['message' => 'User has been deactivated',];
+        }
+
+        $this->userRepository->activate($user);
+        return ['message' => 'User has been activated',];
+    }
+
     public function verifyUser(User $user): void {
         if ($this->isUserVerified($user)) {
             return;
@@ -67,7 +77,7 @@ class UserService {
         if ($this->userRepository->markAsVerified($user)) {
             $user->notify(new \App\Notifications\PushNotification(
                 'Account verified',
-                'Your account has been verified successfully.',
+                "Your account [$user->username] has been verified successfully.",
                 ['type' => 'account_verified']
             ));
         }

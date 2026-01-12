@@ -20,12 +20,14 @@ Route::middleware('auth')->group(function () {
     Route::prefix('users')->group(function () {
         Route::get('/', [UsersController::class, 'index']);
         Route::get('/{user}', [DashboardController::class, 'showUser']);
+        Route::post('/{user}/toggle', [UsersController::class, 'toggleActivation']);
         Route::post('/{user}/verify', [UsersController::class, 'verify']);
     });
 
     Route::prefix('properties')->group(function () {
         Route::get('/', [PropertyController::class, 'index']);
         Route::get('/{property}', [DashboardController::class, 'showProperty']);
+        Route::post('/{property}/toggle', [PropertyController::class, 'togglePublishing']);
         Route::post('/{property}/verify', [PropertyController::class, 'verify']);
     });
 

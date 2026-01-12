@@ -17,6 +17,7 @@ class Property extends Model {
         'rent',
         'overall_reviews',
         'reviewers_number',
+        'published_at',
         'verified_at',
         'governorate_id',
         'user_id',

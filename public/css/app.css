@@ -16,6 +16,7 @@ THEME VARIABLES
 --text-muted: #6a6a6a;
 
 --success: #16a34a;
+--success-dark: #0aa543;
 --danger: #ef4444;
 --danger-dark: #ff2929;
 
@@ -131,19 +132,27 @@ text-decoration: none;
 }
 
 .btn-primary.btn-alert {
-    background: var(--danger);
+background: var(--danger);
+}
+
+.btn-primary.btn-safe {
+background: var(--success);
 }
 
 .btn-primary:not(:disabled):hover {
-  background: var(--primary-dark);
+background: var(--primary-dark);
 }
 
 .btn-primary.btn-alert:not(:disabled):hover {
-  background: var(--danger-dark);
+background: var(--danger-dark);
+}
+
+.btn-primary.btn-safe:not(:disabled):hover {
+background: var(--success-dark);
 }
 
 .btn-primary:not(:disabled):active {
-  transform: scale(0.97);
+transform: scale(0.97);
 }
 
 /* Cards */
@@ -830,11 +839,11 @@ line-height:1;
 
 .btn-primary:disabled,
 .btn-primary[disabled] {
-  background: var(--text-muted);
-  color: #fff !important;
-  cursor: not-allowed;
-  opacity: 0.7;
-  transform: none;
+background: var(--text-muted);
+color: #fff !important;
+cursor: not-allowed;
+opacity: 0.7;
+transform: none;
 }
 
 .photo-section-property{
@@ -1126,4 +1135,26 @@ background: var(--accent);
 .attention-link {
 font-weight: 700;
 color: var(--primary);
+}
+
+.status-dot {
+width: 7px;
+height: 7px;
+border-radius: 50%;
+margin: 0 auto;
+position: relative;
+}
+
+.online-glow {
+background-color: var(--success-dark);
+box-shadow:
+0 0 0 2px rgba(40, 167, 69, 0.1),
+0 0 0 4px rgba(40, 167, 69, 0.05);
+}
+
+.offline-glow {
+background-color: var(--danger-dark);
+box-shadow:
+0 0 0 2px rgba(220, 53, 69, 0.1),
+0 0 0 4px rgba(220, 53, 69, 0.05);
 }

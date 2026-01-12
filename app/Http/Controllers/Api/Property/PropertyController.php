@@ -81,6 +81,14 @@ class PropertyController extends Controller {
         return response()->noContent();
     }
 
+    public function toggle(Property $property) {
+        $this->authorize('toggle', $property);
+
+        $result = $this->propertyService->toggleProperty($property);
+
+        return $result;
+    }
+
     public function userProperties(Request $request) {
         $user = $request->user();
 

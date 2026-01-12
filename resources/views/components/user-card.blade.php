@@ -80,15 +80,17 @@
 
     </div>
 
-
-
     @if ($showActions)
         <div class="card-footer">
             <a href="{{ $backUrl }}" class="btn btn-secondary">Back</a>
 
-                <button class="btn btn-primary btn-alert">
-                    Block / Blocked
+                <form action="{{ url('/users/' . $user->id . '/toggle') }}" method="POST"
+                style="display:inline;">
+                @csrf
+                <button type="submit" class="btn btn-primary @if (!$user->deactivated_at) btn-safe @else btn-alert @endif">
+                    {{ $user->deactivated_at ? 'Deactivated' : 'Activated' }}
                 </button>
+            </form>
 
                 <form action="{{ url('/users/' . $user->id . '/verify') }}" method="POST">
                     @csrf

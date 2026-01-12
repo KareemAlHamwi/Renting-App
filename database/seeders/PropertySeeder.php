@@ -22,6 +22,7 @@ class PropertySeeder extends Seeder {
         }
 
         for ($i = 0; $i < 30; $i++) {
+            $randomDate = $faker->boolean(80) ? now()->subDays($faker->numberBetween(0, 365)) : null;
             Property::query()->create([
                 'title'            => $faker->sentence(3),
                 'description'      => $faker->paragraphs(2, true),
@@ -29,7 +30,8 @@ class PropertySeeder extends Seeder {
                 'rent'             => $faker->numberBetween(20, 200),
                 'overall_reviews'  => $faker->randomFloat(2, 0, 5),
                 'reviewers_number' => $faker->numberBetween(0, 150),
-                'verified_at'      => $faker->boolean(80) ? now()->subDays($faker->numberBetween(0, 365)) : null,
+                'verified_at'      => $randomDate,
+                'published_at'      => $randomDate,
                 'governorate_id'   => $faker->randomElement($govIds),
                 'user_id'          => $faker->randomElement($userIds),
             ]);

@@ -34,4 +34,11 @@ class UsersController extends Controller {
             ->back()
             ->with('success', 'User verified successfully.');
     }
+
+    public function toggleActivation(User $user) {
+        $this->userService->toggleAccount($user);
+
+        return redirect()
+            ->back();
+    }
 }

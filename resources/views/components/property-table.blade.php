@@ -1,9 +1,4 @@
-@props([
-'properties',
-'tableId' => 'propertiesTable',
-'detailsBaseUrl' => '/properties/',
-'links' => true
-])
+@props(['properties', 'tableId' => 'propertiesTable', 'detailsBaseUrl' => '/properties/', 'links' => true])
 
 <div class="card table-wrapper">
     <table id="{{ $tableId }}" class="users-table">
@@ -29,6 +24,14 @@
                                     ? \Illuminate\Support\Facades\Storage::disk('public')->url($firstPhoto->path)
                                     : asset('images/property.jpg');
                             @endphp
+
+                            <div>
+                                @if ($property->published_at)
+                                    <div class="status-dot online-glow" title="Online"></div>
+                                @else
+                                    <div class="status-dot offline-glow" title="Offline"></div>
+                                @endif
+                            </div>
 
                             <img src="{{ $src }}" alt="Property Image" class="avatar-sm avatar-square"
                                 onerror="this.onerror=null;this.src='{{ asset('images/property.jpg') }}';">
@@ -79,8 +82,7 @@
 
 <div>
     @if ($links)
-
-    {{ $properties->links() }}
+        {{ $properties->links() }}
     @endif
 </div>
 

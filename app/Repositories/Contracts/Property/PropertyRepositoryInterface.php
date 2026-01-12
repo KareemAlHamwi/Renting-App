@@ -14,6 +14,9 @@ interface PropertyRepositoryInterface {
     public function findById(int $propertyId);
     public function update(Property $property, array $data);
     public function delete(Property $property);
+    public function publish(Property $property);
+    public function unpublish(Property $property);
+    public function isPublished(Property $property);
     public function markAsVerified(Property $property);
     public function findLockedOrFail(Property $property);
     public function saveReviewStats(Property $property, int $reviewersNumber, float $overallReviews);

@@ -7,6 +7,8 @@ use App\Models\User\User;
 use App\Repositories\Contracts\Property\PropertyRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 
+use function Illuminate\Support\now;
+
 class PropertyRepository implements PropertyRepositoryInterface {
     public function getAll(array $filters = []) {
         $q             = trim((string)($filters['q'] ?? ''));              // search text
@@ -54,6 +56,7 @@ class PropertyRepository implements PropertyRepositoryInterface {
         $query = Property::query()
             ->with(['photos', 'governorate'])
             ->whereNotNull('verified_at')
+            ->whereNotNull('published_at')
             ->where('user_id', '!=', $user->id);
 
         // title
@@ -138,8 +141,24 @@ class PropertyRepository implements PropertyRepositoryInterface {
             ->delete();
     }
 
+    public function publish(Property $property) {
+        $property->forceFill(['published_at' => now()])->save();
+    }
+
+    public function unpublish(Property $property) {
+        $property->forceFill(['published_at' => null])->save();
+    }
+
+    public function isPublished(Property $property) {
+        return Property::query()
+            ->where('id', $property->id)
+            ->whereNotNull('published_at')
+            ->exists();
+    }
+
     public function markAsVerified(Property $property) {
         $property->forceFill(['verified_at' => now()])->save();
+        $property->forceFill(['published_at' => now()])->save();
 
         return $property->fresh(['photos', 'governorate']);
     }

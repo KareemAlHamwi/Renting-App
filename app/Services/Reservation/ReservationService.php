@@ -133,7 +133,7 @@ class ReservationService {
 
         $recipient->notify(new \App\Notifications\PushNotification(
             'Reservation cancelled',
-            "Reservation for [{$reservation->property->title}] has been cancelled by [$reservation->cancelled_by].",
+            "Reservation for [{$reservation->property->title}] has been cancelled by [{$reservation->cancelledBy->username}].",
             [
                 'type' => 'reservation_cancelled',
                 'reservation_id' => (string) $reservation->id,

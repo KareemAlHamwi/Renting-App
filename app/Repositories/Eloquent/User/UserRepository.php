@@ -103,6 +103,18 @@ class UserRepository implements UserRepositoryInterface {
         return true;
     }
 
+    public function deactivate(User $user) {
+        $user->forceFill(['deactivated_at' => now()])->save();
+    }
+
+    public function activate(User $user) {
+        $user->forceFill(['deactivated_at' => null])->save();
+    }
+
+    public function isActivated(User $user) {
+        return is_null($user->deactivated_at);
+    }
+
     public function isVerified(User $user): bool {
         return User::query()
             ->whereKey($user->getKey())

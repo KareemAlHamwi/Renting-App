@@ -204,4 +204,3 @@ Repository interfaces are bound to Eloquent implementations in AppServiceProvide
 ## Database Diagram
 
 ![Database Diagram](database/diagrams/renting_app_database.png)
-```

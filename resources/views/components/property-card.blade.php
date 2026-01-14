@@ -95,13 +95,13 @@
     @if ($showActions)
         <div class="card-footer">
 
-
             <a href="{{ $backUrl }}" class="btn btn-secondary">Back</a>
 
-            <form action="{{ url('/properties/' . $property->id . '/toggle') }}" method="POST"
-                style="display:inline;">
+            <form action="{{ url('/properties/' . $property->id . '/toggle') }}" method="POST" style="display:inline;"
+                onsubmit="return confirm('{{ $property->published_at ? 'Are you sure you want to unpublish this property?' : 'Are you sure you want to publish this property?' }}');">
                 @csrf
-                <button type="submit" class="btn btn-primary @if (!$property->published_at) btn-alert @else btn-safe @endif">
+                <button type="submit"
+                    class="btn btn-primary @if (!$property->published_at) btn-alert @else btn-safe @endif">
                     {{ $property->published_at ? 'Published' : 'Unpublished' }}
                 </button>
             </form>
@@ -109,8 +109,7 @@
             <form action="{{ url('/properties/' . $property->id . '/verify') }}" method="POST"
                 style="display:inline;">
                 @csrf
-                <button type="submit" class="btn btn-primary"
-                    @if ($property->verified_at) disabled @endif>
+                <button type="submit" class="btn btn-primary" @if ($property->verified_at) disabled @endif>
                     {{ $property->verified_at ? 'Verified' : 'Verify' }}
                 </button>
             </form>

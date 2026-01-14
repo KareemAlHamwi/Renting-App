@@ -61,6 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+        Route::post('/check-token', [AuthController::class, 'checkSession']);
     });
 
     /*

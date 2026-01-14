@@ -65,6 +65,10 @@ class User extends Authenticatable {
         return $this->hasMany(UserDevice::class, 'user_id');
     }
 
+    public function routeNotificationForFcm() {
+        return $this->devices()->pluck('fcm_token')->all();
+    }
+
     public function activeReservationsForProperty(Property $property) {
         return $this->reservations()
             ->where('property_id', $property->id)

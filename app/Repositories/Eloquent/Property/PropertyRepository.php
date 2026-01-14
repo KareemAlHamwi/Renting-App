@@ -11,10 +11,11 @@ use function Illuminate\Support\now;
 
 class PropertyRepository implements PropertyRepositoryInterface {
     public function getAll(array $filters = []) {
-        $q             = trim((string)($filters['q'] ?? ''));              // search text
-        $governorateId = $filters['governorate_id'] ?? null;               // FK
-        $status        = $filters['status'] ?? null;                       // verified|pending|null
-        $perPage       = (int)($filters['per_page'] ?? 10);                // 10/15/etc
+        $q             = trim((string)($filters['q'] ?? ''));
+        $governorateId = $filters['governorate_id'] ?? null;
+        $status        = $filters['status'] ?? null;
+        // $verification = $filters['verification'] ?? null;
+        $perPage       = (int)($filters['per_page'] ?? 10);
 
         // optional sorting (admin-friendly)
         $allowedSortBy = ['id', 'rent', 'overall_reviews', 'verified_at', 'reviewers_number'];

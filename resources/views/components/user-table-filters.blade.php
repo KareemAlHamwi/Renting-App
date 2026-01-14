@@ -6,6 +6,7 @@
     $q = request('q', '');
     $verification = request('verification', '');
     $role = request('role', '');
+    $activation = request('some', '');
     $perPage = (int) request('per_page', 10);
 
     $perPageOptions = [10, 15, 20, 50];
@@ -22,6 +23,16 @@
 
         <div class="popover-card">
             <div class="field">
+
+                <div class="field">
+                <label>Account</label>
+                <select name="account">
+                    <option value="">All Status</option>
+                    <option value="user" @selected($activation === 'activated')>activated</option>
+                    <option value="admin" @selected($activation === 'deactivated')>deactivated</option>
+                </select>
+            </div>
+
                 <label>Verification</label>
                 <select name="verification">
                     <option value="">All Status</option>

@@ -21,7 +21,7 @@ class PropertySeeder extends Seeder {
             return;
         }
 
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 35; $i++) {
             $randomDate = $faker->boolean(80) ? now()->subDays($faker->numberBetween(0, 365)) : null;
             Property::query()->create([
                 'title'            => $faker->sentence(3),

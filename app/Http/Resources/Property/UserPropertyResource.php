@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Property;
 
+use App\Support\Utilities;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -43,29 +44,10 @@ class UserPropertyResource extends JsonResource {
                         'id'    => $p->id,
                         'order' => $p->order,
                         'path'  => $p->path,
-                        'url'   => $this->photoUrl($p->path),
+                        'url'   => Utilities::photoUrl($p->path),
                     ];
                 });
             }),
         ];
-    }
-
-    private function photoUrl(?string $path): ?string {
-        if (!$path) return null;
-
-        // If already absolute, keep it.
-        if (str_contains($path, '://')) return $path;
-
-        // Normalize "public/..." and leading slashes
-        $path = preg_replace('#^public/#', '', $path);
-        $path = ltrim($path, '/');
-
-        // Return a RELATIVE public URL (no domain).
-        $relative = str_starts_with($path, 'storage/')
-            ? '/' . $path
-            : '/storage/' . $path;
-
-        // Prevent accidental "//"
-        return preg_replace('#/+#', '/', $relative);
     }
 }

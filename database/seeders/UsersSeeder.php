@@ -30,6 +30,23 @@ class UsersSeeder extends Seeder {
             ])->id,
         ]);
 
-        User::factory(19)->create();
+        User::factory()->create([
+            'phone_number' => '0982738724',
+            'username' => 'ammar',
+            'password' => Hash::make('Ammar@123'),
+            'verified_at' => now(),
+            'role' => 0,
+            'person_id' => Person::factory()->create([
+                'first_name' => 'Ammar',
+                'last_name' => 'Shaaban',
+                'birthdate' => '2004-01-01',
+                'personal_photo' => 'test',
+                'id_photo' => 'test',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])->id,
+        ]);
+
+        User::factory(18)->create();
     }
 }

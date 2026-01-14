@@ -12,19 +12,17 @@ return new class extends Migration {
         Schema::create('user_devices', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 
-            $table->string('device_id');                // your existing "device_id" used with Sanctum tokens
-            $table->string('platform', 20)->nullable(); // android / ios / web (optional)
-            $table->string('fcm_token', 512);          // can be long
+            $table->string('device_id');
+            $table->string('platform', 20)->nullable();
+            $table->string('fcm_token', 512);
             $table->timestamp('last_seen_at')->nullable();
 
             $table->timestamps();
 
             $table->unique(['user_id', 'device_id']);
-            $table->index('fcm_token');
+            $table->unique('fcm_token');
         });
     }
 

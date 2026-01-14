@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User\User;
 use App\Services\User\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class UsersController extends Controller {
     private UserService $userService;
@@ -36,9 +37,24 @@ class UsersController extends Controller {
     }
 
     public function toggleActivation(User $user) {
+        $wasActive = is_null($user->deactivated_at);
+
         $this->userService->toggleAccount($user);
 
-        return redirect()
-            ->back();
+        $user->refresh();
+
+        if ($wasActive && !is_null($user->deactivated_at)) {
+            $user->tokens()->delete();
+
+            $user->notify(new \App\Notifications\PushNotification(
+                'Account blocked',
+                "Your phone number [{$user->phone_number}] has been deactivated, please contact Support.",
+                ['type' => 'account_deactivated']
+            ));
+
+            $user->devices()->delete();
+        }
+
+        return redirect()->back();
     }
 }

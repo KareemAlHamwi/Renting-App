@@ -39,11 +39,7 @@ class ReservationService {
     public function createReservation(User $user, Property $property, string $startDate, ?string $endDate) {
         $endDate = $endDate ?: $startDate;
 
-        // if ($endDate < $startDate) {
-        //     throw new ConflictHttpException('End date cannot be before start date.');
-        // }
-
-        return DB::transaction(function () use ($user, $property, $startDate, $endDate) {
+        $reservation = DB::transaction(function () use ($user, $property, $startDate, $endDate) {
             if ($this->reservationRepository->checkConflict($property, $startDate, $endDate)) {
                 throw new ConflictHttpException('The property is booked during this period.');
             }
@@ -56,6 +52,17 @@ class ReservationService {
                 'status'      => ReservationStatus::Pending,
             ]);
         }, 3);
+
+        $property->owner->notify(new \App\Notifications\PushNotification(
+            'New reservation',
+            "Request pending for [$property->title] from [$user->username].",
+            [
+                'type' => 'property_verified',
+                'property_id' => (string) $property->property_id,
+            ]
+        ));
+
+        return $reservation;
     }
 
     public function updateReservation(Reservation $reservation, array $data) {

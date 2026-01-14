@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Property;
 
+use App\Support\Utilities;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,7 +16,6 @@ class UserPropertyListResource extends JsonResource {
             'id' => $this->id,
             'title' => $this->title,
 
-            // minimal governorate info
             'governorate_name' => $this->governorate?->governorate_name,
             'governorate_id' => $this->governorate?->id,
 
@@ -25,30 +25,10 @@ class UserPropertyListResource extends JsonResource {
             'reviewers_number' => (int) ($this->reviewers_number ?? 0),
             'verified_at' => $this->verified_at,
 
-            // photo with order = 1 (or smallest order)
             'primary_photo' => $primary ? [
                 'path' => $primary->path,
-                'url' => $this->photoUrl($primary->path),
+                'url' => Utilities::photoUrl($primary->path),
             ] : null,
         ];
-    }
-
-    private function photoUrl(?string $path): ?string {
-        if (!$path) return null;
-
-        // If already absolute, keep it.
-        if (str_contains($path, '://')) return $path;
-
-        // Normalize "public/..." and leading slashes
-        $path = preg_replace('#^public/#', '', $path);
-        $path = ltrim($path, '/');
-
-        // Return a RELATIVE public URL (no domain).
-        $relative = str_starts_with($path, 'storage/')
-            ? '/' . $path
-            : '/storage/' . $path;
-
-        // Prevent accidental "//"
-        return preg_replace('#/+#', '/', $relative);
     }
 }

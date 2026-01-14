@@ -2,9 +2,8 @@
 
 namespace App\Http\Resources\User;
 
+use App\Support\Utilities;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Filesystem\FilesystemAdapter;
 
 class UserMeResource extends JsonResource {
     public function toArray($request): array {
@@ -22,19 +21,9 @@ class UserMeResource extends JsonResource {
                 'first_name'    => $this->person->first_name,
                 'last_name'     => $this->person->last_name,
                 'birthdate'     => $this->person->birthdate,
-                'personal_photo' => $this->photoUrl($this->person->personal_photo),
-                'id_photo'       => $this->photoUrl($this->person->id_photo),
+                'personal_photo' => Utilities::photoUrl($this->person->personal_photo),
+                'id_photo'       => Utilities::photoUrl($this->person->id_photo),
             ] : null,
         ];
-    }
-
-    private function photoUrl(?string $path): ?string {
-        if (!$path) return null;
-        if (str_contains($path, '://')) return $path;
-
-        /** @var FilesystemAdapter $disk */
-        $disk = Storage::disk('public');
-
-        return $disk->url($path);
     }
 }

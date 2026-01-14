@@ -25,7 +25,7 @@ class UserFactory extends Factory {
             'phone_number' => fake()->phoneNumber(),
             'username' => fake()->userName(),
             'password' => 'Admin@123',
-            'verified_at' => null,
+            'verified_at' => now(),
             'role' => 0,
             'person_id' => Person::factory(),
         ];

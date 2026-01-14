@@ -9,6 +9,7 @@ class ReviewResource extends JsonResource {
         return [
             'id'         => $this->id,
             'reservation_id' => $this->reservation_id,
+            'username' => $this->reservation->user->username,
             'rating'      => (float) $this->rating,
             'comment'     => $this->comment,
             'created_at' => $this->created_at->format('Y-m-d'),

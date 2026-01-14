@@ -11,6 +11,10 @@ class DeviceTokenController extends Controller {
     public function upsert(UpsertDeviceTokenRequest $request) {
         $user = $request->user();
 
+        UserDevice::where('fcm_token', $request->fcm_token)
+            ->where('user_id', '!=', $user->id)
+            ->delete();
+
         UserDevice::updateOrCreate(
             [
                 'user_id'   => $user->id,

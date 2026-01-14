@@ -68,29 +68,27 @@
             <a href="{{ $backUrl }}" class="btn btn-secondary">Back</a>
             @if ($showCancel)
                 <form action="{{ url('/reservations/' . $reservation->id . '/cancel') }}" method="POST"
-                    style="display:inline;">
+                    style="display:inline;"
+                    onsubmit="return confirm('Are you sure you want to cancel this reservation?');">
                     @csrf
                     @php
-    // Force enum from raw DB value (bypasses any accessor overriding the cast)
-    $statusEnum = $reservation->status instanceof \App\Enums\ReservationStatus
-        ? $reservation->status
-        : \App\Enums\ReservationStatus::tryFrom((int) $reservation->getRawOriginal('status'));
+                        // Force enum from raw DB value (bypasses any accessor overriding the cast)
+                        $statusEnum =
+                            $reservation->status instanceof \App\Enums\ReservationStatus
+                                ? $reservation->status
+                                : \App\Enums\ReservationStatus::tryFrom((int) $reservation->getRawOriginal('status'));
 
-    $isCompleted = $statusEnum === \App\Enums\ReservationStatus::Completed;
-    $isCancelled = $statusEnum === \App\Enums\ReservationStatus::Cancelled;
+                        $isCompleted = $statusEnum === \App\Enums\ReservationStatus::Completed;
+                        $isCancelled = $statusEnum === \App\Enums\ReservationStatus::Cancelled;
 
-    $cancelDisabled = $isCompleted || $isCancelled;
+                        $cancelDisabled = $isCompleted || $isCancelled;
 
-    $cancelLabel = $isCompleted
-        ? 'Completed'
-        : ($isCancelled ? 'Cancelled' : 'Cancel');
-@endphp
+                        $cancelLabel = $isCompleted ? 'Completed' : ($isCancelled ? 'Cancelled' : 'Cancel');
+                    @endphp
 
-<button type="submit"
-        class="btn btn-primary btn-alert"
-        {{ $cancelDisabled ? 'disabled' : '' }}>
-    {{ $cancelLabel }}
-</button>
+                    <button type="submit" class="btn btn-primary btn-alert" {{ $cancelDisabled ? 'disabled' : '' }}>
+                        {{ $cancelLabel }}
+                    </button>
 
                 </form>
             @endif

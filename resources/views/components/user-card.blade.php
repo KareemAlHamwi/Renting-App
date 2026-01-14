@@ -7,7 +7,7 @@
     'reservationsUrl' => url('/reservations'),
 ])
 
-    <h2 >{{ $cardHeader }}</h2>
+<h2>{{ $cardHeader }}</h2>
 
 
 @php
@@ -84,21 +84,24 @@
         <div class="card-footer">
             <a href="{{ $backUrl }}" class="btn btn-secondary">Back</a>
 
-                <form action="{{ url('/users/' . $user->id . '/toggle') }}" method="POST"
-                style="display:inline;">
+            <form action="{{ url('/users/' . $user->id . '/toggle') }}" method="POST" style="display:inline;"
+                onsubmit="return confirm('{{ $user->deactivated_at ? 'Are you sure you want to activate this user?' : 'Are you sure you want to deactivate this user?' }}')">
                 @csrf
-                <button type="submit" class="btn btn-primary @if (!$user->deactivated_at) btn-safe @else btn-alert @endif">
+
+                <button type="submit"
+                    class="btn btn-primary @if (!$user->deactivated_at) btn-safe @else btn-alert @endif">
                     {{ $user->deactivated_at ? 'Deactivated' : 'Activated' }}
                 </button>
             </form>
 
-                <form action="{{ url('/users/' . $user->id . '/verify') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-primary verify-btn"
-                        @if ($user->verified_at) disabled @endif>
-                        {{ $user->verified_at ? 'Verified' : 'Verify' }}
-                    </button>
-                </form>
+
+            <form action="{{ url('/users/' . $user->id . '/verify') }}" method="POST">
+                @csrf
+                <button type="submit" class="btn btn-primary verify-btn"
+                    @if ($user->verified_at) disabled @endif>
+                    {{ $user->verified_at ? 'Verified' : 'Verify' }}
+                </button>
+            </form>
         </div>
     @endif
 </div>

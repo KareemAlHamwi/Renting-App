@@ -4,6 +4,7 @@ namespace App\Services\Push;
 
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
 class FcmClient {

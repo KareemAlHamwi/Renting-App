@@ -50,6 +50,8 @@ class AuthController extends Controller {
 
     public function login(LoginRequest $request) {
         $identifier = $request->phone_number ?? $request->username;
+        $this->authorize('login', [User::class, $identifier]);
+
         $user = $this->userService->validateLogin($identifier, $request->password);
 
         $token = $this->issueTokenForDevice($user, $request->device_id);
@@ -89,5 +91,29 @@ class AuthController extends Controller {
         return $user
             ->createToken($deviceId)
             ->plainTextToken;
+    }
+
+    public function checkSession(Request $request) {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json([
+                'authenticated' => false,
+                'message' => 'Invalid or missing token.',
+            ], 401);
+        }
+
+        $token = $user->currentAccessToken();
+
+        if (!$token) {
+            return response()->json([
+                'authenticated' => false,
+                'message' => 'Token not found.',
+            ], 401);
+        }
+
+        return response()->json([
+            'message' => 'Token found.'
+        ],200);
     }
 }

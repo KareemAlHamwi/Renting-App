@@ -30,10 +30,11 @@ Built with **Laravel 12** and **Sanctum** for token-based authentication.
 
 #### Auth
 
-| Method | Path                   | Description                     |
-| ------ | ---------------------- | ------------------------------- |
-| POST   | `/api/auth/logout`     | Logout and revoke current token |
-| POST   | `/api/auth/logout-all` | Logout and revoke all tokens    |
+| Method | Path                   | Description                                |
+| ------ | ---------------------- | ------------------------------------------ |
+| POST   | `/api/auth/logout`     | Logout and revoke current token            |
+| POST   | `/api/auth/logout-all` | Logout and revoke all tokens               |
+| POST   | `/api/auth/check-token` | Check token if user is still logged in    |
 
 #### User (Authenticated User)
 
@@ -44,7 +45,7 @@ Built with **Laravel 12** and **Sanctum** for token-based authentication.
 | PUT    | `/api/user/phone`                  | Change phone number                              |
 | PUT    | `/api/user/password`               | Change password                                  |
 | DELETE | `/api/user/delete`                 | Delete account                                   |
-| GET | `/api/user/is-verified`                 | Check account verification                                   |
+| GET    | `/api/user/is-verified`            | Check account verification                       |
 | GET    | `/api/user/properties`             | List authenticated user's properties             |
 | GET    | `/api/user/properties/{property}`  | Show a single property owned by the user         |
 
@@ -52,8 +53,8 @@ Built with **Laravel 12** and **Sanctum** for token-based authentication.
 
 | Method | Path                               | Description                                      |
 | ------ | ---------------------------------- | ------------------------------------------------ |
-| POST    | `/api/push/token`             | Store FCM token                   |
-| DELETE    | `/api/push/token`                 | Delete FCM token                              |
+| POST   | `/api/push/token`                  | Store FCM token                                  |
+| DELETE | `/api/push/token`                  | Delete FCM token                                 |
 
 #### Properties
 
@@ -63,6 +64,7 @@ Built with **Laravel 12** and **Sanctum** for token-based authentication.
 | POST   | `/api/properties`                         | Create property                                  |
 | PUT    | `/api/properties/{property}`              | Update property                                  |
 | DELETE | `/api/properties/{property}`              | Delete property                                  |
+| POST   | `/api/properties/{property}/toggle`       | Property publishment                             |
 | GET    | `/api/properties/{property}/reservations` | List reservations for a property (landlord view) |
 | POST   | `/api/properties/{property}/reservations` | Create a reservation for a property              |
 
@@ -83,13 +85,13 @@ Built with **Laravel 12** and **Sanctum** for token-based authentication.
 
 #### Reservations
 
-| Method | Path                                 | Description                              |
-| ------ | ------------------------------------ | ---------------------------------------- |
-| GET    | `/api/reservations`                  | List authenticated tenant reservations   |
-| PUT    | `/api/reservations/{reservation}`    | Update reservation                       |
-| POST   | `/api/reservations/{reservation}/approve` | Approve reservation                  |
-| POST   | `/api/reservations/{reservation}/cancel`  | Cancel reservation                   |
-| POST   | `/api/reservations/{reservation}/review`  | Add a review for a reservation       |
+| Method | Path                                      | Description                             |
+| ------ | ----------------------------------------- | --------------------------------------- |
+| GET    | `/api/reservations`                       | List authenticated tenant reservations  |
+| PUT    | `/api/reservations/{reservation}`         | Update reservation                      |
+| POST   | `/api/reservations/{reservation}/approve` | Approve reservation                     |
+| POST   | `/api/reservations/{reservation}/cancel`  | Cancel reservation                      |
+| POST   | `/api/reservations/{reservation}/review`  | Add a review for a reservation          |
 
 #### Reviews
 
@@ -118,6 +120,7 @@ Built with **Laravel 12** and **Sanctum** for token-based authentication.
 | ------ | ---------------------- | ------------------------ |
 | GET    | `/users`               | List all users           |
 | GET    | `/users/{user}`        | Show single user details |
+| POST   | `/users/{user}/toggle` | Account Activation       |
 | POST   | `/users/{user}/verify` | Verify a user account    |
 
 ### Properties Management
@@ -126,6 +129,7 @@ Built with **Laravel 12** and **Sanctum** for token-based authentication.
 | ------ | ------------------------------- | ---------------------------- |
 | GET    | `/properties`                   | List all properties          |
 | GET    | `/properties/{property}`        | Show single property details |
+| POST   | `/properties/{property}/toggle` | Property publishment         |
 | POST   | `/properties/{property}/verify` | Verify a property            |
 
 ### Reservations Management

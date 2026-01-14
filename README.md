@@ -2,7 +2,7 @@
 
 A simple Laravel backend API for managing basic rental app logic & data, with an admin dashboard website to handle verifying users/properties and general administration.
 
-Built with **Laravel 12** and **Sanctum** for token-based authentication.
+Built with **Laravel 12** and **Sanctum** for token-based authentication, organized around a **Repository Pattern** with a dedicated service layer.
 
 ## Architecture Overview
 

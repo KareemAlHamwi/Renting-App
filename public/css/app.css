@@ -785,7 +785,7 @@ gap:25px;
 .photo-item.avatar-item img{
 width: 155px;
 height: 155px;
-border-radius: 50%;
+border-radius: 5%;
 object-fit: cover;
 display:block;
 /* transform: translate(35px, 30px); */

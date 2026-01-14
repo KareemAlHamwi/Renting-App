@@ -6,12 +6,12 @@
     $q = request('q', '');
     $verification = request('verification', '');
     $role = request('role', '');
-    $activation = request('some', '');
+    $activation = request('activation', '');
     $perPage = (int) request('per_page', 10);
 
     $perPageOptions = [10, 15, 20, 50];
 
-    $openFilters = filled($verification) || filled($role) || request()->has('per_page');
+    $openFilters = filled($verification) || filled($activation) || filled($role) || request()->has('per_page');
 @endphp
 
 <form class="search-form" method="GET" action="{{ url()->current() }}">
@@ -23,16 +23,15 @@
 
         <div class="popover-card">
             <div class="field">
-
-                <div class="field">
                 <label>Account</label>
-                <select name="account">
-                    <option value="">All Status</option>
-                    <option value="user" @selected($activation === 'activated')>activated</option>
-                    <option value="admin" @selected($activation === 'deactivated')>deactivated</option>
+                <select name="activation">
+                    <option value="">All Accounts</option>
+                    <option value="activated" @selected($activation === 'activated')>Activated</option>
+                    <option value="deactivated" @selected($activation === 'deactivated')>Deactivated</option>
                 </select>
             </div>
 
+            <div class="field">
                 <label>Verification</label>
                 <select name="verification">
                     <option value="">All Status</option>
@@ -54,8 +53,7 @@
                 <label>Per page</label>
                 <select name="per_page">
                     @foreach ($perPageOptions as $n)
-                        <option value="{{ $n }}" @selected($perPage === $n)>{{ $n }} users
-                        </option>
+                        <option value="{{ $n }}" @selected($perPage === $n)>{{ $n }} users</option>
                     @endforeach
                 </select>
             </div>

@@ -14,10 +14,9 @@ class PropertyRepository implements PropertyRepositoryInterface {
         $q             = trim((string)($filters['q'] ?? ''));
         $governorateId = $filters['governorate_id'] ?? null;
         $status        = $filters['status'] ?? null;
-        // $verification = $filters['verification'] ?? null;
+        $publishment        = $filters['publishment'] ?? null;
         $perPage       = (int)($filters['per_page'] ?? 10);
 
-        // optional sorting (admin-friendly)
         $allowedSortBy = ['id', 'rent', 'overall_reviews', 'verified_at', 'reviewers_number'];
         $sortBy  = (string)($filters['sort_by'] ?? 'id');
         $sortBy  = in_array($sortBy, $allowedSortBy, true) ? $sortBy : 'id';
@@ -35,22 +34,26 @@ class PropertyRepository implements PropertyRepositoryInterface {
             });
         }
 
-        // governorate_id filter
         if (!empty($governorateId)) {
             $query->where('governorate_id', (int)$governorateId);
         }
 
-        // status filter
         if ($status === 'verified') {
             $query->whereNotNull('verified_at');
         } elseif ($status === 'pending') {
             $query->whereNull('verified_at');
         }
 
+        if ($publishment === 'published') {
+            $query->whereNotNull('published_at');
+        } elseif ($publishment === 'unpublished') {
+            $query->whereNull('published_at');
+        }
+
         return $query
             ->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
-            ->withQueryString(); // keeps q/governorate_id/status/per_page/sort_* across pages
+            ->withQueryString();
     }
 
     public function getVerifiedExcludingUser(User $user, array $filters = []) {

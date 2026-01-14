@@ -10,6 +10,7 @@ class UserRepository implements UserRepositoryInterface {
     public function index(array $filters = []) {
         $q            = trim(string: (string)($filters['q'] ?? ''));
         $verification = $filters['verification'] ?? null;
+        $activation = $filters['activation'] ?? null;
         $role         = $filters['role'] ?? null;
         $perPage      = (int)($filters['per_page'] ?? 10);
 
@@ -31,6 +32,12 @@ class UserRepository implements UserRepositoryInterface {
             $query->whereNotNull('verified_at');
         } elseif ($verification === 'pending') {
             $query->whereNull('verified_at');
+        }
+
+        if ($activation === 'activated') {
+            $query->whereNull('deactivated_at');
+        } elseif ($activation === 'deactivated') {
+            $query->whereNotNull('deactivated_at');
         }
 
         if ($role === 'user') {

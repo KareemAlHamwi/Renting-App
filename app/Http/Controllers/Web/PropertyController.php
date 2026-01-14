@@ -24,6 +24,7 @@ class PropertyController extends Controller {
             'q',
             'governorate_id',
             'status',
+            'publishment',
             'per_page',
             'sort_by',
             'sort_dir'

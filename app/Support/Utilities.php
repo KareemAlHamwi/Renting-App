@@ -3,7 +3,7 @@
 namespace App\Support;
 
 class Utilities {
-    // public function isPhoneFormat(string $identifier): bool {
+    // public static function isPhoneFormat(string $identifier): bool {
     //     return preg_match('/^(09[3-9]\d{7}|095\d{7}|944\d{7})$/', $identifier);
     // }
 

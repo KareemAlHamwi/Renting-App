@@ -9,6 +9,7 @@
     $q       = request('q', '');
     $govId   = request('governorate_id', '');
     $status  = request('status', '');
+    $publishment  = request('publishment', '');
     $perPage = (int) request('per_page', 10);
     $sortBy  = request('sort_by', 'id');
     $sortDir = request('sort_dir', 'desc');
@@ -23,7 +24,7 @@
         'verified_at' => 'Verified Date',
     ];
 
-    $openFilters = filled($govId) || filled($status) || request()->has('per_page') || request()->has('sort_by') || request()->has('sort_dir');
+    $openFilters = filled($govId) || filled($publishment) || filled($status) || request()->has('per_page') || request()->has('sort_by') || request()->has('sort_dir');
 
     $govs = collect();
     try {
@@ -87,6 +88,15 @@
                     <option value="">All Statuses</option>
                     <option value="verified" @selected($status === 'verified')>Verified</option>
                     <option value="pending"  @selected($status === 'pending')>Pending</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Publishment</label>
+                <select name="publishment">
+                    <option value="">All Properties</option>
+                    <option value="published" @selected($status === 'published')>Published</option>
+                    <option value="unpublished"  @selected($status === 'unpublished')>Unpublished</option>
                 </select>
             </div>
 

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\User\User;
 use App\Services\User\UserService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class UsersController extends Controller {
     private UserService $userService;
@@ -19,6 +18,7 @@ class UsersController extends Controller {
         $filters = $request->only([
             'q',
             'verification',
+            'activation',
             'role',
             'per_page'
         ]);

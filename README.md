@@ -4,6 +4,65 @@ A simple Laravel backend API for managing basic rental app logic & data, with an
 
 Built with **Laravel 12** and **Sanctum** for token-based authentication.
 
+## Architecture Overview
+
+This project follows a layered approach:
+
+-   **Controllers**: HTTP entry points (minimal logic, delegate to services).
+-   **Form Requests**: Validation + authorization at the request level.
+-   **Services**: Business logic orchestration (use repositories, handle workflows).
+-   **Repositories (Repository Pattern)**:
+    -   `Repositories/Contracts/*`: Interfaces (dependency inversion)
+    -   `Repositories/Eloquent/*`: Concrete Eloquent repositories
+    -   `BaseRepository.php`: Shared repository functionality
+-   **API Resources**: Consistent JSON shaping/serialization for API responses.
+-   **Policies**: Authorization rules for key actions (Property/Reservation/Review).
+-   **Enums**: Shared domain constants (e.g., reservation statuses).
+-   **Console Commands**: Background/system logic (e.g., marking expired reservations).
+
+## Project Structure (Core)
+```txt
+app/
+├─ Http/
+│  ├─ Controllers/Api/
+│  │  ├─ User/ (AuthController, UserController)
+│  │  ├─ Property/ (PropertyController, PropertyPhotoController, FavoritesController, GovernorateController)
+│  │  ├─ Reservation/ (ReservationController, ReviewController)
+│  │  └─ Push/ (DeviceTokenController)
+│  ├─ Requests/
+│  │  ├─ User/ (LoginRequest, RegisterRequest, ...)
+│  │  ├─ Property/ (PropertyRequest, PropertyPhotoRequest, ...)
+│  │  └─ Reservation/ (...)
+│  └─ Resources/
+│     ├─ User/ (UserMeResource, UserPublicResource)
+│     ├─ Property/ (...)
+│     └─ Reservation/ (ReviewResource, ...)
+├─ Services/
+│  ├─ User/ (UserService, PersonService)
+│  ├─ Property/ (PropertyService, PropertyPhotoService, FavoriteService, GovernorateService)
+│  ├─ Reservation/ (ReservationService, ReviewService)
+│  └─ Push/ (FcmClient, FcmAccessTokenProvider)
+├─ Repositories/
+│  ├─ Contracts/
+│  │  ├─ User/ (UserRepositoryInterface, PersonRepositoryInterface)
+│  │  ├─ Property/ (PropertyRepositoryInterface, PropertyPhotoRepositoryInterface, FavoriteRepositoryInterface, GovernorateRepositoryInterface)
+│  │  └─ Reservation/ (ReservationRepositoryInterface, ReviewRepositoryInterface)
+│  ├─ Eloquent/
+│  │  ├─ User/ (UserRepository, PersonRepository)
+│  │  ├─ Property/ (PropertyRepository, PropertyPhotoRepository, FavoriteRepository, GovernorateRepository)
+│  │  └─ Reservation/ (ReservationRepository, ReviewRepository)
+│  └─ BaseRepository.php
+├─ Policies/ (PropertyPolicy, ReservationPolicy, ReviewPolicy)
+├─ Enums/ (ReservationStatus)
+├─ Console/Commands/ (MarkExpiredReservationsCompleted)
+└─ Providers/ (bindings in AppServiceProvider)
+
+
+Dependency Injection / Bindings
+
+Repository interfaces are bound to Eloquent implementations in AppServiceProvider, ensuring controllers/services depend on abstractions rather than concrete classes.
+```
+
 ## API (Flutter App) Endpoints
 
 ### Auth (Public)
@@ -145,3 +204,4 @@ Built with **Laravel 12** and **Sanctum** for token-based authentication.
 ## Database Diagram
 
 ![Database Diagram](database/diagrams/renting_app_database.png)
+```

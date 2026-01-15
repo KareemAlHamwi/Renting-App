@@ -63,19 +63,16 @@ class PropertyRepository implements PropertyRepositoryInterface {
             ->whereNotNull('published_at')
             ->where('user_id', '!=', $user->id);
 
-        // title
         $query->when(
             filled($filters['title'] ?? null),
             fn(Builder $q) => $q->where('title', 'like', '%' . $filters['title'] . '%')
         );
 
-        // governorate_id
         $query->when(
             filled($filters['governorate_id'] ?? null),
             fn(Builder $q) => $q->where('governorate_id', (int) $filters['governorate_id'])
         );
 
-        // rent_min / rent_max (already normalized)
         $rentMin = $filters['rent_min'] ?? null;
         $rentMax = $filters['rent_max'] ?? null;
 
@@ -87,17 +84,17 @@ class PropertyRepository implements PropertyRepositoryInterface {
             $query->where('rent', '<=', $rentMax);
         }
 
-        // sorting (already normalized)
-        $sortBy  = $filters['sort_by'] ?? 'verified_at';
+        $allowedSortBy = ['rent', 'overall_reviews', 'reviewers_number', 'published_at'];
+        $sortBy  = (string)($filters['sort_by'] ?? 'id');
+        $sortBy  = in_array($sortBy, $allowedSortBy, true) ? $sortBy : 'published_at';
         $sortDir = $filters['sort_dir'] ?? 'desc';
         $query->orderBy($sortBy, $sortDir);
 
-        // pagination (already normalized)
         $perPage = (int) ($filters['per_page'] ?? 15);
 
         return $query
-            ->paginate($perPage)   // uses ?page= automatically
-            ->withQueryString();   // keeps filters/sort/per_page in pagination links
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function getUserProperties(User $user) {

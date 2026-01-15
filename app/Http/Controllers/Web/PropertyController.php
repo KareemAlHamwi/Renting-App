@@ -47,6 +47,20 @@ class PropertyController extends Controller {
     public function togglePublishing(Property $property) {
         $this->propertyService->toggleProperty($property);
 
+        if (!is_null($property->published_at)) {
+            $property->owner->notify(new \App\Notifications\PushNotification(
+                'Property published',
+                "Your property [$property->title] has been published.",
+                ['type' => 'property_published']
+            ));
+        } else {
+            $property->owner->notify(new \App\Notifications\PushNotification(
+                'Property unpublished',
+                "Your property [$property->title] has been unpublished.",
+                ['type' => 'property_published']
+            ));
+        }
+
         return redirect()
             ->back();
     }
